@@ -43,13 +43,18 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -72,7 +77,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -95,6 +99,24 @@
     <ClInclude Include="pch.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\Awaitable.ixx" />
+    <ClCompile Include="lib\Constraints.ixx" />
+    <ClCompile Include="lib\Coroutine.ixx" />
+    <ClCompile Include="lib\FixedString.ixx" />
+    <ClCompile Include="lib\IoService.ixx" />
+    <ClCompile Include="lib\IpAddress.ixx" />
+    <ClCompile Include="lib\IpAddressType.ixx" />
+    <ClCompile Include="lib\IPromise.ixx" />
+    <ClCompile Include="lib\IPv4Address.ixx" />
+    <ClCompile Include="lib\IPv6Address.ixx" />
+    <ClCompile Include="lib\NativeHandle.ixx" />
+    <ClCompile Include="lib\IResourcePool.ixx" />
+    <ClCompile Include="lib\Promissory.ixx" />
+    <ClCompile Include="lib\Socket.ixx" />
+    <ClCompile Include="lib\Suspender.ixx" />
+    <ClCompile Include="lib\Task.ixx" />
+    <ClCompile Include="lib\Traits.ixx" />
+    <ClCompile Include="lib\ValuePromise.ixx" />
     <ClCompile Include="Modern Network.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{7b13205e-9c35-448f-8be6-288ebd7addb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.hpp">
@@ -28,6 +31,60 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IpAddress.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\FixedString.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IPv4Address.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IPv6Address.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Socket.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Awaitable.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Task.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\NativeHandle.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IoService.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IpAddressType.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Coroutine.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Suspender.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IResourcePool.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Promissory.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IPromise.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Constraints.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Traits.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ValuePromise.ixx">
+      <Filter>lib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
