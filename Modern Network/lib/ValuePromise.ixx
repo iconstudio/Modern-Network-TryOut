@@ -1,0 +1,89 @@
+export module Net.Coroutine.ValuePromise;
+import Net.Constraints;
+import Net.Coroutine.Suspender;
+import Net.Coroutine.Awaitable;
+import Net.Coroutine.IPromise;
+import <type_traits>;
+import <concepts>;
+import <coroutine>;
+
+export namespace net
+{
+	template<typename V
+		, Suspender Init = std::suspend_always, Suspender Final = std::suspend_always>
+	class [[nodiscard]] ValuePromise;
+
+	template<Suspender Init, Suspender Final>
+	class [[nodiscard]] ValuePromise<void, Init, Final>
+		: public IPromise<ValuePromise<void, Init, Final>, Init, Final>
+	{
+	public:
+		using type = ValuePromise<void, Init, Final>;
+		using super = IPromise<ValuePromise<void, Init, Final>, Init, Final>;
+		using handle_type = super::handle_type;
+	};
+
+	template<movable Value
+		, Suspender Init, Suspender Final>
+	class [[nodiscard]] ValuePromise<Value, Init, Final>
+		: public IPromise<ValuePromise<Value, Init, Final>, Init, Final>
+	{
+	public:
+		using type = ValuePromise<Value, Init, Final>;
+		using super = IPromise<ValuePromise<Value, Init, Final>, Init, Final>;
+		using handle_type = super::handle_type;
+
+		using value_type = Value;
+		using reference = remove_reference_t<Value>&;
+		using const_reference = const remove_reference_t<Value>&;
+		using rvalue_reference = remove_reference_t<Value>&&;
+		using const_rvalue_reference = const remove_reference_t<Value>&&;
+
+		constexpr ValuePromise()
+			noexcept(nothrow_default_constructibles<value_type>) requires default_initializables<Value&&>
+			: myValue()
+		{}
+
+		constexpr ValuePromise()
+			noexcept(nothrow_default_constructibles<value_type>) requires (!default_initializables<Value&&>)
+		{}
+
+		virtual constexpr ~ValuePromise()
+			noexcept(nothrow_destructibles<value_type>) = default;
+
+		template<typename U>
+		constexpr Final yield_value(U&& value)
+			noexcept(nothrow_assignables<Value, U&&>)
+		{
+			myValue = std::forward<U>(value);
+
+			return {};
+		}
+
+		[[nodiscard]]
+		constexpr reference value() & noexcept
+		{
+			return myValue;
+		}
+
+		[[nodiscard]]
+		constexpr const_reference value() const& noexcept
+		{
+			return myValue;
+		}
+
+		[[nodiscard]]
+		constexpr rvalue_reference value() && noexcept
+		{
+			return std::move(myValue);
+		}
+
+		[[nodiscard]]
+		constexpr const_rvalue_reference value() const&& noexcept
+		{
+			return std::move(myValue);
+		}
+
+		Value myValue;
+	};
+}
