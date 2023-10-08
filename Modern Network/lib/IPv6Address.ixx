@@ -4,7 +4,7 @@ import <string_view>;
 
 export namespace net
 {
-	class [[nodiscard]] IPv6Address : public IpAddress
+	class [[nodiscard]] IPv6Address final : public IpAddress
 	{
 	public:
 		constexpr IPv6Address() noexcept = default;

@@ -17,28 +17,30 @@ export namespace net
 		using handle_type = std::coroutine_handle<type>;
 
 		constexpr IPromise() noexcept = default;
-		constexpr ~IPromise() noexcept = default;
+		virtual constexpr ~IPromise() noexcept = default;
 
-		auto get_return_object() noexcept
+		[[nodiscard]]
+		virtual handle_type get_return_object() noexcept
 		{
-			return handle_type::from_address(this);
+			return handle_type::from_promise(*this);
 		}
 
+		[[nodiscard]]
 		static constexpr std::decay_t<Init> initial_suspend() noexcept
 		{
 			return {};
 		}
 
+		[[nodiscard]]
 		static constexpr std::decay_t<Final> final_suspend() noexcept
 		{
 			return {};
 		}
 
-		[[noreturn]]
 		static constexpr void return_void() noexcept {}
 
 		[[noreturn]]
-		static void unhandled_exception()
+		virtual void unhandled_exception()
 		{
 			throw;
 		}

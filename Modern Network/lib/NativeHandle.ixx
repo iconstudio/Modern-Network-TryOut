@@ -3,7 +3,7 @@ import <compare>;
 
 export namespace net
 {
-	class [[nodiscard]] NativeHandle
+	class [[nodiscard]] NativeHandle final
 	{
 	public:
 		constexpr NativeHandle() noexcept = default;

@@ -1,11 +1,12 @@
 export module Net.FixedString;
 import <type_traits>;
+import <compare>;
 import <string_view>;
 
 export namespace net
 {
 	template <typename Char, size_t N>
-	struct basic_fixed_string
+	struct [[nodiscard]] basic_fixed_string final
 	{
 		static_assert(std::is_trivially_copyable_v<Char>, "Char must be trivially copyable.");
 		static_assert(std::is_standard_layout_v<Char>, "Char must be standard layout.");
@@ -16,6 +17,7 @@ export namespace net
 		constexpr ~basic_fixed_string() noexcept = default;
 
 		constexpr basic_fixed_string(const Char* const& buffer) noexcept
+			: intBuffer()
 		{
 			for (size_t i = 0; i < N; ++i)
 			{
@@ -29,6 +31,12 @@ export namespace net
 			return std::basic_string_view<Char>(intBuffer, N);
 		}
 
+		[[nodiscard]]
+		constexpr bool operator==(const basic_fixed_string&) const noexcept = default;
+		[[nodiscard]]
+		constexpr std::strong_ordering operator<=>(const basic_fixed_string&) const noexcept = default;
+
+	private:
 		Char intBuffer[N];
 	};
 

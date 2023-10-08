@@ -3,7 +3,7 @@ import Net.NativeHandle;
 
 export namespace net
 {
-	class [[nodiscard]] Socket
+	class [[nodiscard]] Socket final
 	{
 	public:
 
