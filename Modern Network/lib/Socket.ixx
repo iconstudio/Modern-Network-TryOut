@@ -1,9 +1,10 @@
 export module Net.Socket;
 import Net.NativeHandle;
+import Net.IHandler;
 
 export namespace net
 {
-	class [[nodiscard]] Socket final
+	class [[nodiscard]] Socket final : public IHandler<NativeHandle>
 	{
 	public:
 
@@ -17,7 +18,5 @@ export namespace net
 	private:
 		Socket(const Socket&) = delete;
 		Socket& operator=(const Socket&) = delete;
-
-		NativeHandle nativeHandle;
 	};
 }
