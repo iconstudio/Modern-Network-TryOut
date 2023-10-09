@@ -128,8 +128,11 @@
     <ClCompile Include="lib\FixedString.ixx">
       <Filter>lib\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Application.ixx">
+    <ClCompile Include="lib\Application.ixx">
       <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
