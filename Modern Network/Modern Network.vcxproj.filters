@@ -22,6 +22,12 @@
     <Filter Include="lib\Coroutine">
       <UniqueIdentifier>{de771f88-c6c4-4480-b4fb-52f936622807}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\Meta">
+      <UniqueIdentifier>{0c141749-2779-438a-984d-9289d992a22b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\Utility">
+      <UniqueIdentifier>{41665156-a67f-4f57-a3fa-ac4e8319ab13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.hpp">
@@ -41,9 +47,6 @@
     <ClCompile Include="lib\IpAddress.ixx">
       <Filter>lib</Filter>
     </ClCompile>
-    <ClCompile Include="lib\FixedString.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
     <ClCompile Include="lib\IPv4Address.ixx">
       <Filter>lib</Filter>
     </ClCompile>
@@ -60,12 +63,6 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\IpAddressType.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\Constraints.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\Traits.ixx">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\EndPoint.ixx">
@@ -90,9 +87,6 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\SocketGeneralErrorCodes.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="Application.ixx">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\IHandler.ixx">
@@ -124,6 +118,18 @@
     </ClCompile>
     <ClCompile Include="lib\ValuePromise.ixx">
       <Filter>lib\Coroutine</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Constraints.ixx">
+      <Filter>lib\Meta</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Traits.ixx">
+      <Filter>lib\Meta</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\FixedString.ixx">
+      <Filter>lib\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.ixx">
+      <Filter>lib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
