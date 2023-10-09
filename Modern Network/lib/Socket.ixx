@@ -15,7 +15,10 @@ export namespace net
 	{
 	private:
 		struct [[nodiscard]] EmptySocketType final
-		{};
+		{
+			constexpr EmptySocketType() noexcept = default;
+			constexpr ~EmptySocketType() noexcept = default;
+		};
 	public:
 		static const EmptySocketType EmptySocket;
 
@@ -59,7 +62,7 @@ export namespace net
 		[[nodiscard]]
 		static Socket Create() noexcept;
 		[[nodiscard]]
-		static Socket Create(int& error_code) noexcept;
+		static Socket Create(SocketErrorCodes& error_code) noexcept;
 
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;
