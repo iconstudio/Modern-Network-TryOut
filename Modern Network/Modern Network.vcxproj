@@ -105,6 +105,7 @@
     <ClCompile Include="lib\EndPoint.ixx" />
     <ClCompile Include="lib\FixedString.ixx" />
     <ClCompile Include="lib\IHandler.ixx" />
+    <ClCompile Include="lib\IoContext.ixx" />
     <ClCompile Include="lib\IoService.ixx" />
     <ClCompile Include="lib\IpAddress.ixx" />
     <ClCompile Include="lib\IpAddressType.ixx" />
