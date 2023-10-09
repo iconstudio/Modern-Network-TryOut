@@ -33,8 +33,56 @@ export namespace net
 		: myValue(std::move(other.myValue))
 		{}
 
+		[[nodiscard]]
+		constexpr T& value() & noexcept
+		{
+			return myValue;
+		}
+
+		[[nodiscard]]
+		constexpr const T& value() const& noexcept
+		{
+			return myValue;
+		}
+
+		[[nodiscard]]
+		constexpr T&& value() && noexcept
+		{
+			return std::move(myValue);
+		}
+
+		[[nodiscard]]
+		constexpr const T&& value() const&& noexcept
+		{
+			return std::move(myValue);
+		}
+
+		[[nodiscard]]
+		explicit constexpr operator T& () & noexcept
+		{
+			return myValue;
+		}
+
+		[[nodiscard]]
+		explicit constexpr operator const T& () const& noexcept
+		{
+			return myValue;
+		}
+
+		[[nodiscard]]
+		explicit constexpr operator T && () && noexcept
+		{
+			return std::move(myValue);
+		}
+
+		[[nodiscard]]
+		explicit constexpr operator const T && () const&& noexcept
+		{
+			return std::move(myValue);
+		}
+
 		template<convertible_to<T> U, bool C2, bool R2>
-		constexpr IProperty& operator=(const IProperty<U, C2, R2>&other)
+		constexpr IProperty& operator=(const IProperty<U, C2, R2>& other)
 			noexcept(nothrow_assignables<const U&, T>)
 			requires !Readonly and C2 and copy_assignables<T, U> and constructible_from<T, const U&>
 		{
