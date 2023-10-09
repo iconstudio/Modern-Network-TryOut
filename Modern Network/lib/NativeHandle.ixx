@@ -1,4 +1,5 @@
 export module Net.NativeHandle;
+import Net.Property;
 import <compare>;
 
 export namespace net
@@ -10,9 +11,15 @@ export namespace net
 		constexpr ~NativeHandle() noexcept = default;
 
 		[[nodiscard]]
-		constexpr const void* const GetPointer() const noexcept
+		constexpr const void* const& GetPointer() const& noexcept
 		{
-			return nativePointer;
+			return nativePointer.value();
+		}
+
+		[[nodiscard]]
+		constexpr void* && GetPointer() && noexcept
+		{
+			return std::move(nativePointer).value();
 		}
 
 		[[nodiscard]]
@@ -35,6 +42,6 @@ export namespace net
 		NativeHandle(const NativeHandle&) = delete;
 		NativeHandle& operator=(const NativeHandle&) = delete;
 
-		void* nativePointer;
+		Property<void*> nativePointer;
 	};
 }
