@@ -12,7 +12,7 @@ export namespace net
 		WSAEINPROGRESS = (int)SocketErrorCodes::WSAEINPROGRESS,
 		WSAEINVAL = (int)SocketErrorCodes::WSAEINVAL,
 		WSAEMSGSIZE = (int)SocketErrorCodes::WSAEMSGSIZE,
-		WSAENETDOWN = (int)SocketErrorCodes::WSAENETDOWN,
+		NETDOWN = (int)SocketErrorCodes::NETDOWN,
 		WSAENETRESET = (int)SocketErrorCodes::WSAENETRESET,
 		WSAENOBUFS = (int)SocketErrorCodes::WSAENOBUFS,
 		WSAENOTCONN = (int)SocketErrorCodes::WSAENOTCONN,
@@ -21,7 +21,7 @@ export namespace net
 		WSAESHUTDOWN = (int)SocketErrorCodes::WSAESHUTDOWN,
 		WSAEWOULDBLOCK = (int)SocketErrorCodes::WSAEWOULDBLOCK,
 		WSANOTINITIALISED = (int)SocketErrorCodes::WSANOTINITIALISED,
-		WSA_IO_PENDING = (int)SocketErrorCodes::WSA_IO_PENDING,
-		WSA_OPERATION_ABORTED = (int)SocketErrorCodes::WSA_OPERATION_ABORTED,
+		IO_PENDING = (int)SocketErrorCodes::IO_PENDING,
+		OPERATION_ABORTED = (int)SocketErrorCodes::OPERATION_ABORTED,
 	};
 }
