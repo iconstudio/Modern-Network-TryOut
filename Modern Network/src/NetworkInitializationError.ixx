@@ -3,8 +3,9 @@ import <exception>;
 
 export namespace net
 {
-	class [[nodiscard]] NetworkInitializationError : public std::exception
+	class [[nodiscard]] NetworkInitializationError final : public std::exception
 	{
+	public:
 		NetworkInitializationError() noexcept
 			: exception("Error on Network Initialization")
 		{}
