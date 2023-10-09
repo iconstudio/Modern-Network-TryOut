@@ -55,10 +55,9 @@ export namespace net
 		T myValue;
 	};
 
+	template<movable T, bool Copyable = copyable<T>>
+	using Property = IProperty<T, Copyable, false>;
 
-	template<typename T>
-	class Property final
-	{
-	public:
-	};
+	template<movable T>
+	using ReadonlyProperty = IProperty<T, false, true>;
 }
