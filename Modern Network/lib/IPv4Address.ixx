@@ -7,6 +7,8 @@ export namespace net
 	class [[nodiscard]] IPv4Address final : public IpAddress
 	{
 	public:
+		static const IPv4Address Loopback;
+
 		constexpr IPv4Address() noexcept = default;
 		constexpr ~IPv4Address() noexcept = default;
 
@@ -33,13 +35,22 @@ export namespace net
 			return IPv4Address{ address };
 		}
 
+		constexpr IPv4Address& operator=(std::string_view address) noexcept
+		{
+			return *this = IPv4Address{ address };
+		}
+
 		[[nodiscard]]
 		constexpr bool operator==(const IPv4Address& other) const noexcept = default;
 
 		constexpr IPv4Address(const IPv4Address&) noexcept = default;
+		constexpr IPv4Address& operator=(const IPv4Address&) noexcept = default;
 		constexpr IPv4Address(IPv4Address&&) noexcept = default;
+		constexpr IPv4Address& operator=(IPv4Address&&) noexcept = default;
 
 	private:
 		char ipAddress[16];
 	};
+
+	const IPv4Address IPv4Address::Loopback = IPv4Address{ "127.0.0.1" };
 }

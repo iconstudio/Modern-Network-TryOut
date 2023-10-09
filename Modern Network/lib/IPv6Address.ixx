@@ -7,6 +7,8 @@ export namespace net
 	class [[nodiscard]] IPv6Address final : public IpAddress
 	{
 	public:
+		static const IPv6Address Loopback;
+
 		constexpr IPv6Address() noexcept = default;
 		constexpr ~IPv6Address() noexcept = default;
 
@@ -33,13 +35,22 @@ export namespace net
 			return IPv6Address{ address };
 		}
 
+		constexpr IPv6Address& operator=(std::string_view address) noexcept
+		{
+			return *this = IPv6Address{ address };
+		}
+
 		[[nodiscard]]
 		constexpr bool operator==(const IPv6Address& other) const noexcept = default;
 
 		constexpr IPv6Address(const IPv6Address&) noexcept = default;
+		constexpr IPv6Address& operator=(const IPv6Address&) noexcept = default;
 		constexpr IPv6Address(IPv6Address&&) noexcept = default;
+		constexpr IPv6Address& operator=(IPv6Address&&) noexcept = default;
 
 	private:
 		char ipAddress[48];
 	};
+
+	const IPv6Address IPv6Address::Loopback = IPv6Address{ ":::::1" };
 }
