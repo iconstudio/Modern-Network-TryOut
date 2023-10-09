@@ -101,6 +101,9 @@
     <ClCompile Include="lib\SocketErrorCode.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="src\Socket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="lib\SocketReceivingErrorCodes.ixx">
       <Filter>lib</Filter>
     </ClCompile>
