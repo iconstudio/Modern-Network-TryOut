@@ -102,6 +102,7 @@
     <ClCompile Include="lib\Awaitable.ixx" />
     <ClCompile Include="lib\Constraints.ixx" />
     <ClCompile Include="lib\Coroutine.ixx" />
+    <ClCompile Include="lib\EndPoint.ixx" />
     <ClCompile Include="lib\FixedString.ixx" />
     <ClCompile Include="lib\IHandler.ixx" />
     <ClCompile Include="lib\IoService.ixx" />
