@@ -19,6 +19,9 @@
     <Filter Include="lib\Interface">
       <UniqueIdentifier>{74e588dc-b779-4f18-85e8-c13512500489}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\Coroutine">
+      <UniqueIdentifier>{de771f88-c6c4-4480-b4fb-52f936622807}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.hpp">
@@ -50,12 +53,6 @@
     <ClCompile Include="lib\Socket.ixx">
       <Filter>lib</Filter>
     </ClCompile>
-    <ClCompile Include="lib\Awaitable.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\Task.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
     <ClCompile Include="lib\NativeHandle.ixx">
       <Filter>lib</Filter>
     </ClCompile>
@@ -65,31 +62,10 @@
     <ClCompile Include="lib\IpAddressType.ixx">
       <Filter>lib</Filter>
     </ClCompile>
-    <ClCompile Include="lib\Coroutine.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\Suspender.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\IResourcePool.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\Promissory.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\IPromise.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
     <ClCompile Include="lib\Constraints.ixx">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\Traits.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\ValuePromise.ixx">
-      <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\IHandler.ixx">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\EndPoint.ixx">
@@ -124,6 +100,30 @@
     </ClCompile>
     <ClCompile Include="lib\IObject.ixx">
       <Filter>lib\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IResourcePool.ixx">
+      <Filter>lib\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Coroutine.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Awaitable.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IPromise.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Promissory.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Suspender.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Task.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ValuePromise.ixx">
+      <Filter>lib\Coroutine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
