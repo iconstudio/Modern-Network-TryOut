@@ -5,4 +5,27 @@ export import :Receiving;
 
 export namespace net
 {
+	[[nodiscard]]
+	constexpr bool operator==(const SocketErrorCodes& lhs, const SendingErrorCodes& rhs) noexcept
+	{
+		return static_cast<int>(lhs) == static_cast<int>(rhs);
+	}
+
+	[[nodiscard]]
+	constexpr bool operator==(const SocketErrorCodes& lhs, const ReceivingErrorCodes& rhs) noexcept
+	{
+		return static_cast<int>(lhs) == static_cast<int>(rhs);
+	}
+
+	[[nodiscard]]
+	constexpr bool operator==(const SendingErrorCodes& lhs, const ReceivingErrorCodes& rhs) noexcept
+	{
+		return static_cast<int>(lhs) == static_cast<int>(rhs);
+	}
+
+	[[nodiscard]]
+	constexpr bool operator==(const ReceivingErrorCodes& lhs, const SendingErrorCodes& rhs) noexcept
+	{
+		return static_cast<int>(lhs) == static_cast<int>(rhs);
+	}
 }
