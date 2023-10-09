@@ -16,6 +16,9 @@
     <Filter Include="lib">
       <UniqueIdentifier>{7b13205e-9c35-448f-8be6-288ebd7addb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\Interface">
+      <UniqueIdentifier>{74e588dc-b779-4f18-85e8-c13512500489}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.hpp">
@@ -112,6 +115,13 @@
     </ClCompile>
     <ClCompile Include="lib\SocketGeneralErrorCodes.ixx">
       <Filter>lib</Filter>
+    </ClCompile>
+    </ClCompile>
+    <ClCompile Include="lib\IHandler.ixx">
+      <Filter>lib\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IObject.ixx">
+      <Filter>lib\Interface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
