@@ -116,6 +116,8 @@
     <ClCompile Include="lib\SocketGeneralErrorCodes.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="Application.ixx">
+      <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\IHandler.ixx">
       <Filter>lib\Interface</Filter>

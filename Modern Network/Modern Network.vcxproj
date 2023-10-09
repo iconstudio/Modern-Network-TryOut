@@ -99,6 +99,7 @@
     <ClInclude Include="pch.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Application.ixx" />
     <ClCompile Include="lib\Awaitable.ixx" />
     <ClCompile Include="lib\Constraints.ixx" />
     <ClCompile Include="lib\Coroutine.ixx" />
