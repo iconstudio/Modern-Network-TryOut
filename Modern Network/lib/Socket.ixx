@@ -12,9 +12,14 @@ export namespace net
 {
 	class [[nodiscard]] Socket final : public Handler<NativeHandle>
 	{
+	private:
+		struct [[nodiscard]] EmptySocketType final
+		{};
 	public:
-		static const Socket EmptySocket;
+		static const EmptySocketType EmptySocket;
 
+		constexpr Socket(EmptySocketType) noexcept;
+		constexpr Socket& operator=(EmptySocketType) noexcept;
 		~Socket() noexcept;
 
 		SocketSendingResult Send(std::span<const std::byte> buffer) const noexcept;

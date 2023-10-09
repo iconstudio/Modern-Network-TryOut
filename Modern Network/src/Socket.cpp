@@ -3,7 +3,7 @@ module Net.Socket;
 
 using namespace net;
 
-const Socket Socket::EmptySocket = {};
+const Socket::EmptySocketType Socket::EmptySocket = {};
 
 SocketSendingResult
 Socket::Send(std::span<const std::byte> buffer)
@@ -33,7 +33,22 @@ const noexcept
 	return SocketReceivingResult();
 }
 
-Socket Socket::Create() noexcept
+constexpr
+net::Socket::Socket(EmptySocketType)
+noexcept
+	: Socket()
+{}
+
+constexpr Socket&
+net::Socket::operator=(EmptySocketType)
+noexcept
+{
+	return *this = Socket{};
+}
+
+Socket
+Socket::Create()
+noexcept
 {
 	return {};
 }
