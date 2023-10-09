@@ -101,5 +101,14 @@
     <ClCompile Include="lib\SocketErrorCode.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="lib\SocketReceivingErrorCodes.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\SocketSendingErrorCodes.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\SocketGeneralErrorCodes.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
