@@ -13,6 +13,10 @@ export namespace net
 	class [[nodiscard]] Socket final : public IHandler<NativeHandle>
 	{
 	public:
+		static const Socket EmptySocket;
+
+		~Socket() noexcept;
+
 		SocketSendingResult Send(std::span<const std::byte> buffer) const noexcept;
 		SocketSendingResult Send(const std::byte* const& buffer, size_t size) const noexcept;
 		SocketReceivingResult Receive(std::span<std::byte> buffer) const noexcept;
@@ -52,8 +56,7 @@ export namespace net
 		constexpr Socket& operator=(Socket&&) noexcept = default;
 
 	private:
-		Socket() noexcept;
-		~Socket() noexcept;
+		Socket() noexcept = default;
 
 		Socket(const Socket&) = delete;
 		Socket& operator=(const Socket&) = delete;
