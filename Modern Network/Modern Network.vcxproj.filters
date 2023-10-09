@@ -140,5 +140,8 @@
     <ClCompile Include="src\Property.ixx">
       <Filter>lib\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="src\SocketErrorCode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

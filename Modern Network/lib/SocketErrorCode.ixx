@@ -6,6 +6,13 @@ export import :Receiving;
 export namespace net
 {
 	[[nodiscard]]
+	SocketErrorCodes AcquireSocketError() noexcept;
+	[[nodiscard]]
+	SendingErrorCodes AcquireSendingError() noexcept;
+	[[nodiscard]]
+	ReceivingErrorCodes AcquireReceivingError() noexcept;
+
+	[[nodiscard]]
 	constexpr bool operator==(const SocketErrorCodes& lhs, const SendingErrorCodes& rhs) noexcept
 	{
 		return static_cast<int>(lhs) == static_cast<int>(rhs);

@@ -142,6 +142,7 @@
     <ClCompile Include="src\NetworkInitializationError.ixx" />
     <ClCompile Include="src\Property.ixx" />
     <ClCompile Include="src\Socket.cpp" />
+    <ClCompile Include="src\SocketErrorCode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
