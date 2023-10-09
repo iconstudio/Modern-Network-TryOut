@@ -117,6 +117,7 @@
     <ClCompile Include="lib\Promissory.ixx" />
     <ClCompile Include="lib\Socket.ixx" />
     <ClCompile Include="lib\SocketError.ixx" />
+    <ClCompile Include="lib\SocketErrorCode.ixx" />
     <ClCompile Include="lib\Suspender.ixx" />
     <ClCompile Include="lib\Task.ixx" />
     <ClCompile Include="lib\Traits.ixx" />

@@ -98,5 +98,8 @@
     <ClCompile Include="lib\SocketError.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="lib\SocketErrorCode.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
