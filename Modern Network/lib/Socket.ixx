@@ -5,6 +5,7 @@ import Net.NativeHandle;
 import Net.Handler;
 import Net.IoContext;
 import Net.Task;
+import Net.EndPoint;
 import <cstddef>;
 import <span>;
 
@@ -21,6 +22,9 @@ export namespace net
 		constexpr Socket(EmptySocketType) noexcept;
 		constexpr Socket& operator=(EmptySocketType) noexcept;
 		~Socket() noexcept;
+
+		SocketResult Bind(const EndPoint& endpoint) const noexcept;
+		SocketResult Bind(EndPoint&& endpoint) const noexcept;
 
 		SocketSendingResult Send(std::span<const std::byte> buffer) const noexcept;
 		SocketSendingResult Send(const std::byte* const& buffer, size_t size) const noexcept;
