@@ -95,5 +95,8 @@
     <ClCompile Include="lib\IoContext.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="lib\SocketError.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
