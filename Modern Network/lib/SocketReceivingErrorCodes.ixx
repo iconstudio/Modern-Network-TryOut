@@ -1,4 +1,4 @@
-export module Net.Socket.ErrorCodes:Receiving;
+export module Net.Socket.ErrorCode:Receiving;
 import :General;
 
 export namespace net

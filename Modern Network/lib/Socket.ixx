@@ -1,5 +1,5 @@
 export module Net.Socket;
-export import Net.Socket.ErrorCodes;
+export import Net.Socket.ErrorCode;
 export import :Result;
 import Net.NativeHandle;
 import Net.IHandler;

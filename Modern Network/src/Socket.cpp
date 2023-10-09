@@ -4,5 +4,5 @@ using namespace net;
 
 SocketSendingResult Socket::Send(std::span<const std::byte> buffer) const noexcept
 {
-	return SocketResult();
+	return SocketSendingResult(0);
 }

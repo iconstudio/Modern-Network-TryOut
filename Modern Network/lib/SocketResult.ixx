@@ -1,5 +1,5 @@
 export module Net.Socket:Result;
-import Net.Socket.ErrorCodes;
+import Net.Socket.ErrorCode;
 import <expected>;
 
 export namespace net

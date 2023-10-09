@@ -1,4 +1,4 @@
-export module Net.Socket.ErrorCodes:General;
+export module Net.Socket.ErrorCode:General;
 
 export namespace net
 {
