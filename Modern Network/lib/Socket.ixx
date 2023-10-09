@@ -2,7 +2,7 @@ export module Net.Socket;
 export import Net.Socket.ErrorCode;
 export import :Result;
 import Net.NativeHandle;
-import Net.IHandler;
+import Net.Handler;
 import Net.IoContext;
 import Net.Task;
 import <cstddef>;
@@ -10,7 +10,7 @@ import <span>;
 
 export namespace net
 {
-	class [[nodiscard]] Socket final : public IHandler<NativeHandle>
+	class [[nodiscard]] Socket final : public Handler<NativeHandle>
 	{
 	public:
 		static const Socket EmptySocket;

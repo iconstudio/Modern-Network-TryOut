@@ -89,7 +89,7 @@
     <ClCompile Include="lib\SocketGeneralErrorCodes.ixx">
       <Filter>lib</Filter>
     </ClCompile>
-    <ClCompile Include="lib\IHandler.ixx">
+    <ClCompile Include="lib\Handler.ixx">
       <Filter>lib\Interface</Filter>
     </ClCompile>
     <ClCompile Include="lib\IObject.ixx">

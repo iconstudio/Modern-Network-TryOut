@@ -105,7 +105,7 @@
     <ClCompile Include="lib\Coroutine.ixx" />
     <ClCompile Include="lib\EndPoint.ixx" />
     <ClCompile Include="lib\FixedString.ixx" />
-    <ClCompile Include="lib\IHandler.ixx" />
+    <ClCompile Include="lib\Handler.ixx" />
     <ClCompile Include="lib\IObject.ixx" />
     <ClCompile Include="lib\IoContext.ixx" />
     <ClCompile Include="lib\IoService.ixx" />

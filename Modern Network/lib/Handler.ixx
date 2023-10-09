@@ -1,22 +1,22 @@
-export module Net.IHandler;
+export module Net.Handler;
 import Net.Constraints;
 
 export namespace net
 {
 	template<typename H>
-	class [[nodiscard]] IHandler
+	class [[nodiscard]] Handler
 	{
 	public:
-		constexpr IHandler()
+		constexpr Handler()
 			noexcept(nothrow_default_constructibles<H>) requires default_initializables<H> = default;
-		virtual constexpr ~IHandler()
+		virtual constexpr ~Handler()
 			noexcept(nothrow_destructibles<H>) = default;
 
-		constexpr IHandler(const H& handle) noexcept(nothrow_copy_constructibles<H>) requires copy_constructible<H>
+		constexpr Handler(const H& handle) noexcept(nothrow_copy_constructibles<H>) requires copy_constructible<H>
 			: myHandle(handle)
 		{}
 
-		constexpr IHandler(H&& handle) noexcept(nothrow_move_constructibles<H>) requires move_constructible<H>
+		constexpr Handler(H&& handle) noexcept(nothrow_move_constructibles<H>) requires move_constructible<H>
 			: myHandle(handle)
 		{}
 
@@ -45,15 +45,15 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		constexpr bool operator==(const IHandler&) const noexcept = default;
+		constexpr bool operator==(const Handler&) const noexcept = default;
 
-		constexpr IHandler(const IHandler&)
+		constexpr Handler(const Handler&)
 			noexcept(nothrow_copy_constructibles<H>) requires copy_constructible<H> = default;
-		constexpr IHandler(IHandler&&)
+		constexpr Handler(Handler&&)
 			noexcept(nothrow_move_constructibles<H>) requires move_constructible<H> = default;
-		constexpr IHandler& operator=(const IHandler&)
+		constexpr Handler& operator=(const Handler&)
 			noexcept(nothrow_copy_assignables<H>) requires copy_assignables<H> = default;
-		constexpr IHandler& operator=(IHandler&&)
+		constexpr Handler& operator=(Handler&&)
 			noexcept(nothrow_move_assignables<H>) requires move_assignables<H> = default;
 
 	protected:

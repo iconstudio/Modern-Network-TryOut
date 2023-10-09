@@ -1,10 +1,10 @@
 export module Net.IoContext;
 import Net.NativeHandle;
-import Net.IHandler;
+import Net.Handler;
 
 export namespace net
 {
-	class IoContext : public IHandler<NativeHandle>
+	class IoContext : public Handler<NativeHandle>
 	{
 	public:
 		constexpr IoContext() = default;
