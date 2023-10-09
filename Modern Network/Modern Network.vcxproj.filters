@@ -137,5 +137,8 @@
     <ClCompile Include="src\NetworkInitializationError.ixx">
       <Filter>lib\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="src\Property.ixx">
+      <Filter>lib\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
