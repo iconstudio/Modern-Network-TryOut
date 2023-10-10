@@ -103,7 +103,6 @@ export namespace net
 	protected:
 		T myValue;
 		std::function<void(T& value)> mySetter;
-		std::function<T& ()> myGetter;
 	};
 
 	template<movable T, bool Copyable = copyable<T>>
