@@ -1,6 +1,7 @@
 export module Net.Property;
 import Net.Constraints;
 import <type_traits>;
+import <functional>;
 
 export namespace net
 {
@@ -101,6 +102,8 @@ export namespace net
 
 	protected:
 		T myValue;
+		std::function<void(T& value)> mySetter;
+		std::function<T& ()> myGetter;
 	};
 
 	template<movable T, bool Copyable = copyable<T>>
