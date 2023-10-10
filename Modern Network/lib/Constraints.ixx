@@ -118,13 +118,13 @@ export namespace net
 	concept nothrow_default_constructibles = make_conjunction<std::is_nothrow_default_constructible, Ts...>;
 
 	template<typename T, typename... Args>
-	concept nothrow_constructibles = std::is_nothrow_constructible_v<T, Args...>;
+	concept nothrow_constructible = std::is_nothrow_constructible_v<T, Args...>;
 
 	template<typename From, typename To>
 	concept nothrow_convertibles = std::is_nothrow_convertible_v<From, To>;
 
 	template<typename From, typename To>
-	concept nothrow_assignables = std::is_nothrow_assignable_v<To, From>;
+	concept nothrow_assignable = std::is_nothrow_assignable_v<To, From>;
 
 	template<typename... Ts>
 	concept nothrow_copy_constructibles = make_conjunction<std::is_nothrow_copy_constructible, Ts...>;

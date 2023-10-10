@@ -16,20 +16,20 @@ export namespace net
 
 		template<convertible_to<T> U>
 		constexpr IProperty(U&& trans_value)
-			noexcept(nothrow_constructibles<T, U&&>) requires constructible_from<T, U&&>
+			noexcept(nothrow_constructible<T, U&&>) requires constructible_from<T, U&&>
 			: myValue(std::forward<U>(trans_value))
 		{}
 
 		template<convertible_to<T> U, bool C2, bool R2>
 		constexpr IProperty(const IProperty<U, C2, R2>& other)
-			noexcept(nothrow_constructibles<T, const U&>)
+			noexcept(nothrow_constructible<T, const U&>)
 			requires Copyable and C2 and copy_constructibles<T, U> and constructible_from<T, const U&>
 		: myValue(other.myValue)
 		{}
 
 		template<convertible_to<T> U, bool C2, bool R2>
 		constexpr IProperty(IProperty<U, C2, R2>&& other)
-			noexcept(nothrow_constructibles<T, U&&>)
+			noexcept(nothrow_constructible<T, U&&>)
 			requires move_constructibles<T, U> and constructible_from<T, U&&>
 		: myValue(std::move(other.myValue))
 		{}
@@ -84,7 +84,7 @@ export namespace net
 
 		template<convertible_to<T> U, bool C2, bool R2>
 		constexpr IProperty& operator=(const IProperty<U, C2, R2>& other)
-			noexcept(nothrow_assignables<const U&, T>)
+			noexcept(nothrow_assignable<const U&, T>)
 			requires !Readonly and C2 and copy_assignables<T, U> and constructible_from<T, const U&>
 		{
 			myValue = other.myValue;
@@ -93,7 +93,7 @@ export namespace net
 
 		template<convertible_to<T> U, bool C2, bool R2>
 		constexpr IProperty& operator=(IProperty<U, C2, R2>&& other)
-			noexcept(nothrow_assignables<U&&, T>)
+			noexcept(nothrow_assignable<U&&, T>)
 			requires !Readonly and move_assignables<T, U> and constructible_from<T, U&&>
 		{
 			myValue = std::move(other.myValue);

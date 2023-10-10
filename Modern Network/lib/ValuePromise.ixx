@@ -53,7 +53,7 @@ export namespace net
 
 		template<typename U>
 		constexpr Final yield_value(U&& value)
-			noexcept(nothrow_assignables<Value, U&&>)
+			noexcept(nothrow_assignable<Value, U&&>)
 		{
 			myValue = std::forward<U>(value);
 
