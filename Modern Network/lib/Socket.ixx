@@ -24,8 +24,8 @@ export namespace net
 	public:
 		static const EmptySocketType EmptySocket;
 
-		constexpr Socket(EmptySocketType) noexcept;
-		constexpr Socket& operator=(EmptySocketType) noexcept;
+		Socket(EmptySocketType) noexcept;
+		Socket& operator=(EmptySocketType) noexcept;
 		~Socket() noexcept;
 
 		SocketResult Bind(const EndPoint& endpoint) const noexcept;

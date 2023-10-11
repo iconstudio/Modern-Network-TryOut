@@ -59,13 +59,12 @@ const noexcept
 	return SocketReceivingResult();
 }
 
-constexpr
 Socket::Socket(EmptySocketType)
 noexcept
 	: Socket()
 {}
 
-constexpr Socket&
+Socket&
 Socket::operator=(EmptySocketType)
 noexcept
 {
