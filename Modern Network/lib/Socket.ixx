@@ -1,17 +1,19 @@
 export module Net.Socket;
 export import Net.Socket.ErrorCode;
 export import :Result;
-import Net.NativeHandle;
 import Net.Handler;
 import Net.IoContext;
 import Net.Task;
 import Net.EndPoint;
 import <cstddef>;
+import <cstdint>;
 import <span>;
 
 export namespace net
 {
-	class [[nodiscard]] Socket final : public Handler<NativeHandle>
+	using NativeSocket = std::uintptr_t;
+
+	class [[nodiscard]] Socket final : public Handler<NativeSocket>
 	{
 	private:
 		struct [[nodiscard]] EmptySocketType final

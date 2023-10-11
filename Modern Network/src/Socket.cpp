@@ -22,7 +22,7 @@ const noexcept
 	};
 
 	DWORD bytes = 0;
-	int result = WSASend(reinterpret_cast<SOCKET>(myHandle.GetPointer()), std::addressof(buffer), 1, std::addressof(bytes), 0, nullptr, nullptr);
+	int result = WSASend(myHandle, std::addressof(buffer), 1, std::addressof(bytes), 0, nullptr, nullptr);
 	if (0 == result)
 	{
 		return bytes;
@@ -92,7 +92,7 @@ SocketListeningResult
 Socket::Open()
 const noexcept
 {
-	const int open = ::listen(GetHandle().GetPointer(), SOMAXCONN);
+	const int open = ::listen(myHandle, SOMAXCONN);
 	if (SOCKET_ERROR == open)
 	{
 		auto error = AcquireListeningError();
