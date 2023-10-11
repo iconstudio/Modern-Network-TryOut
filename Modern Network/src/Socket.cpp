@@ -6,9 +6,6 @@ module Net.Socket;
 
 using namespace net;
 
-[[nodiscard]]
-int CheckWinsockError(const int& winsock_state) noexcept;
-
 const Socket::EmptySocketType Socket::EmptySocket = {};
 
 SocketSendingResult
@@ -95,8 +92,6 @@ const noexcept
 	const int open = ::listen(myHandle, SOMAXCONN);
 	if (SOCKET_ERROR == open)
 	{
-		auto error = AcquireListeningError();
-
 		return std::unexpected(AcquireListeningError());
 	}
 
@@ -108,17 +103,4 @@ Socket::Create()
 noexcept
 {
 	return {};
-}
-
-[[nodiscard]]
-int CheckWinsockError(const int& winsock_state) noexcept
-{
-	if (SOCKET_ERROR == winsock_state)
-	{
-		return ::WSAGetLastError();
-	}
-	else
-	{
-		return 0;
-	}
 }
