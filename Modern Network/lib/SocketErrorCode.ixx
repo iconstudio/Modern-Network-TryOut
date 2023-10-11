@@ -2,6 +2,7 @@ export module Net.Socket.ErrorCode;
 export import :General;
 export import :Sending;
 export import :Receiving;
+export import :Open;
 
 export namespace net
 {
@@ -11,6 +12,8 @@ export namespace net
 	SendingErrorCodes AcquireSendingError() noexcept;
 	[[nodiscard]]
 	ReceivingErrorCodes AcquireReceivingError() noexcept;
+	[[nodiscard]]
+	SocketOpenErrorCodes AcquireListeningError() noexcept;
 
 	[[nodiscard]]
 	constexpr bool operator==(const SocketErrorCodes& lhs, const SendingErrorCodes& rhs) noexcept
