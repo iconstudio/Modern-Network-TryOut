@@ -1,9 +1,13 @@
 module;
 #pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
+#include <ws2ipdef.h>
 #include <MSWSock.h>
 #include <type_traits>
+
 module Net.Socket;
+import <cstdint>;
+import <expected>;
 
 using namespace net;
 
@@ -79,6 +83,46 @@ SocketResult
 Socket::Bind(const EndPoint& endpoint)
 const noexcept
 {
+	const auto addr = endpoint.GetAddress();
+	const auto port = endpoint.GetPort();
+	const auto family = endpoint.GetAddressFamily();
+	const auto ip_type = endpoint.GetType();
+
+	SOCKADDR_STORAGE sockaddr{};
+	switch (ip_type)
+	{
+		case IpAddressType::IPv4:
+		{
+			SOCKADDR_IN ipv4_addr
+			{
+				.sin_family = (short) std::uint16_t,
+				.sin_addr.s_addr = 0, //TODO
+				.sin_port = port,
+			};
+
+			sockaddr = *reinterpret_cast<SOCKADDR_STORAGE*>(std::addressof(ipv4_addr));
+		}
+		break;
+
+		case IpAddressType::IPv6:
+		{
+			SOCKADDR_IN6 ipv6_addr
+			{
+
+			};
+
+			sockaddr = *reinterpret_cast<SOCKADDR_STORAGE*>(&std::addressof(ipv6_addr));
+		}
+		break;
+
+		case IpAddressType::Unknown:
+		{
+			return std::unexpected(AcquireSocketError());
+		}
+	}
+
+	const int result = ::bind(myHandle, std::addressof(sockaddr), sizeof(sockaddr));
+
 	return SocketResult();
 }
 
