@@ -26,7 +26,7 @@ const noexcept
 	}
 	else
 	{
-		if (auto error = AcquireSendingError(); error != SendingErrorCodes::IO_PENDING)
+		if (auto error = AcquireSendingError(); error != SendingErrorCodes::PendedIoOperation)
 		{
 			return std::unexpected(std::move(error));
 		}
