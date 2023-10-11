@@ -9,4 +9,6 @@ export namespace net
 	using SocketReceivingResult = std::expected<unsigned int, ReceivingErrorCodes>;
 
 	using SocketSendingResult = std::expected<unsigned int, SendingErrorCodes>;
+
+	using SocketListeningResult = std::expected<int, SocketOpenErrorCodes>;
 }
