@@ -6,7 +6,7 @@ export namespace net
 	class Application : public IObject
 	{
 	public:
-		constexpr Application() noexcept;
+		Application() noexcept;
 		~Application() noexcept override;
 
 		void Awake() override;
@@ -14,5 +14,9 @@ export namespace net
 		void Update(float) override;
 
 	private:
+		Application(const Application&) = delete;
+		void operator=(const Application&) = delete;
+		Application(Application&&) = delete;
+		void operator=(Application&&) = delete;
 	};
 }
