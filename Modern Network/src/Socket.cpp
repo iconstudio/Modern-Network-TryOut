@@ -6,6 +6,9 @@ module Net.Socket;
 
 using namespace net;
 
+[[nodiscard]]
+int CheckWinsockError(const int& winsock_state) noexcept;
+
 const Socket::EmptySocketType Socket::EmptySocket = {};
 
 SocketSendingResult
@@ -59,16 +62,45 @@ const noexcept
 }
 
 constexpr
-net::Socket::Socket(EmptySocketType)
+Socket::Socket(EmptySocketType)
 noexcept
 	: Socket()
 {}
 
 constexpr Socket&
-net::Socket::operator=(EmptySocketType)
+Socket::operator=(EmptySocketType)
 noexcept
 {
 	return *this = Socket{};
+}
+
+SocketResult
+Socket::Bind(const EndPoint& endpoint)
+const noexcept
+{
+	return SocketResult();
+}
+
+SocketResult
+Socket::Bind(EndPoint&& endpoint)
+const noexcept
+{
+	return SocketResult();
+}
+
+SocketListeningResult
+Socket::Open()
+const noexcept
+{
+	const int open = ::listen(GetHandle().GetPointer(), SOMAXCONN);
+	if (SOCKET_ERROR == open)
+	{
+		auto error = AcquireListeningError();
+
+		return std::unexpected(AcquireListeningError());
+	}
+
+	return 0;
 }
 
 Socket
@@ -76,4 +108,17 @@ Socket::Create()
 noexcept
 {
 	return {};
+}
+
+[[nodiscard]]
+int CheckWinsockError(const int& winsock_state) noexcept
+{
+	if (SOCKET_ERROR == winsock_state)
+	{
+		return ::WSAGetLastError();
+	}
+	else
+	{
+		return 0;
+	}
 }

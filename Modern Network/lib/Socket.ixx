@@ -28,7 +28,7 @@ export namespace net
 
 		SocketResult Bind(const EndPoint& endpoint) const noexcept;
 		SocketResult Bind(EndPoint&& endpoint) const noexcept;
-		SocketResult Open() const noexcept;
+		SocketListeningResult Open() const noexcept;
 
 		SocketSendingResult Send(std::span<const std::byte> memory) const noexcept;
 		SocketSendingResult Send(const std::byte* const& memory, size_t size) const noexcept;
