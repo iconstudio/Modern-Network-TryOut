@@ -152,14 +152,14 @@ export namespace net
 		template<convertible_to<T> U, typename S2, bool C2, bool R2>
 		constexpr IProperty(const IProperty<U, S2, C2, R2>& other)
 			noexcept(nothrow_constructible<T, const U&>)
-			requires Copyable and C2 and copy_constructibles<T, U> and constructible_from<T, const U&>
+			requires Copyable and C2 and constructible_from<T, const U&>
 		: myValue(other.myValue)
 		{}
 
 		template<convertible_to<T> U, typename S2, bool C2, bool R2>
 		constexpr IProperty(IProperty<U, S2, C2, R2>&& other)
 			noexcept(nothrow_constructible<T, U&&>)
-			requires move_constructibles<T, U> and constructible_from<T, U&&>
+			requires constructible_from<T, U&&>
 		: myValue(std::move(other.myValue))
 		{}
 
@@ -223,7 +223,7 @@ export namespace net
 		template<convertible_to<T> U, typename S2, bool C2, bool R2>
 		constexpr IProperty& operator=(const IProperty<U, S2, C2, R2>& other)
 			noexcept(nothrow_assignable<const U&, T>)
-			requires !Readonly and C2 and copy_assignables<T> and assignable_from<T, const U&>
+			requires !Readonly and C2 and assignable_from<T, const U&>
 		{
 			myValue = other.myValue;
 			return *this;
@@ -232,7 +232,7 @@ export namespace net
 		template<convertible_to<T> U, typename S2, bool C2, bool R2>
 		constexpr IProperty& operator=(IProperty<U, S2, C2, R2>&& other)
 			noexcept(nothrow_assignable<U&&, T>)
-			requires !Readonly and move_assignables<T> and assignable_from<T, U&&>
+			requires !Readonly and assignable_from<T, U&&>
 		{
 			myValue = std::move(other.myValue);
 			return *this;
