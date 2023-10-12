@@ -8,16 +8,10 @@ net::SerializedIpAddress
 net::IpAddress::Serialize()
 const noexcept
 {
-	SOCKADDR_STORAGE sockaddr{};
-	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
+	SerializedIpAddress result{};
+	SerializedIpAddress* sockaddr_ptr = std::addressof(result);
 
 	::inet_pton((int)addressFamily, addressBuffer.get(), sockaddr_ptr);
-
-	SerializedIpAddress result;
-	const char* it = reinterpret_cast<const char*>(sockaddr_ptr);
-	char* dest = reinterpret_cast<char*>(std::addressof(result));
-
-	std::copy(it, it + sizeof(sockaddr), dest);
 
 	return result;
 }
@@ -26,21 +20,14 @@ bool
 net::IpAddress::TrySerialize(net::SerializedIpAddress& out)
 const noexcept
 {
-	SOCKADDR_STORAGE sockaddr{};
-	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
+	SerializedIpAddress* sockaddr_ptr = std::addressof(out);
 
-	if (1 != ::inet_pton((int)addressFamily, addressBuffer.get(), sockaddr_ptr))
+	if (1 != ::inet_pton((int)addressFamily, addressBuffer.get(), out))
 	{
 		return false;
 	}
 	else
 	{
-		SerializedIpAddress result;
-		const char* it = reinterpret_cast<const char*>(sockaddr_ptr);
-		char* dest = reinterpret_cast<char*>(std::addressof(result));
-
-		std::copy(it, it + sizeof(sockaddr), dest);
-
 		return true;
 	}
 }
