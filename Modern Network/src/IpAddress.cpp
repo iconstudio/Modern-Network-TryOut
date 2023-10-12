@@ -20,14 +20,16 @@ bool
 net::IpAddress::TrySerialize(net::SerializedIpAddress& out)
 const noexcept
 {
-	SerializedIpAddress* sockaddr_ptr = std::addressof(out);
+	SerializedIpAddress result{};
+	SerializedIpAddress* sockaddr_ptr = std::addressof(result);
 
-	if (1 != ::inet_pton((int)addressFamily, addressBuffer.get(), out))
+	if (1 != ::inet_pton((int)addressFamily, addressBuffer.get(), sockaddr_ptr))
 	{
 		return false;
 	}
 	else
 	{
+		out = std::move(result);
 		return true;
 	}
 }
