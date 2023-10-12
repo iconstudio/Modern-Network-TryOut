@@ -7,6 +7,14 @@ import <memory>;
 
 export namespace net
 {
+	struct alignas(1) [[nodiscard]] SerializedIpAddress
+	{
+		constexpr SerializedIpAddress() noexcept = default;
+		constexpr ~SerializedIpAddress() noexcept = default;
+
+		char data[128];
+	};
+
 	class [[nodiscard]] IpAddress final
 	{
 	public:
