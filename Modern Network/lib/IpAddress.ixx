@@ -1,5 +1,5 @@
 export module Net.IpAddress;
-export import :IpAddressType;
+export import :IpAddressFamily;
 import <string_view>;
 
 export namespace net
@@ -13,7 +13,7 @@ export namespace net
 		[[nodiscard]]
 		virtual constexpr std::string_view GetAddress() const noexcept = 0;
 		[[nodiscard]]
-		virtual constexpr IpAddressType GetType() const noexcept = 0;
+		virtual constexpr IpAddressFamily GetType() const noexcept = 0;
 
 		[[nodiscard]]
 		constexpr bool operator==(const IpAddress& other) const noexcept = default;

@@ -116,7 +116,7 @@
     <ClCompile Include="lib\IoContext.ixx" />
     <ClCompile Include="lib\IoService.ixx" />
     <ClCompile Include="lib\IpAddress.ixx" />
-    <ClCompile Include="lib\IpAddressType.ixx" />
+    <ClCompile Include="lib\IpAddressFamily.ixx" />
     <ClCompile Include="lib\IPromise.ixx" />
     <ClCompile Include="lib\IPv4Address.ixx" />
     <ClCompile Include="lib\IPv6Address.ixx" />

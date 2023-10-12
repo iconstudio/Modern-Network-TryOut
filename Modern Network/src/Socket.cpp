@@ -91,7 +91,7 @@ const noexcept
 	SOCKADDR_STORAGE sockaddr{};
 	switch (ip_type)
 	{
-		case IpAddressType::IPv4:
+		case IpAddressFamily::IPv4:
 		{
 			SOCKADDR_IN ipv4_addr
 			{
@@ -104,7 +104,7 @@ const noexcept
 		}
 		break;
 
-		case IpAddressType::IPv6:
+		case IpAddressFamily::IPv6:
 		{
 			SOCKADDR_IN6 ipv6_addr
 			{
@@ -115,7 +115,7 @@ const noexcept
 		}
 		break;
 
-		case IpAddressType::Unknown:
+		case IpAddressFamily::Unknown:
 		{
 			return std::unexpected(AcquireSocketError());
 		}

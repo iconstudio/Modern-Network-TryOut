@@ -62,7 +62,7 @@
     <ClCompile Include="lib\IoService.ixx">
       <Filter>lib</Filter>
     </ClCompile>
-    <ClCompile Include="lib\IpAddressType.ixx">
+    <ClCompile Include="lib\IpAddressFamily.ixx">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\EndPoint.ixx">

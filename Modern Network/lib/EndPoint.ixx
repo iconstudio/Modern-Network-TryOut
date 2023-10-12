@@ -18,7 +18,7 @@ export namespace net
 			return myPort;
 		}
 		[[nodiscard]]
-		constexpr IpAddressType GetType() const noexcept
+		constexpr IpAddressFamily GetType() const noexcept
 		{
 			return myAddress.GetType();
 		}
