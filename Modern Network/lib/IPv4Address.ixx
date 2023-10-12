@@ -4,53 +4,19 @@ import <string_view>;
 
 export namespace net
 {
-	class [[nodiscard]] IPv4Address final : public IpAddress
+	class [[nodiscard]] IPv4Address final
 	{
 	public:
-		static const IPv4Address Loopback;
-
-		constexpr IPv4Address() noexcept = default;
-		constexpr ~IPv4Address() noexcept = default;
-
-		constexpr IPv4Address(std::string_view address) noexcept
-			: ipAddress()
-		{
-			std::copy(address.begin(), address.end(), ipAddress);
-		}
-
 		[[nodiscard]]
-		constexpr std::string_view GetAddress() const noexcept override
+		static constexpr IpAddress Create(std::string_view address) noexcept
 		{
-			return ipAddress;
-		}
-		[[nodiscard]]
-		constexpr IpAddressFamily GetFamily() const noexcept override
-		{
-			return IpAddressFamily::IPv4;
+			return IpAddress{ IpAddressFamily::IPv4, address };
 		}
 
-		[[nodiscard]]
-		static constexpr IPv4Address Create(std::string_view address) noexcept
-		{
-			return IPv4Address{ address };
-		}
-
-		constexpr IPv4Address& operator=(std::string_view address) noexcept
-		{
-			return *this = IPv4Address{ address };
-		}
-
-		[[nodiscard]]
-		constexpr bool operator==(const IPv4Address&) const noexcept = default;
-
-		constexpr IPv4Address(const IPv4Address&) noexcept = default;
-		constexpr IPv4Address& operator=(const IPv4Address&) noexcept = default;
-		constexpr IPv4Address(IPv4Address&&) noexcept = default;
-		constexpr IPv4Address& operator=(IPv4Address&&) noexcept = default;
+		constinit static inline IpAddress Loopback = Create("127.0.0.1");
 
 	private:
-		char ipAddress[16];
+		constexpr IPv4Address() noexcept = default;
+		constexpr ~IPv4Address() noexcept = default;
 	};
-
-	const IPv4Address IPv4Address::Loopback = IPv4Address{ "127.0.0.1" };
 }
