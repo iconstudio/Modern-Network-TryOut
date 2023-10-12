@@ -58,7 +58,7 @@ export namespace net
 
 		[[nodiscard]]
 		SerializedIpAddress Serialize() const noexcept;
-		bool TrySerialize(SerializedIpAddress& result) const noexcept;
+		bool TrySerialize(SerializedIpAddress& out) const noexcept;
 
 		[[nodiscard]]
 		constexpr IpAddressFamily GetFamily() const& noexcept

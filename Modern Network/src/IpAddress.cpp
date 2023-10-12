@@ -6,7 +6,7 @@ module Net.IpAddress;
 
 net::SerializedIpAddress
 net::IpAddress::Serialize()
-noexcept
+const noexcept
 {
 	SOCKADDR_STORAGE sockaddr{};
 	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
@@ -23,7 +23,7 @@ noexcept
 }
 
 bool
-net::IpAddress::TrySerialize(net::SerializedIpAddress& result)
+net::IpAddress::TrySerialize(net::SerializedIpAddress& out)
 const noexcept
 {
 	SOCKADDR_STORAGE sockaddr{};
