@@ -18,9 +18,9 @@ export namespace net
 			return myPort;
 		}
 		[[nodiscard]]
-		constexpr IpAddressFamily GetType() const noexcept
+		constexpr IpAddressFamily GetFamily() const noexcept
 		{
-			return myAddress.GetType();
+			return myAddress.GetFamily();
 		}
 		[[nodiscard]]
 		constexpr unsigned int GetAddressFamily() const noexcept

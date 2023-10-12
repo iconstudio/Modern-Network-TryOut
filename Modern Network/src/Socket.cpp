@@ -86,7 +86,7 @@ const noexcept
 	const auto addr = endpoint.GetAddress();
 	const auto port = endpoint.GetPort();
 	const auto family = endpoint.GetAddressFamily();
-	const auto ip_type = endpoint.GetType();
+	const auto ip_type = endpoint.GetFamily();
 
 	SOCKADDR_STORAGE sockaddr{};
 	switch (ip_type)
@@ -95,9 +95,9 @@ const noexcept
 		{
 			SOCKADDR_IN ipv4_addr
 			{
-				.sin_family = (short) std::uint16_t,
-				.sin_addr.s_addr = 0, //TODO
+				.sin_family = (std::uint16_t)family,
 				.sin_port = port,
+				.sin_addr = sk_addr,
 			};
 
 			sockaddr = *reinterpret_cast<SOCKADDR_STORAGE*>(std::addressof(ipv4_addr));

@@ -24,7 +24,7 @@ export namespace net
 			return ipAddress;
 		}
 		[[nodiscard]]
-		constexpr IpAddressFamily GetType() const noexcept override
+		constexpr IpAddressFamily GetFamily() const noexcept override
 		{
 			return IpAddressFamily::IPv6;
 		}
