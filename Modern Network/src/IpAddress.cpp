@@ -9,9 +9,8 @@ net::IpAddress::Serialize()
 const noexcept
 {
 	SerializedIpAddress result{};
-	SerializedIpAddress* sockaddr_ptr = std::addressof(result);
 
-	::inet_pton((int)addressFamily, addressBuffer.get(), sockaddr_ptr);
+	::inet_pton((int)addressFamily, addressBuffer.get(),  std::addressof(result));
 
 	return result;
 }
@@ -21,9 +20,8 @@ net::IpAddress::TrySerialize(net::SerializedIpAddress& out)
 const noexcept
 {
 	SerializedIpAddress result{};
-	SerializedIpAddress* sockaddr_ptr = std::addressof(result);
 
-	if (1 != ::inet_pton((int)addressFamily, addressBuffer.get(), sockaddr_ptr))
+	if (1 != ::inet_pton((int)addressFamily, addressBuffer.get(), std::addressof(result)))
 	{
 		return false;
 	}
