@@ -84,13 +84,15 @@ SocketResult
 Socket::Bind(const EndPoint& endpoint)
 const noexcept
 {
-	const auto addr = endpoint.GetAddress();
+	const auto& ip = endpoint.GetIpAddress();
 	const auto port = endpoint.GetPort();
 	const auto family = endpoint.GetAddressFamily();
 
 	SOCKADDR_STORAGE sockaddr{};
 	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
-	if (1 != ::inet_pton(family, addr.data(), sockaddr_ptr))
+
+	SerializedIpAddress serialized_address;
+	if (not ip.TrySerialize(serialized_address))
 	{
 		return std::unexpected(AcquireSocketError());
 	}
@@ -100,6 +102,8 @@ const noexcept
 		case IpAddressFamily::IPv4:
 		{
 			::IN_ADDR sk_addr{};
+			sk_addr.S_un.S_addr = 0;
+			inet_addr();
 
 			SOCKADDR_IN ipv4_addr
 			{
