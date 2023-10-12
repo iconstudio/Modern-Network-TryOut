@@ -68,14 +68,24 @@ export namespace net
 		constexpr ~IpAddress() = default;
 
 		[[nodiscard]]
-		constexpr std::string_view GetAddress() const noexcept
+		constexpr IpAddressFamily GetFamily() const& noexcept
+		{
+			return addressFamily;
+		}
+		[[nodiscard]]
+		constexpr std::string_view GetAddress() const& noexcept
 		{
 			return addressBuffer.get();
 		}
 		[[nodiscard]]
-		constexpr IpAddressFamily GetFamily() const noexcept
+		constexpr IpAddressFamily&& GetFamily() && noexcept
 		{
-			return addressFamily;
+			return std::move(addressFamily);
+		}
+		[[nodiscard]]
+		constexpr std::unique_ptr<char[]>&& GetAddress() && noexcept
+		{
+			return std::move(addressBuffer);
 		}
 
 		[[nodiscard]]
