@@ -90,7 +90,7 @@ const noexcept
 	SOCKADDR_STORAGE sockaddr{};
 	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
 
-	switch (family)
+	switch (endpoint.GetAddressFamily())
 	{
 		case IpAddressFamily::IPv4:
 		{
@@ -150,7 +150,65 @@ SocketResult
 Socket::Bind(EndPoint&& endpoint)
 const noexcept
 {
-	return SocketResult();
+	auto&& ip = std::move(endpoint).GetIpAddress();
+
+	SOCKADDR_STORAGE sockaddr{};
+	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
+
+	switch (endpoint.GetAddressFamily())
+	{
+		case IpAddressFamily::IPv4:
+		{
+			IN_ADDR sk_addr{};
+			if (not ip.TrySerialize(std::addressof(sk_addr.s_addr)))
+			{
+				return std::unexpected(AcquireSocketError());
+			}
+
+			SOCKADDR_IN ipv4_addr
+			{
+				.sin_family = (std::uint16_t)IpAddressFamily::IPv4,
+				.sin_port = std::move(endpoint).GetPort(),
+				.sin_addr = std::move(sk_addr),
+			};
+
+			sockaddr = *reinterpret_cast<const SOCKADDR_STORAGE*>(std::addressof(ipv4_addr));
+		}
+		break;
+
+		case IpAddressFamily::IPv6:
+		{
+			IN6_ADDR sk_addr{};
+			if (not ip.TrySerialize(std::addressof(sk_addr.s6_addr)))
+			{
+				return std::unexpected(AcquireSocketError());
+			}
+
+			SOCKADDR_IN6 ipv6_addr
+			{
+				.sin6_family = (std::uint16_t)IpAddressFamily::IPv6,
+				.sin6_port = std::move(endpoint).GetPort(),
+				.sin6_flowinfo = 0,
+				.sin6_addr = std::move(sk_addr),
+				.sin6_scope_id = 0,
+			};
+
+			sockaddr = *reinterpret_cast<const SOCKADDR_STORAGE*>(std::addressof(ipv6_addr));
+		}
+		break;
+
+		case IpAddressFamily::Unknown:
+		{
+			return std::unexpected(AcquireSocketError());
+		}
+	}
+
+	if (0 != ::bind(myHandle, reinterpret_cast<const SOCKADDR*>(sockaddr_ptr), sizeof(sockaddr)))
+	{
+		return std::unexpected(AcquireSocketError());
+	}
+
+	return static_cast<unsigned int>(sizeof(sockaddr));
 }
 
 SocketListeningResult
