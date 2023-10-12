@@ -23,6 +23,11 @@ export namespace net
 			return myAddress.GetFamily();
 		}
 		[[nodiscard]]
+		constexpr const IpAddress& GetIpAddress() const& noexcept
+		{
+			return myAddress;
+		}
+		[[nodiscard]]
 		constexpr std::string_view GetAddress() const& noexcept
 		{
 			return myAddress.GetAddress();
@@ -36,6 +41,11 @@ export namespace net
 		constexpr IpAddressFamily&& GetAddressFamily() && noexcept
 		{
 			return std::move(myAddress).GetFamily();
+		}
+		[[nodiscard]]
+		constexpr IpAddress&& GetIpAddress() && noexcept
+		{
+			return std::move(myAddress);
 		}
 		[[nodiscard]]
 		constexpr decltype(auto) GetAddress() && noexcept
