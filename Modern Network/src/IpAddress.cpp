@@ -22,7 +22,9 @@ noexcept
 	return result;
 }
 
-bool net::IpAddress::TrySerialize(net::SerializedIpAddress& result) noexcept
+bool
+net::IpAddress::TrySerialize(net::SerializedIpAddress& result)
+const noexcept
 {
 	SOCKADDR_STORAGE sockaddr{};
 	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
