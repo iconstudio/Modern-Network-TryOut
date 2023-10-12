@@ -87,7 +87,6 @@ const noexcept
 	const auto addr = endpoint.GetAddress();
 	const auto port = endpoint.GetPort();
 	const auto family = endpoint.GetAddressFamily();
-	const auto ip_type = endpoint.GetFamily();
 
 	SOCKADDR_STORAGE sockaddr{};
 	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
@@ -96,7 +95,7 @@ const noexcept
 		return std::unexpected(AcquireSocketError());
 	}
 
-	switch (ip_type)
+	switch (family)
 	{
 		case IpAddressFamily::IPv4:
 		{
