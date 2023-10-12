@@ -1,5 +1,5 @@
 export module Net.IpAddress.IPv4;
-import Net.IpAddress;
+export import Net.IpAddress;
 import <string_view>;
 
 export namespace net
