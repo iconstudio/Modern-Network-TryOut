@@ -56,7 +56,10 @@ export namespace net
 
 		constexpr ~IpAddress() = default;
 
-		bool Serialize() noexcept;
+		[[nodiscard]]
+		SerializedIpAddress Serialize() noexcept;
+		bool TrySerialize(SerializedIpAddress& result) noexcept;
+
 		[[nodiscard]]
 		constexpr IpAddressFamily GetFamily() const& noexcept
 		{
