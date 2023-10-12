@@ -1,5 +1,6 @@
 export module Net.EndPoint;
 import Net.IpAddress;
+import <cstdint>;
 import <string_view>;
 
 export namespace net
@@ -7,6 +8,14 @@ export namespace net
 	struct [[nodiscard]] EndPoint final
 	{
 	public:
+		constexpr EndPoint(const IpAddress& ip, const std::uint16_t& port) noexcept
+			: myAddress(ip), myPort(port)
+		{}
+		constexpr EndPoint(IpAddress&& ip, const std::uint16_t& port) noexcept
+			: myAddress(static_cast<IpAddress&&>(ip)), myPort(port)
+		{}
+		constexpr ~EndPoint() noexcept = default;
+
 		[[nodiscard]]
 		constexpr std::string_view GetAddress() const noexcept
 		{
@@ -18,19 +27,13 @@ export namespace net
 			return myPort;
 		}
 		[[nodiscard]]
-		constexpr IpAddressFamily GetFamily() const noexcept
+		constexpr IpAddressFamily GetAddressFamily() const noexcept
 		{
 			return myAddress.GetFamily();
 		}
-		[[nodiscard]]
-		constexpr unsigned int GetAddressFamily() const noexcept
-		{
-			return addressFamily;
-		}
 
 	private:
-		IpAddress&& myAddress;
-		unsigned short&& myPort;
-		unsigned int&& addressFamily;
+		IpAddress myAddress;
+		std::uint16_t myPort;
 	};
 }
