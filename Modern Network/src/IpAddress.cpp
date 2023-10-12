@@ -31,3 +31,17 @@ const noexcept
 		return true;
 	}
 }
+
+bool
+net::IpAddress::TrySerialize(void* const& out)
+const noexcept
+{
+	if (1 != ::inet_pton((int)addressFamily, addressBuffer.get(), out))
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
