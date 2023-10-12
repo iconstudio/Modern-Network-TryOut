@@ -22,7 +22,7 @@ export namespace net
 			return myAddress.GetAddress();
 		}
 		[[nodiscard]]
-		constexpr unsigned short GetPort() const noexcept
+		constexpr std::uint16_t GetPort() const noexcept
 		{
 			return myPort;
 		}
