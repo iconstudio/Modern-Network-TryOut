@@ -2,6 +2,7 @@ module;
 #pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
 #include <ws2ipdef.h>
+#include <WS2tcpip.h>
 #include <MSWSock.h>
 #include <type_traits>
 
@@ -89,10 +90,18 @@ const noexcept
 	const auto ip_type = endpoint.GetFamily();
 
 	SOCKADDR_STORAGE sockaddr{};
+	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
+	if (1 != ::inet_pton(family, addr.data(), sockaddr_ptr))
+	{
+		return std::unexpected(AcquireSocketError());
+	}
+
 	switch (ip_type)
 	{
 		case IpAddressFamily::IPv4:
 		{
+			::IN_ADDR sk_addr{};
+
 			SOCKADDR_IN ipv4_addr
 			{
 				.sin_family = (std::uint16_t)family,
@@ -100,7 +109,7 @@ const noexcept
 				.sin_addr = sk_addr,
 			};
 
-			sockaddr = *reinterpret_cast<SOCKADDR_STORAGE*>(std::addressof(ipv4_addr));
+			sockaddr = *reinterpret_cast<const SOCKADDR_STORAGE*>(std::addressof(ipv4_addr));
 		}
 		break;
 
@@ -111,7 +120,7 @@ const noexcept
 
 			};
 
-			sockaddr = *reinterpret_cast<SOCKADDR_STORAGE*>(&std::addressof(ipv6_addr));
+			sockaddr = *reinterpret_cast<const SOCKADDR_STORAGE*>(std::addressof(ipv6_addr));
 		}
 		break;
 
@@ -121,9 +130,12 @@ const noexcept
 		}
 	}
 
-	const int result = ::bind(myHandle, std::addressof(sockaddr), sizeof(sockaddr));
+	if (0 != ::bind(myHandle, reinterpret_cast<const SOCKADDR*>(sockaddr_ptr), sizeof(sockaddr)))
+	{
+		return std::unexpected(AcquireSocketError());
+	}
 
-	return SocketResult();
+	return sizeof(sockaddr);
 }
 
 SocketResult
