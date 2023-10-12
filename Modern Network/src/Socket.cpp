@@ -86,7 +86,6 @@ const noexcept
 {
 	const auto& ip = endpoint.GetIpAddress();
 	const auto& port = endpoint.GetPort();
-	const auto& family = endpoint.GetAddressFamily();
 
 	SOCKADDR_STORAGE sockaddr{};
 	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
@@ -103,7 +102,7 @@ const noexcept
 
 			SOCKADDR_IN ipv4_addr
 			{
-				.sin_family = (std::uint16_t)family,
+				.sin_family = (std::uint16_t)IpAddressFamily::IPv4,
 				.sin_port = port,
 				.sin_addr = std::move(sk_addr),
 			};
@@ -122,7 +121,7 @@ const noexcept
 
 			SOCKADDR_IN6 ipv6_addr
 			{
-				.sin6_family = (std::uint16_t)family,
+				.sin6_family = (std::uint16_t)IpAddressFamily::IPv6,
 				.sin6_port = port,
 				.sin6_flowinfo = 0,
 				.sin6_addr = std::move(sk_addr),
