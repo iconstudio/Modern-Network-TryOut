@@ -91,25 +91,21 @@ const noexcept
 	SOCKADDR_STORAGE sockaddr{};
 	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);
 
-	SerializedIpAddress serialized_address;
-	if (not ip.TrySerialize(serialized_address))
-	{
-		return std::unexpected(AcquireSocketError());
-	}
-
 	switch (family)
 	{
 		case IpAddressFamily::IPv4:
 		{
-			::IN_ADDR sk_addr{};
-			sk_addr.S_un.S_addr = 0;
-			inet_addr();
+			IN_ADDR sk_addr{};
+			if (not ip.TrySerialize(std::addressof(sk_addr.s_addr)))
+			{
+				return std::unexpected(AcquireSocketError());
+			}
 
 			SOCKADDR_IN ipv4_addr
 			{
 				.sin_family = (std::uint16_t)family,
 				.sin_port = port,
-				.sin_addr = sk_addr,
+				.sin_addr = std::move(sk_addr),
 			};
 
 			sockaddr = *reinterpret_cast<const SOCKADDR_STORAGE*>(std::addressof(ipv4_addr));
@@ -118,9 +114,19 @@ const noexcept
 
 		case IpAddressFamily::IPv6:
 		{
+			IN6_ADDR sk_addr{};
+			if (not ip.TrySerialize(std::addressof(sk_addr.s6_addr)))
+			{
+				return std::unexpected(AcquireSocketError());
+			}
+
 			SOCKADDR_IN6 ipv6_addr
 			{
-
+				.sin6_family = (std::uint16_t)family,
+				.sin6_port = port,
+				.sin6_flowinfo = 0,
+				.sin6_addr = std::move(sk_addr),
+				.sin6_scope_id = 0,
 			};
 
 			sockaddr = *reinterpret_cast<const SOCKADDR_STORAGE*>(std::addressof(ipv6_addr));
@@ -138,7 +144,7 @@ const noexcept
 		return std::unexpected(AcquireSocketError());
 	}
 
-	return sizeof(sockaddr);
+	return static_cast<unsigned int>(sizeof(sockaddr));
 }
 
 SocketResult
