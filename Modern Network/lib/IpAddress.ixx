@@ -62,7 +62,7 @@ export namespace net
 		bool TrySerialize(void* const& out) const noexcept;
 
 		[[nodiscard]]
-		constexpr IpAddressFamily GetFamily() const& noexcept
+		constexpr const IpAddressFamily& GetFamily() const& noexcept
 		{
 			return addressFamily;
 		}

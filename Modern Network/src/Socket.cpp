@@ -85,8 +85,8 @@ Socket::Bind(const EndPoint& endpoint)
 const noexcept
 {
 	const auto& ip = endpoint.GetIpAddress();
-	const auto port = endpoint.GetPort();
-	const auto family = endpoint.GetAddressFamily();
+	const auto& port = endpoint.GetPort();
+	const auto& family = endpoint.GetAddressFamily();
 
 	SOCKADDR_STORAGE sockaddr{};
 	SOCKADDR_STORAGE* sockaddr_ptr = std::addressof(sockaddr);

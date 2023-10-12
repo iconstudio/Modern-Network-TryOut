@@ -18,7 +18,7 @@ export namespace net
 		constexpr ~EndPoint() noexcept = default;
 
 		[[nodiscard]]
-		constexpr IpAddressFamily GetAddressFamily() const& noexcept
+		constexpr const IpAddressFamily& GetAddressFamily() const& noexcept
 		{
 			return myAddress.GetFamily();
 		}
@@ -33,7 +33,7 @@ export namespace net
 			return myAddress.GetAddress();
 		}
 		[[nodiscard]]
-		constexpr std::uint16_t GetPort() const& noexcept
+		constexpr const std::uint16_t& GetPort() const& noexcept
 		{
 			return myPort;
 		}
@@ -53,7 +53,7 @@ export namespace net
 			return std::move(myAddress).GetAddress();
 		}
 		[[nodiscard]]
-		constexpr std::uint16_t GetPort() && noexcept
+		constexpr std::uint16_t&& GetPort() && noexcept
 		{
 			return std::move(myPort);
 		}
