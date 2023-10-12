@@ -41,7 +41,7 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		constexpr bool operator==(const IPv4Address& other) const noexcept = default;
+		constexpr bool operator==(const IPv4Address&) const noexcept = default;
 
 		constexpr IPv4Address(const IPv4Address&) noexcept = default;
 		constexpr IPv4Address& operator=(const IPv4Address&) noexcept = default;

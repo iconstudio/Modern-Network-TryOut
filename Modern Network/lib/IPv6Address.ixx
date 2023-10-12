@@ -41,7 +41,7 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		constexpr bool operator==(const IPv6Address& other) const noexcept = default;
+		constexpr bool operator==(const IPv6Address&) const noexcept = default;
 
 		constexpr IPv6Address(const IPv6Address&) noexcept = default;
 		constexpr IPv6Address& operator=(const IPv6Address&) noexcept = default;
@@ -49,7 +49,7 @@ export namespace net
 		constexpr IPv6Address& operator=(IPv6Address&&) noexcept = default;
 
 	private:
-		char ipAddress[48];
+		char ipAddress[32];
 	};
 
 	const IPv6Address IPv6Address::Loopback = IPv6Address{ ":::::1" };
