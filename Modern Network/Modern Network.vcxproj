@@ -140,6 +140,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\IpAddress.cpp" />
     <ClCompile Include="src\NetworkInitializationError.ixx" />
     <ClCompile Include="src\Property.ixx" />
     <ClCompile Include="src\Socket.cpp" />

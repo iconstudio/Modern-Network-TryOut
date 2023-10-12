@@ -146,5 +146,8 @@
     <ClCompile Include="lib\SocketOpenErrorCodes.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="src\IpAddress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
