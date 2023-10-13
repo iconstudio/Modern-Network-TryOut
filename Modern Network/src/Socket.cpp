@@ -288,13 +288,68 @@ Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code)
 noexcept
 {
-	Socket result = Create(protocol, family);
-	if (!result.IsAvailable())
+	if (Socket result = Create(protocol, family); result.IsAvailable())
+	{
+		return result;
+	}
+	else
 	{
 		error_code = AcquireSocketError();
+		return EmptySocket;
 	}
+}
 
-	return result;
+bool
+Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out)
+noexcept
+{
+	if (Socket result = Create(protocol, family); result.IsAvailable())
+	{
+		out = AttentSocket
+		{
+			.Socket = std::move(result)
+		};
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool
+Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, SocketErrorCodes& error_code)
+noexcept
+{
+	if (Socket result = Create(protocol, family); result.IsAvailable())
+	{
+		out = AttentSocket
+		{
+			.Socket = std::move(result)
+		};
+
+		return true;
+	}
+	else
+	{
+		error_code = AcquireSocketError();
+		return false;
+	}
+}
+
+Socket::FactoryResult
+Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family)
+noexcept
+{
+	if (Socket result = Create(protocol, family); result.IsAvailable())
+	{
+		return std::move(result);
+	}
+	else
+	{
+		return std::unexpected(AcquireSocketError());
+	}
 }
 
 constexpr Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept
