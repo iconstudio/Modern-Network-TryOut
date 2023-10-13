@@ -2,8 +2,10 @@ export module Net.Socket;
 export import Net.Socket.ErrorCode;
 export import :Result;
 import Net.Handler;
+import Net.Property;
 import Net.IoContext;
 import Net.Task;
+import Net.IpAddress;
 import Net.InternalProtocols;
 import Net.EndPoint;
 import <cstddef>;
@@ -81,8 +83,12 @@ export namespace net
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;
 
+		ReadonlyProperty<InternalProtocols> myProtocol;
+		ReadonlyProperty<IpAddressFamily> myFamily;
+
 	private:
 		Socket() noexcept = default;
+		Socket(InternalProtocols protocol, IpAddressFamily family);
 
 		Socket(const Socket&) = delete;
 		Socket& operator=(const Socket&) = delete;

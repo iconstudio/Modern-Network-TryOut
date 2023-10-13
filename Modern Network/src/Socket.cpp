@@ -235,7 +235,7 @@ Socket
 Socket::Create(const InternalProtocols& protocol)
 noexcept
 {
-	::WSASocket()
+	//::WSASocket()
 
 	return Socket();
 }
