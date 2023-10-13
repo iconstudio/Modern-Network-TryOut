@@ -62,25 +62,25 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		explicit constexpr operator T& () & noexcept
+		constexpr operator T& () & noexcept
 		{
 			return myValue;
 		}
 
 		[[nodiscard]]
-		explicit constexpr operator const T& () const& noexcept
+		constexpr operator const T& () const& noexcept
 		{
 			return myValue;
 		}
 
 		[[nodiscard]]
-		explicit constexpr operator T && () && noexcept
+		constexpr operator T && () && noexcept
 		{
 			return std::move(myValue);
 		}
 
 		[[nodiscard]]
-		explicit constexpr operator const T && () const&& noexcept
+		constexpr operator const T && () const&& noexcept
 		{
 			return std::move(myValue);
 		}
@@ -188,25 +188,25 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		explicit constexpr operator T& () & noexcept
+		constexpr operator T& () & noexcept
 		{
 			return myValue;
 		}
 
 		[[nodiscard]]
-		explicit constexpr operator const T& () const& noexcept
+		constexpr operator const T& () const& noexcept
 		{
 			return myValue;
 		}
 
 		[[nodiscard]]
-		explicit constexpr operator T && () && noexcept
+		constexpr operator T && () && noexcept
 		{
 			return std::move(myValue);
 		}
 
 		[[nodiscard]]
-		explicit constexpr operator const T && () const&& noexcept
+		constexpr operator const T && () const&& noexcept
 		{
 			return std::move(myValue);
 		}

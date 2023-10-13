@@ -45,7 +45,7 @@ net::Application::Awake()
 
 	serverSocket = Socket::Create(InternetProtocols::TCP, IpAddressFamily::IPv4);
 
-	auto binded = serverSocket.Bind(IPv4Address::Loopback.value(), 52000);
+	auto binded = serverSocket.Bind(IPv4Address::Loopback, 52000);
 
 	if (binded.has_value())
 	{
