@@ -217,6 +217,7 @@ export namespace net
 			requires !Readonly and assignable_from<T, U&&>
 		{
 			myValue = std::forward<U>(value);
+			mySetter(myValue);
 			return *this;
 		}
 
@@ -226,6 +227,7 @@ export namespace net
 			requires !Readonly and C2 and assignable_from<T, const U&>
 		{
 			myValue = other.myValue;
+			mySetter(myValue);
 			return *this;
 		}
 
@@ -235,6 +237,7 @@ export namespace net
 			requires !Readonly and assignable_from<T, U&&>
 		{
 			myValue = std::move(other.myValue);
+			mySetter(myValue);
 			return *this;
 		}
 
