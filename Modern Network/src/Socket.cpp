@@ -157,36 +157,55 @@ const noexcept
 }
 
 SocketResult
-Socket::Connect(const EndPoint& address)
+Socket::Connect(const EndPoint& endpoint)
 const noexcept
 {
-	//if (0 != ::WSAConnect(myHandle))
-	{
+	SOCKADDR_STORAGE sockaddr = SerializeEndpoint(endpoint);
+	SOCKADDR_STORAGE* ptr = std::addressof(sockaddr);
 
+	if (0 != ::WSAConnect(myHandle
+		, reinterpret_cast<const SOCKADDR*>(ptr), sizeof(sockaddr)
+		, nullptr, nullptr
+		, nullptr, nullptr))
+	{
+		auto error_code = AcquireSocketError();
+		if (error_code == SocketErrorCodes::NonBlockedOperation)
+		{
+			return 0;
+		}
+		else
+		{
+			return std::unexpected(error_code);
+		}
 	}
 
-	return SocketResult();
+	return 1;
 }
 
 SocketResult
-Socket::Connect(EndPoint&& address)
+Socket::Connect(EndPoint&& endpoint)
 const noexcept
 {
-	return SocketResult();
-}
+	SOCKADDR_STORAGE sockaddr = SerializeEndpoint(std::move(endpoint));
+	SOCKADDR_STORAGE* ptr = std::addressof(sockaddr);
 
-SocketResult
-Socket::Connect(IoContext* context, const EndPoint& address)
-const noexcept
-{
-	return SocketResult();
-}
+	if (0 != ::WSAConnect(myHandle
+		, reinterpret_cast<const SOCKADDR*>(ptr), sizeof(sockaddr)
+		, nullptr, nullptr
+		, nullptr, nullptr))
+	{
+		auto error_code = AcquireSocketError();
+		if (error_code == SocketErrorCodes::NonBlockedOperation)
+		{
+			return 0;
+		}
+		else
+		{
+			return std::unexpected(error_code);
+		}
+	}
 
-SocketResult
-Socket::Connect(IoContext* context, EndPoint&& address)
-const noexcept
-{
-	return SocketResult();
+	return 1;
 }
 
 Task<SocketResult>
