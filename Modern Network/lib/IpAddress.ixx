@@ -21,10 +21,9 @@ export namespace net
 		constexpr IpAddress(const IpAddressFamily& family, std::string_view address)
 			: addressFamily(family), addressBuffer()
 		{
-			const size_t sz = GetSizeOfFamilyBuffer(family);
-			addressBuffer = std::make_unique<char[]>(sz);
+			addressBuffer = std::make_unique<char[]>(GetSizeOfFamilyBuffer(family));
 
-			std::copy_n(address.begin(), sz, addressBuffer.get());
+			std::copy(address.cbegin(), address.cend(), addressBuffer.get());
 		}
 
 		constexpr IpAddress(const IpAddress& other)
