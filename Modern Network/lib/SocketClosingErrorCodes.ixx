@@ -11,6 +11,6 @@ export namespace net
 		NotASocket = (std::int32_t)SocketErrorCodes::NotASocket,
 		YetInProgress = (std::int32_t)SocketErrorCodes::YetInProgress,
 		BlockingCallsInterrupted = (std::int32_t)SocketErrorCodes::BlockingCallsInterrupted,
-		NotOverlappedOperations = (std::int32_t)SocketErrorCodes::NotOverlappedOperations,
+		NonBlockedOperation = (std::int32_t)SocketErrorCodes::NonBlockedOperation,
 	};
 }

@@ -22,7 +22,7 @@ export namespace net
 		CannotReceive = (std::int32_t)SocketErrorCodes::NoSupportOperation,
 		ClosedSocket = (std::int32_t)SocketErrorCodes::ClosedSocket,
 		NetworkTimeOut = (std::int32_t)SocketErrorCodes::NetworkTimeOut,
-		NotOverlappedOperations = (std::int32_t)SocketErrorCodes::NotOverlappedOperations,
+		NonBlockedOperation = (std::int32_t)SocketErrorCodes::NonBlockedOperation,
 		NotInitializedSocketSystem = (std::int32_t)SocketErrorCodes::NotInitializedSocketSystem,
 		PendedIoOperation = (std::int32_t)SocketErrorCodes::PendedIoOperation,
 		OPERATION_ABORTED = (std::int32_t)SocketErrorCodes::OPERATION_ABORTED,

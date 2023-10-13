@@ -55,10 +55,10 @@ export namespace net
 		SocketListeningResult Open() const noexcept;
 		SocketResult Connect(const IpAddress& address, const std::uint16_t& port) const noexcept;
 		SocketResult Connect(IpAddress&& address, const std::uint16_t& port) const noexcept;
-		SocketResult Connect(const EndPoint& address) const noexcept;
-		SocketResult Connect(EndPoint&& address) const noexcept;
-		SocketResult Connect(_Maybenull_ IoContext* context, const EndPoint& address) const noexcept;
-		SocketResult Connect(_Maybenull_ IoContext* context, EndPoint&& address) const noexcept;
+		SocketResult Connect(const EndPoint& endpoint) const noexcept;
+		SocketResult Connect(EndPoint&& endpoint) const noexcept;
+		SocketResult Connect(_Maybenull_ IoContext* context, const EndPoint& endpoint) const noexcept;
+		SocketResult Connect(_Maybenull_ IoContext* context, EndPoint&& endpoint) const noexcept;
 		[[nodiscard]]
 		Task<SocketResult> ConnectAsync(_Maybenull_ IoContext* context) const noexcept;
 		bool Close() noexcept;

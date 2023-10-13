@@ -20,7 +20,7 @@ export namespace net
 		NotASocket = (std::int32_t)SocketErrorCodes::NotASocket,
 		CannotSend = (std::int32_t)SocketErrorCodes::NoSupportOperation,
 		ClosedSocket = (std::int32_t)SocketErrorCodes::ClosedSocket,
-		NotOverlappedOperations = (std::int32_t)SocketErrorCodes::NotOverlappedOperations,
+		NonBlockedOperation = (std::int32_t)SocketErrorCodes::NonBlockedOperation,
 		NotInitializedSocketSystem = (std::int32_t)SocketErrorCodes::NotInitializedSocketSystem,
 		PendedIoOperation = (std::int32_t)SocketErrorCodes::PendedIoOperation,
 		OPERATION_ABORTED = (std::int32_t)SocketErrorCodes::OPERATION_ABORTED,

@@ -20,7 +20,7 @@ export namespace net
 		WSAEFAULT = 10014,
 		DidNotBind = 10022,
 		WSAEMFILE = 10024,
-		NotOverlappedOperations = 10035, // EWOULDBLOCK
+		NonBlockedOperation = 10035, // EWOULDBLOCK
 		YetInProgress = 10036,
 		WSAEALREADY = 10037,
 		NotASocket = 10038,
