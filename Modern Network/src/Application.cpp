@@ -6,6 +6,7 @@ module;
 
 module Net.Application;
 import Net.Socket;
+import Net.IpAddress;
 import Net.Exception.NetworkInitializationError;
 import <type_traits>;
 import <utility>;
@@ -40,7 +41,7 @@ net::Application::Awake()
 
 	RIO_EXTENSION_FUNCTION_TABLE rio_table{};
 
-	serverSocket = Socket::Create(InternalProtocols::TCP);
+	serverSocket = Socket::Create(InternetProtocols::TCP, IpAddressFamily::IPv4);
 }
 
 void

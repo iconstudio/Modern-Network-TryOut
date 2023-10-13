@@ -66,7 +66,7 @@ const noexcept
 
 Socket::Socket(EmptySocketType)
 noexcept
-	: Socket()
+	: Socket(-1, InternetProtocols::Unknown, IpAddressFamily::Unknown)
 {}
 
 Socket&
@@ -246,35 +246,35 @@ noexcept
 }
 
 Socket
-Socket::Create(const InternalProtocols& protocol)
+Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
 noexcept
 {
 	//::WSASocket()
 
-	return Socket();
+	return Socket(0, protocol, family);
 }
 
 Socket
-Socket::Create(const InternalProtocols& protocol, SocketErrorCodes& error_code)
+Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code)
 noexcept
 {
-	return Socket();
+	return Socket(0, protocol, family);
 }
 
 bool
-Socket::TryCreate(const InternalProtocols& protocol, AttentSocket& out, SocketErrorCodes& error_code)
+Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, SocketErrorCodes& error_code)
 noexcept
 {
 	return false;
 }
 
 SocketErrorCodes
-Socket::TryCreate(const InternalProtocols& protocol, AttentSocket& out)
+Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out)
 noexcept
 {
 	return SocketErrorCodes();
 }
 
-net::Socket::Socket(InternalProtocols protocol, IpAddressFamily family)
-	: myProtocol(protocol), myFamily(family)
+constexpr Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept
+	: Handler(sock), myProtocol(protocol), myFamily(family)
 {}

@@ -74,13 +74,13 @@ export namespace net
 		friend class AttentSocket;
 
 		[[nodiscard]]
-		static Socket Create(const InternalProtocols& protocol) noexcept;
+		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
 		[[nodiscard]]
-		static Socket Create(const InternalProtocols& protocol, SocketErrorCodes& error_code) noexcept;
+		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code) noexcept;
 		[[nodiscard]]
-		static bool TryCreate(const InternalProtocols& protocol, AttentSocket& out, SocketErrorCodes& error_code) noexcept;
+		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, SocketErrorCodes& error_code) noexcept;
 		[[nodiscard]]
-		static SocketErrorCodes TryCreate(const InternalProtocols& protocol, AttentSocket& out) noexcept;
+		static SocketErrorCodes TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out) noexcept;
 
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;
