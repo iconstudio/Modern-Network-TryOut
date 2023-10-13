@@ -13,6 +13,12 @@ export namespace net
 {
 	using NativeSocket = std::uintptr_t;
 
+	class [[nodiscard]] AttentSocket
+	{
+	public:
+		Socket Socket;
+	};
+
 	class [[nodiscard]] Socket final : public Handler<NativeSocket>
 	{
 	private:
@@ -62,10 +68,16 @@ export namespace net
 		[[nodiscard]]
 		Task<SocketReceivingResult> ReceiveAsync(IoContext* context, const std::byte* const& memory, size_t size) const noexcept;
 
+		friend class AttentSocket;
+
 		[[nodiscard]]
 		static Socket Create() noexcept;
 		[[nodiscard]]
 		static Socket Create(SocketErrorCodes& error_code) noexcept;
+		[[nodiscard]]
+		static bool TryCreate(AttentSocket& socket) noexcept;
+		[[nodiscard]]
+		static SocketErrorCodes TryCreate(AttentSocket& socket) noexcept;
 
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;
