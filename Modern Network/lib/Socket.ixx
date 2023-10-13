@@ -97,6 +97,7 @@ export namespace net
 		friend class AttentSocket;
 
 	private:
+		Socket() noexcept;
 		constexpr Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept;
 
 		Socket(const Socket&) = delete;

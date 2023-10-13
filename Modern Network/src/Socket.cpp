@@ -352,6 +352,11 @@ noexcept
 	}
 }
 
+Socket::Socket()
+noexcept
+	: Socket(EmptySocket)
+{}
+
 constexpr Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept
 	: Handler(sock), myProtocol(protocol), myFamily(family)
 {}
