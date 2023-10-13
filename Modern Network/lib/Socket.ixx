@@ -49,8 +49,12 @@ export namespace net
 		SocketResult Bind(IpAddress&& address, const std::uint16_t& port) const noexcept;
 		SocketResult Bind(const EndPoint& endpoint) const noexcept;
 		SocketResult Bind(EndPoint&& endpoint) const noexcept;
+
+		// Methods
+
 		SocketListeningResult Open() const noexcept;
 		bool Close() noexcept;
+		bool Close(SocketClosingErrorCodes& error_code) noexcept;
 
 		// Synchronous Send & Receive (1)
 

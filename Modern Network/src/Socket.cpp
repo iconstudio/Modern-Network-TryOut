@@ -255,6 +255,29 @@ noexcept
 }
 
 bool
+net::Socket::Close(SocketClosingErrorCodes& error_code)
+noexcept
+{
+	if (IsAvailable())
+	{
+		if (0 == ::closesocket(myHandle))
+		{
+			return true;
+		}
+		else
+		{
+			error_code = AcquireClosingError();
+			return false;
+		}
+	}
+	else
+	{
+		error_code = SocketClosingErrorCodes::NotASocket;
+		return false;
+	}
+}
+
+bool
 Socket::IsAvailable()
 const noexcept
 {
