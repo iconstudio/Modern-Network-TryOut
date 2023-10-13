@@ -7,6 +7,7 @@ module;
 module Net.Application;
 import Net.Socket;
 import Net.IpAddress;
+import Net.IpAddress.IPv4;
 import Net.Exception.NetworkInitializationError;
 import <type_traits>;
 import <utility>;
@@ -42,6 +43,8 @@ net::Application::Awake()
 	RIO_EXTENSION_FUNCTION_TABLE rio_table{};
 
 	serverSocket = Socket::Create(InternetProtocols::TCP, IpAddressFamily::IPv4);
+
+	serverSocket.Bind(IPv4Address::Loopback.value(), 52000);
 }
 
 void
