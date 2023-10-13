@@ -125,6 +125,7 @@
     <ClCompile Include="lib\IResourcePool.ixx" />
     <ClCompile Include="lib\Promissory.ixx" />
     <ClCompile Include="lib\Socket.ixx" />
+    <ClCompile Include="lib\SocketClosingErrorCodes.ixx" />
     <ClCompile Include="lib\SocketGeneralErrorCodes.ixx" />
     <ClCompile Include="lib\SocketOpenErrorCodes.ixx" />
     <ClCompile Include="lib\SocketReceivingErrorCodes.ixx" />

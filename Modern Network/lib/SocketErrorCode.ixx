@@ -3,6 +3,7 @@ export import :General;
 export import :Sending;
 export import :Receiving;
 export import :Open;
+export import :Closing;
 
 export namespace net
 {
