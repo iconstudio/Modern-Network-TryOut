@@ -9,13 +9,13 @@ export namespace net
 	struct [[nodiscard]] EndPoint final
 	{
 	public:
-		constexpr EndPoint(const IpAddress& ip, const std::uint16_t& port) noexcept
+		EndPoint(const IpAddress& ip, const std::uint16_t& port) noexcept
 			: myAddress(ip), myPort(port)
 		{}
-		constexpr EndPoint(IpAddress&& ip, const std::uint16_t& port) noexcept
+		EndPoint(IpAddress&& ip, const std::uint16_t& port) noexcept
 			: myAddress(static_cast<IpAddress&&>(ip)), myPort(port)
 		{}
-		constexpr ~EndPoint() noexcept = default;
+		~EndPoint() noexcept = default;
 
 		[[nodiscard]]
 		constexpr const IpAddressFamily& GetAddressFamily() const& noexcept

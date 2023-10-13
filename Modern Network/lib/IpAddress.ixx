@@ -1,6 +1,5 @@
 export module Net.IpAddress;
 export import :IpAddressFamily;
-import <exception>;
 import <type_traits>;
 import <string_view>;
 import <memory>;
@@ -18,42 +17,10 @@ export namespace net
 	class [[nodiscard]] IpAddress final
 	{
 	public:
-		constexpr IpAddress(const IpAddressFamily& family, std::string_view address)
-			: addressFamily(family), addressBuffer()
-		{
-			addressBuffer = std::make_unique<char[]>(GetSizeOfFamilyBuffer(family));
-
-			std::copy(address.cbegin(), address.cend(), addressBuffer.get());
-		}
-
-		constexpr IpAddress(const IpAddress& other)
-			: addressFamily(other.addressFamily), addressBuffer()
-		{
-			const size_t sz = GetSizeOfFamilyBuffer(other.addressFamily);
-			addressBuffer = std::make_unique<char[]>(sz);
-
-			std::copy_n(other.addressBuffer.get(), sz, addressBuffer.get());
-		}
-
-		constexpr IpAddress& operator=(const IpAddress& other)
-		{
-			if (addressBuffer)
-			{
-				if (other.addressFamily != addressFamily)
-				{
-					throw std::exception("Cannot assign to the address with a unmatched address family!");
-				}
-
-				std::copy_n(other.addressBuffer.get(), GetSizeOfFamilyBuffer(addressFamily), addressBuffer.get());
-				return *this;
-			}
-			else
-			{
-				return *this = IpAddress(other);
-			}
-		}
-
-		constexpr ~IpAddress() = default;
+		IpAddress(const IpAddressFamily& family, std::string_view address);
+		IpAddress(const IpAddress& other);
+		IpAddress& operator=(const IpAddress& other);
+		~IpAddress() = default;
 
 		[[nodiscard]]
 		SerializedIpAddress Serialize() const noexcept;

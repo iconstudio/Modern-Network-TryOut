@@ -11,7 +11,7 @@ export namespace net
 		static ReadonlyProperty<IpAddress> Loopback;
 
 		[[nodiscard]]
-		static constexpr IpAddress Create(std::string_view address) noexcept
+		static IpAddress Create(std::string_view address) noexcept
 		{
 			return IpAddress{ IpAddressFamily::IPv4, address };
 		}
