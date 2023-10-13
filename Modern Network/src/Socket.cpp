@@ -224,6 +224,13 @@ const noexcept
 	return 0;
 }
 
+bool
+Socket::Close()
+noexcept
+{
+	return false;
+}
+
 Socket
 Socket::Create(const SocketProtocols& protocol)
 noexcept

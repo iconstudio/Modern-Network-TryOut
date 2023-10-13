@@ -28,6 +28,7 @@ export namespace net
 			constexpr EmptySocketType() noexcept = default;
 			constexpr ~EmptySocketType() noexcept = default;
 		};
+
 	public:
 		static const EmptySocketType EmptySocket;
 
@@ -38,6 +39,7 @@ export namespace net
 		SocketResult Bind(const EndPoint& endpoint) const noexcept;
 		SocketResult Bind(EndPoint&& endpoint) const noexcept;
 		SocketListeningResult Open() const noexcept;
+		bool Close() noexcept;
 
 		SocketSendingResult Send(std::span<const std::byte> memory) const noexcept;
 		SocketSendingResult Send(const std::byte* const& memory, size_t size) const noexcept;
