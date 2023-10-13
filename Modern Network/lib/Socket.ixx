@@ -13,11 +13,7 @@ export namespace net
 {
 	using NativeSocket = std::uintptr_t;
 
-	class [[nodiscard]] AttentSocket
-	{
-	public:
-		Socket Socket;
-	};
+	class AttentSocket;
 
 	enum class [[nodiscard]] SocketProtocols
 	{
@@ -92,5 +88,11 @@ export namespace net
 
 		Socket(const Socket&) = delete;
 		Socket& operator=(const Socket&) = delete;
+	};
+
+	class [[nodiscard]] AttentSocket
+	{
+	public:
+		Socket Socket;
 	};
 }
