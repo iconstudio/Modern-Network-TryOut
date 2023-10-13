@@ -6,7 +6,7 @@ import Net.Property;
 import Net.IoContext;
 import Net.Task;
 import Net.IpAddress;
-import Net.InternalProtocols;
+import Net.InternetProtocols;
 import Net.EndPoint;
 import <cstddef>;
 import <cstdint>;
@@ -85,12 +85,11 @@ export namespace net
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;
 
-		ReadonlyProperty<InternalProtocols> myProtocol;
+		ReadonlyProperty<InternetProtocols> myProtocol;
 		ReadonlyProperty<IpAddressFamily> myFamily;
 
 	private:
-		Socket() noexcept = default;
-		Socket(InternalProtocols protocol, IpAddressFamily family);
+		constexpr Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept;
 
 		Socket(const Socket&) = delete;
 		Socket& operator=(const Socket&) = delete;
