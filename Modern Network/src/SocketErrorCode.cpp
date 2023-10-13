@@ -29,3 +29,10 @@ noexcept
 {
 	return static_cast<net::SocketOpenErrorCodes>(WSAGetLastError());
 }
+
+net::SocketClosingErrorCodes
+net::AcquireClosingError()
+noexcept
+{
+	return static_cast<net::SocketClosingErrorCodes>(WSAGetLastError());
+}

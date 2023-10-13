@@ -11,11 +11,13 @@ export namespace net
 	[[nodiscard]]
 	SocketErrorCodes AcquireSocketError() noexcept;
 	[[nodiscard]]
+	SocketOpenErrorCodes AcquireListeningError() noexcept;
+	[[nodiscard]]
+	SocketClosingErrorCodes AcquireClosingError() noexcept;
+	[[nodiscard]]
 	SendingErrorCodes AcquireSendingError() noexcept;
 	[[nodiscard]]
 	ReceivingErrorCodes AcquireReceivingError() noexcept;
-	[[nodiscard]]
-	SocketOpenErrorCodes AcquireListeningError() noexcept;
 
 	[[nodiscard]]
 	constexpr bool operator==(const SocketErrorCodes& lhs, const SendingErrorCodes& rhs) noexcept
