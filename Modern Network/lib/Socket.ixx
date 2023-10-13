@@ -60,7 +60,7 @@ export namespace net
 		SocketResult Connect(_Maybenull_ IoContext* context, const EndPoint& address) const noexcept;
 		SocketResult Connect(_Maybenull_ IoContext* context, EndPoint&& address) const noexcept;
 		[[nodiscard]]
-		Task<SocketResult> ConnectAsync(_Maybenull_ IoContext* context, std::span<const std::byte> memory) const noexcept;
+		Task<SocketResult> ConnectAsync(_Maybenull_ IoContext* context) const noexcept;
 		bool Close() noexcept;
 		bool Close(SocketClosingErrorCodes& error_code) noexcept;
 
