@@ -256,7 +256,7 @@ const noexcept
 
 Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
-noexcept
+{
 {
 	//::WSASocket()
 
@@ -265,7 +265,6 @@ noexcept
 
 Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code)
-noexcept
 {
 	return Socket(0, protocol, family);
 }

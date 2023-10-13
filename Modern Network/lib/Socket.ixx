@@ -75,9 +75,9 @@ export namespace net
 		bool IsAvailable() const noexcept;
 
 		[[nodiscard]]
-		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
+		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family);
 		[[nodiscard]]
-		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code) noexcept;
+		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code);
 		[[nodiscard]]
 		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, SocketErrorCodes& error_code) noexcept;
 		[[nodiscard]]
