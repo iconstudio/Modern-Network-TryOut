@@ -258,6 +258,7 @@ const noexcept
 
 Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
+noexcept
 {
 	NativeSocket result;
 	switch (protocol)
@@ -285,6 +286,7 @@ Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
 
 Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code)
+noexcept
 {
 	Socket result = Create(protocol, family);
 	if (!result.IsAvailable())
@@ -293,20 +295,6 @@ Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family,
 	}
 
 	return result;
-}
-
-bool
-Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, SocketErrorCodes& error_code)
-noexcept
-{
-	return false;
-}
-
-SocketErrorCodes
-Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out)
-noexcept
-{
-	return SocketErrorCodes();
 }
 
 constexpr Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept
