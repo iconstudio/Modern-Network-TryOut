@@ -142,6 +142,60 @@ const noexcept
 	return 0;
 }
 
+SocketResult
+net::Socket::Connect(const IpAddress& address, const std::uint16_t& port)
+const noexcept
+{
+	return this->Connect(EndPoint(address, port));
+}
+
+SocketResult
+Socket::Connect(IpAddress&& address, const std::uint16_t& port)
+const noexcept
+{
+	return this->Connect(EndPoint(std::move(address), port));
+}
+
+SocketResult
+Socket::Connect(const EndPoint& address)
+const noexcept
+{
+	//if (0 != ::WSAConnect(myHandle))
+	{
+
+	}
+
+	return SocketResult();
+}
+
+SocketResult
+Socket::Connect(EndPoint&& address)
+const noexcept
+{
+	return SocketResult();
+}
+
+SocketResult
+Socket::Connect(IoContext* context, const EndPoint& address)
+const noexcept
+{
+	return SocketResult();
+}
+
+SocketResult
+Socket::Connect(IoContext* context, EndPoint&& address)
+const noexcept
+{
+	return SocketResult();
+}
+
+Task<SocketResult>
+Socket::ConnectAsync(IoContext* context)
+const noexcept
+{
+	return Task<SocketResult>();
+}
+
 bool
 Socket::Close()
 noexcept
