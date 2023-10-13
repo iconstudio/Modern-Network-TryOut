@@ -90,6 +90,7 @@ export namespace net
 
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;
+		constexpr bool operator==(const Socket&) const noexcept = default;
 
 		ReadonlyProperty<InternetProtocols> myProtocol;
 		ReadonlyProperty<IpAddressFamily> myFamily;
