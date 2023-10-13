@@ -149,5 +149,8 @@
     <ClCompile Include="src\IpAddress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\InternalProtocols.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

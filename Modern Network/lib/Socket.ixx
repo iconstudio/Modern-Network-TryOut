@@ -4,6 +4,7 @@ export import :Result;
 import Net.Handler;
 import Net.IoContext;
 import Net.Task;
+import Net.InternalProtocols;
 import Net.EndPoint;
 import <cstddef>;
 import <cstdint>;
@@ -14,11 +15,6 @@ export namespace net
 	using NativeSocket = std::uintptr_t;
 
 	class AttentSocket;
-
-	enum class [[nodiscard]] SocketProtocols
-	{
-		Unknown, TCP, UDP, RDP, BTH
-	};
 
 	class [[nodiscard]] Socket final : public Handler<NativeSocket>
 	{
@@ -74,13 +70,13 @@ export namespace net
 		friend class AttentSocket;
 
 		[[nodiscard]]
-		static Socket Create(const SocketProtocols& protocol) noexcept;
+		static Socket Create(const InternalProtocols& protocol) noexcept;
 		[[nodiscard]]
-		static Socket Create(const SocketProtocols& protocol, SocketErrorCodes& error_code) noexcept;
+		static Socket Create(const InternalProtocols& protocol, SocketErrorCodes& error_code) noexcept;
 		[[nodiscard]]
-		static bool TryCreate(const SocketProtocols& protocol, AttentSocket& out, SocketErrorCodes& error_code) noexcept;
+		static bool TryCreate(const InternalProtocols& protocol, AttentSocket& out, SocketErrorCodes& error_code) noexcept;
 		[[nodiscard]]
-		static SocketErrorCodes TryCreate(const SocketProtocols& protocol, AttentSocket& out) noexcept;
+		static SocketErrorCodes TryCreate(const InternalProtocols& protocol, AttentSocket& out) noexcept;
 
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;

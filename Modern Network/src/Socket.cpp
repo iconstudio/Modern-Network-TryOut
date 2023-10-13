@@ -232,28 +232,30 @@ noexcept
 }
 
 Socket
-Socket::Create(const SocketProtocols& protocol)
+Socket::Create(const InternalProtocols& protocol)
 noexcept
 {
+	::WSASocket()
+
 	return Socket();
 }
 
 Socket
-Socket::Create(const SocketProtocols& protocol, SocketErrorCodes& error_code)
+Socket::Create(const InternalProtocols& protocol, SocketErrorCodes& error_code)
 noexcept
 {
 	return Socket();
 }
 
 bool
-Socket::TryCreate(const SocketProtocols& protocol, AttentSocket& out, SocketErrorCodes& error_code)
+Socket::TryCreate(const InternalProtocols& protocol, AttentSocket& out, SocketErrorCodes& error_code)
 noexcept
 {
 	return false;
 }
 
 SocketErrorCodes
-Socket::TryCreate(const SocketProtocols& protocol, AttentSocket& out)
+Socket::TryCreate(const InternalProtocols& protocol, AttentSocket& out)
 noexcept
 {
 	return SocketErrorCodes();
