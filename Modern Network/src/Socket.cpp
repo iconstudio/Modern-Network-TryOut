@@ -73,7 +73,9 @@ Socket&
 Socket::operator=(EmptySocketType)
 noexcept
 {
-	return *this = Socket{};
+	Close();
+
+	return *this = Socket{ EmptySocket };
 }
 
 Socket::~Socket()
