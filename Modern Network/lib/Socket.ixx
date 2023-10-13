@@ -29,13 +29,21 @@ export namespace net
 		};
 
 	public:
+		// Type members
+
 		using FactoryResult = std::expected<Socket, SocketErrorCodes>;
 
+		// Static members
+
 		static const EmptySocketType EmptySocket;
+
+		// Constructors, Destructors, Assignees
 
 		Socket(EmptySocketType) noexcept;
 		Socket& operator=(EmptySocketType) noexcept;
 		~Socket() noexcept;
+
+		// Opt-in interfaces
 
 		SocketResult Bind(const IpAddress& address, const std::uint16_t& port) const noexcept;
 		SocketResult Bind(IpAddress&& address, const std::uint16_t& port) const noexcept;
@@ -44,38 +52,51 @@ export namespace net
 		SocketListeningResult Open() const noexcept;
 		bool Close() noexcept;
 
+		// Synchronous Send & Receive (1)
+
 		SocketSendingResult Send(std::span<const std::byte> memory) const noexcept;
 		SocketSendingResult Send(const std::byte* const& memory, size_t size) const noexcept;
 		SocketReceivingResult Receive(std::span<std::byte> memory) const noexcept;
 		SocketReceivingResult Receive(const std::byte* const& memory, size_t size) const noexcept;
+
+		// Synchronous Send & Receive (2)
 
 		bool Send(std::span<const std::byte> memory, SocketSendingResult& error) const noexcept;
 		bool Send(const std::byte* const& memory, size_t size, SocketSendingResult& error) const noexcept;
 		bool Receive(std::span<std::byte> memory, SocketReceivingResult& error) const noexcept;
 		bool Receive(const std::byte* const& memory, size_t size, SocketReceivingResult& error) const noexcept;
 
+		// Maybe asynchronous Send & Receive (1)
+
 		SocketSendingResult Send(IoContext* context, std::span<const std::byte> memory) const noexcept;
 		SocketSendingResult Send(IoContext* context, const std::byte* const& memory, size_t size) const noexcept;
 		SocketReceivingResult Receive(IoContext* context, std::span<std::byte> memory) const noexcept;
 		SocketReceivingResult Receive(IoContext* context, const std::byte* const& memory, size_t size) const noexcept;
+
+		// Maybe asynchronous Send & Receive (2)
 
 		bool Send(IoContext* context, std::span<const std::byte> memory, SocketSendingResult& error) const noexcept;
 		bool Send(IoContext* context, const std::byte* const& memory, size_t size, SocketSendingResult& error) const noexcept;
 		bool Receive(IoContext* context, std::span<std::byte> memory, SocketReceivingResult& error) const noexcept;
 		bool Receive(IoContext* context, const std::byte* const& memory, size_t size, SocketReceivingResult& error) const noexcept;
 
+		// Asynchronous Send & Receive (1)
+
 		[[nodiscard]]
 		Task<SocketSendingResult> SendAsync(IoContext* context, std::span<const std::byte> memory) const noexcept;
 		[[nodiscard]]
 		Task<SocketSendingResult> SendAsync(IoContext* context, const std::byte* const& memory, size_t size) const noexcept;
-
 		[[nodiscard]]
 		Task<SocketReceivingResult> ReceiveAsync(IoContext* context, std::span<std::byte> memory) const noexcept;
 		[[nodiscard]]
 		Task<SocketReceivingResult> ReceiveAsync(IoContext* context, const std::byte* const& memory, size_t size) const noexcept;
 
+		// Observers
+
 		[[nodiscard]]
 		bool IsAvailable() const noexcept;
+
+		// Static methods
 
 		[[nodiscard]]
 		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
@@ -88,9 +109,13 @@ export namespace net
 		[[nodiscard]]
 		static FactoryResult TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
 
+		// Default methods
+
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;
 		constexpr bool operator==(const Socket&) const noexcept = default;
+
+		// Fields
 
 		ReadonlyProperty<InternetProtocols> myProtocol;
 		ReadonlyProperty<IpAddressFamily> myFamily;
