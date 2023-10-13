@@ -260,3 +260,7 @@ noexcept
 {
 	return SocketErrorCodes();
 }
+
+net::Socket::Socket(InternalProtocols protocol, IpAddressFamily family)
+	: myProtocol(protocol), myFamily(family)
+{}
