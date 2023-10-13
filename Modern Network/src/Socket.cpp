@@ -66,7 +66,7 @@ const noexcept
 
 Socket::Socket(EmptySocketType)
 noexcept
-	: Socket(-1, InternetProtocols::Unknown, IpAddressFamily::Unknown)
+	: Socket(INVALID_SOCKET, InternetProtocols::Unknown, IpAddressFamily::Unknown)
 {}
 
 Socket&
@@ -245,6 +245,13 @@ Socket::Close()
 noexcept
 {
 	return false;
+}
+
+bool
+Socket::IsAvailable()
+const noexcept
+{
+	return myHandle != INVALID_SOCKET;
 }
 
 Socket

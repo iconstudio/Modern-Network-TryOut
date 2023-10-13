@@ -71,7 +71,8 @@ export namespace net
 		[[nodiscard]]
 		Task<SocketReceivingResult> ReceiveAsync(IoContext* context, const std::byte* const& memory, size_t size) const noexcept;
 
-		friend class AttentSocket;
+		[[nodiscard]]
+		bool IsAvailable() const noexcept;
 
 		[[nodiscard]]
 		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
@@ -87,6 +88,8 @@ export namespace net
 
 		ReadonlyProperty<InternetProtocols> myProtocol;
 		ReadonlyProperty<IpAddressFamily> myFamily;
+
+		friend class AttentSocket;
 
 	private:
 		constexpr Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept;
