@@ -244,9 +244,14 @@ bool
 Socket::Close()
 noexcept
 {
-
-
-	return false;
+	if (IsAvailable())
+	{
+		return 0 == ::closesocket(myHandle);
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool
