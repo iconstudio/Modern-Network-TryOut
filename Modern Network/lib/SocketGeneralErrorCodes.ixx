@@ -1,8 +1,9 @@
 export module Net.Socket.ErrorCode:General;
+import <cstdint>;
 
 export namespace net
 {
-	enum class SocketErrorCodes
+	enum class SocketErrorCodes : std::int32_t
 	{
 		PendedIoOperation = 997,
 		WSA_IO_INCOMPLETE = 996,

@@ -1,29 +1,30 @@
 export module Net.Socket.ErrorCode:Receiving;
 import :General;
+import <cstdint>;
 
 export namespace net
 {
-	enum class ReceivingErrorCodes
+	enum class ReceivingErrorCodes : std::int32_t
 	{
-		ConnectionAborted = (int)SocketErrorCodes::ConnectionAborted,
-		ConnectionStateReset = (int)SocketErrorCodes::ConnectionStateReset,
-		WSAEDISCON = (int)SocketErrorCodes::WSAEDISCON,
-		WSAEFAULT = (int)SocketErrorCodes::WSAEFAULT,
-		YetInProgress = (int)SocketErrorCodes::YetInProgress,
-		BlockingCallsInterrupted = (int)SocketErrorCodes::BlockingCallsInterrupted,
-		DidNotBind = (int)SocketErrorCodes::DidNotBind,
-		WSAEMSGSIZE = (int)SocketErrorCodes::WSAEMSGSIZE,
-		NetworkIsDown = (int)SocketErrorCodes::NetworkIsDown,
-		WSAENETRESET = (int)SocketErrorCodes::WSAENETRESET,
-		NoBufferStorage = (int)SocketErrorCodes::NoBufferStorage,
-		NotConnected = (int)SocketErrorCodes::NotConnected,
-		NotASocket = (int)SocketErrorCodes::NotASocket,
-		CannotReceive = (int)SocketErrorCodes::NoSupportOperation,
-		ClosedSocket = (int)SocketErrorCodes::ClosedSocket,
-		NetworkTimeOut = (int)SocketErrorCodes::NetworkTimeOut,
-		NotOverlappedOperations = (int)SocketErrorCodes::NotOverlappedOperations,
-		NotInitializedSocketSystem = (int)SocketErrorCodes::NotInitializedSocketSystem,
-		PendedIoOperation = (int)SocketErrorCodes::PendedIoOperation,
-		OPERATION_ABORTED = (int)SocketErrorCodes::OPERATION_ABORTED,
+		ConnectionAborted = (std::int32_t)SocketErrorCodes::ConnectionAborted,
+		ConnectionStateReset = (std::int32_t)SocketErrorCodes::ConnectionStateReset,
+		WSAEDISCON = (std::int32_t)SocketErrorCodes::WSAEDISCON,
+		WSAEFAULT = (std::int32_t)SocketErrorCodes::WSAEFAULT,
+		YetInProgress = (std::int32_t)SocketErrorCodes::YetInProgress,
+		BlockingCallsInterrupted = (std::int32_t)SocketErrorCodes::BlockingCallsInterrupted,
+		DidNotBind = (std::int32_t)SocketErrorCodes::DidNotBind,
+		WSAEMSGSIZE = (std::int32_t)SocketErrorCodes::WSAEMSGSIZE,
+		NetworkIsDown = (std::int32_t)SocketErrorCodes::NetworkIsDown,
+		WSAENETRESET = (std::int32_t)SocketErrorCodes::WSAENETRESET,
+		NoBufferStorage = (std::int32_t)SocketErrorCodes::NoBufferStorage,
+		NotConnected = (std::int32_t)SocketErrorCodes::NotConnected,
+		NotASocket = (std::int32_t)SocketErrorCodes::NotASocket,
+		CannotReceive = (std::int32_t)SocketErrorCodes::NoSupportOperation,
+		ClosedSocket = (std::int32_t)SocketErrorCodes::ClosedSocket,
+		NetworkTimeOut = (std::int32_t)SocketErrorCodes::NetworkTimeOut,
+		NotOverlappedOperations = (std::int32_t)SocketErrorCodes::NotOverlappedOperations,
+		NotInitializedSocketSystem = (std::int32_t)SocketErrorCodes::NotInitializedSocketSystem,
+		PendedIoOperation = (std::int32_t)SocketErrorCodes::PendedIoOperation,
+		OPERATION_ABORTED = (std::int32_t)SocketErrorCodes::OPERATION_ABORTED,
 	};
 }

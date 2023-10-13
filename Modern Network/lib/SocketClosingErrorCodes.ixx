@@ -1,15 +1,16 @@
 export module Net.Socket.ErrorCode:Closing;
 import :General;
+import <cstdint>;
 
 export namespace net
 {
-	enum class SocketClosingErrorCodes
+	enum class SocketClosingErrorCodes : std::int32_t
 	{
-		NotInitializedSocketSystem = (int)SocketErrorCodes::NotInitializedSocketSystem,
-		NetworkIsDown = (int)SocketErrorCodes::NetworkIsDown,
-		NotASocket = (int)SocketErrorCodes::NotASocket,
-		YetInProgress = (int)SocketErrorCodes::YetInProgress,
-		BlockingCallsInterrupted = (int)SocketErrorCodes::BlockingCallsInterrupted,
-		NotOverlappedOperations = (int)SocketErrorCodes::NotOverlappedOperations,
+		NotInitializedSocketSystem = (std::int32_t)SocketErrorCodes::NotInitializedSocketSystem,
+		NetworkIsDown = (std::int32_t)SocketErrorCodes::NetworkIsDown,
+		NotASocket = (std::int32_t)SocketErrorCodes::NotASocket,
+		YetInProgress = (std::int32_t)SocketErrorCodes::YetInProgress,
+		BlockingCallsInterrupted = (std::int32_t)SocketErrorCodes::BlockingCallsInterrupted,
+		NotOverlappedOperations = (std::int32_t)SocketErrorCodes::NotOverlappedOperations,
 	};
 }

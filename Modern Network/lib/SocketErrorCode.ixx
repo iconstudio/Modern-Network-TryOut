@@ -4,6 +4,7 @@ export import :Sending;
 export import :Receiving;
 export import :Open;
 export import :Closing;
+import <cstdint>;
 
 export namespace net
 {
@@ -19,30 +20,36 @@ export namespace net
 	[[nodiscard]]
 	constexpr bool operator==(const SocketErrorCodes& lhs, const SendingErrorCodes& rhs) noexcept
 	{
-		return static_cast<int>(lhs) == static_cast<int>(rhs);
+		return static_cast<std::int32_t>(lhs) == static_cast<std::int32_t>(rhs);
 	}
 
 	[[nodiscard]]
 	constexpr bool operator==(const SocketErrorCodes& lhs, const ReceivingErrorCodes& rhs) noexcept
 	{
-		return static_cast<int>(lhs) == static_cast<int>(rhs);
+		return static_cast<std::int32_t>(lhs) == static_cast<std::int32_t>(rhs);
 	}
 
 	[[nodiscard]]
 	constexpr bool operator==(const SocketErrorCodes& lhs, const SocketOpenErrorCodes& rhs) noexcept
 	{
-		return static_cast<int>(lhs) == static_cast<int>(rhs);
+		return static_cast<std::int32_t>(lhs) == static_cast<std::int32_t>(rhs);
+	}
+
+	[[nodiscard]]
+	constexpr bool operator==(const SocketErrorCodes& lhs, const SocketClosingErrorCodes& rhs) noexcept
+	{
+		return static_cast<std::int32_t>(lhs) == static_cast<std::int32_t>(rhs);
 	}
 
 	[[nodiscard]]
 	constexpr bool operator==(const SendingErrorCodes& lhs, const ReceivingErrorCodes& rhs) noexcept
 	{
-		return static_cast<int>(lhs) == static_cast<int>(rhs);
+		return static_cast<std::int32_t>(lhs) == static_cast<std::int32_t>(rhs);
 	}
 
 	[[nodiscard]]
 	constexpr bool operator==(const ReceivingErrorCodes& lhs, const SendingErrorCodes& rhs) noexcept
 	{
-		return static_cast<int>(lhs) == static_cast<int>(rhs);
+		return static_cast<std::int32_t>(lhs) == static_cast<std::int32_t>(rhs);
 	}
 }

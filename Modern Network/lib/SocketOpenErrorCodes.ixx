@@ -1,19 +1,20 @@
 export module Net.Socket.ErrorCode:Open;
 import :General;
+import <cstdint>;
 
 export namespace net
 {
-	enum class SocketOpenErrorCodes
+	enum class SocketOpenErrorCodes : std::int32_t
 	{
-		NotInitializedSocketSystem = (int)SocketErrorCodes::NotInitializedSocketSystem,
-		NetworkIsDown = (int)SocketErrorCodes::NetworkIsDown,
-		CannotUseThisAddress = (int)SocketErrorCodes::CannotUseThisAddress,
-		YetInProgress = (int)SocketErrorCodes::YetInProgress,
-		DidNotBind = (int)SocketErrorCodes::DidNotBind,
-		AlreadyConnected = (int)SocketErrorCodes::WSAEISCONN,
-		NotASocket = (int)SocketErrorCodes::NotASocket,
-		CouldNotUseThis = (int)SocketErrorCodes::WSAEMFILE,
-		NoBufferStorage = (int)SocketErrorCodes::NoBufferStorage,
-		NoSupportOperation = (int)SocketErrorCodes::NoSupportOperation
+		NotInitializedSocketSystem = (std::int32_t)SocketErrorCodes::NotInitializedSocketSystem,
+		NetworkIsDown = (std::int32_t)SocketErrorCodes::NetworkIsDown,
+		CannotUseThisAddress = (std::int32_t)SocketErrorCodes::CannotUseThisAddress,
+		YetInProgress = (std::int32_t)SocketErrorCodes::YetInProgress,
+		DidNotBind = (std::int32_t)SocketErrorCodes::DidNotBind,
+		AlreadyConnected = (std::int32_t)SocketErrorCodes::WSAEISCONN,
+		NotASocket = (std::int32_t)SocketErrorCodes::NotASocket,
+		CouldNotUseThis = (std::int32_t)SocketErrorCodes::WSAEMFILE,
+		NoBufferStorage = (std::int32_t)SocketErrorCodes::NoBufferStorage,
+		NoSupportOperation = (std::int32_t)SocketErrorCodes::NoSupportOperation
 	};
 }
