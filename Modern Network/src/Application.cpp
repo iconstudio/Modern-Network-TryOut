@@ -18,14 +18,7 @@ using namespace net;
 
 Socket serverSocket = Socket::EmptySocket;
 
-net::Application::Application() noexcept
-{}
-
-net::Application::~Application() noexcept
-{}
-
-void
-net::Application::Awake()
+net::Application::Application()
 {
 	WSADATA version_data{};
 
@@ -40,7 +33,16 @@ net::Application::Awake()
 
 		throw startup_error;
 	}
+}
 
+net::Application::~Application() noexcept
+{
+	::WSACleanup();
+}
+
+void
+net::Application::Awake()
+{
 	RIO_EXTENSION_FUNCTION_TABLE rio_table{};
 
 	serverSocket = Socket::Create(InternetProtocols::TCP, IpAddressFamily::IPv4);

@@ -6,7 +6,7 @@ export namespace net
 	class Application : public IObject
 	{
 	public:
-		Application() noexcept;
+		Application();
 		~Application() noexcept override;
 
 		void Awake() override;
