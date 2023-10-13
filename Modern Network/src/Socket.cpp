@@ -244,6 +244,8 @@ bool
 Socket::Close()
 noexcept
 {
+
+
 	return false;
 }
 
@@ -257,16 +259,40 @@ const noexcept
 Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
 {
-{
-	//::WSASocket()
+	NativeSocket result;
+	switch (protocol)
+	{
+		case InternetProtocols::TCP:
+		{
+			result = WSASocket(static_cast<int>(family), SOCK_STREAM, IPPROTO::IPPROTO_TCP, nullptr, 0, WSA_FLAG_REGISTERED_IO);
+		}
+		break;
 
-	return Socket(0, protocol, family);
+		case InternetProtocols::UDP:
+		{
+			result = WSASocket(static_cast<int>(family), SOCK_DGRAM, IPPROTO::IPPROTO_UDP, nullptr, 0, WSA_FLAG_REGISTERED_IO);
+		}
+		break;
+
+		case InternetProtocols::Unknown:
+		{
+			return EmptySocket;
+		}
+	}
+
+	return Socket(result, protocol, family);
 }
 
 Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code)
 {
-	return Socket(0, protocol, family);
+	Socket result = Create(protocol, family);
+	if (!result.IsAvailable())
+	{
+		error_code = AcquireSocketError();
+	}
+
+	return result;
 }
 
 bool
