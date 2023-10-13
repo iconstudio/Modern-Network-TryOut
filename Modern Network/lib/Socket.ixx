@@ -99,7 +99,7 @@ export namespace net
 
 	private:
 		Socket() noexcept;
-		constexpr Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept;
+		Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept;
 
 		Socket(const Socket&) = delete;
 		Socket& operator=(const Socket&) = delete;
