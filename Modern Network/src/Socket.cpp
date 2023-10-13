@@ -225,8 +225,29 @@ const noexcept
 }
 
 Socket
-Socket::Create()
+Socket::Create(const SocketProtocols& protocol)
 noexcept
 {
-	return {};
+	return Socket();
+}
+
+Socket
+Socket::Create(const SocketProtocols& protocol, SocketErrorCodes& error_code)
+noexcept
+{
+	return Socket();
+}
+
+bool
+Socket::TryCreate(const SocketProtocols& protocol, AttentSocket& out, SocketErrorCodes& error_code)
+noexcept
+{
+	return false;
+}
+
+SocketErrorCodes
+Socket::TryCreate(const SocketProtocols& protocol, AttentSocket& out)
+noexcept
+{
+	return SocketErrorCodes();
 }

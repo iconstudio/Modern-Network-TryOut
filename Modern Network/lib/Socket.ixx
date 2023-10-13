@@ -19,6 +19,11 @@ export namespace net
 		Socket Socket;
 	};
 
+	enum class [[nodiscard]] SocketProtocols
+	{
+		Unknown, TCP, UDP, RDP, BTH
+	};
+
 	class [[nodiscard]] Socket final : public Handler<NativeSocket>
 	{
 	private:
@@ -71,13 +76,13 @@ export namespace net
 		friend class AttentSocket;
 
 		[[nodiscard]]
-		static Socket Create() noexcept;
+		static Socket Create(const SocketProtocols& protocol) noexcept;
 		[[nodiscard]]
-		static Socket Create(SocketErrorCodes& error_code) noexcept;
+		static Socket Create(const SocketProtocols& protocol, SocketErrorCodes& error_code) noexcept;
 		[[nodiscard]]
-		static bool TryCreate(AttentSocket& socket) noexcept;
+		static bool TryCreate(const SocketProtocols& protocol, AttentSocket& out, SocketErrorCodes& error_code) noexcept;
 		[[nodiscard]]
-		static SocketErrorCodes TryCreate(AttentSocket& socket) noexcept;
+		static SocketErrorCodes TryCreate(const SocketProtocols& protocol, AttentSocket& out) noexcept;
 
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;

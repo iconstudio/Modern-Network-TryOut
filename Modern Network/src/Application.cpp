@@ -40,7 +40,7 @@ net::Application::Awake()
 
 	RIO_EXTENSION_FUNCTION_TABLE rio_table{};
 
-	serverSocket = Socket::Create();
+	serverSocket = Socket::Create(SocketProtocols::TCP);
 }
 
 void
