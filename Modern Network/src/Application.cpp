@@ -12,6 +12,7 @@ import Net.Exception.NetworkInitializationError;
 import <type_traits>;
 import <utility>;
 import <format>;
+import <print>;
 
 using namespace net;
 
@@ -44,7 +45,12 @@ net::Application::Awake()
 
 	serverSocket = Socket::Create(InternetProtocols::TCP, IpAddressFamily::IPv4);
 
-	serverSocket.Bind(IPv4Address::Loopback.value(), 52000);
+	auto binded = serverSocket.Bind(IPv4Address::Loopback.value(), 52000);
+
+	if (binded.has_value())
+	{
+		std::println("binded!");
+	}
 }
 
 void
