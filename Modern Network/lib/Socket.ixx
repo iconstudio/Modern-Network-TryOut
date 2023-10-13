@@ -98,6 +98,6 @@ export namespace net
 	class [[nodiscard]] AttentSocket
 	{
 	public:
-		Socket Socket;
+		Socket Socket = Socket::EmptySocket;
 	};
 }
