@@ -53,6 +53,14 @@ export namespace net
 		// Opt-out Methods
 
 		SocketListeningResult Open() const noexcept;
+		SocketResult Connect(const IpAddress& address, const std::uint16_t& port) const noexcept;
+		SocketResult Connect(IpAddress&& address, const std::uint16_t& port) const noexcept;
+		SocketResult Connect(const EndPoint& address) const noexcept;
+		SocketResult Connect(EndPoint&& address) const noexcept;
+		SocketResult Connect(_Maybenull_ IoContext* context, const EndPoint& address) const noexcept;
+		SocketResult Connect(_Maybenull_ IoContext* context, EndPoint&& address) const noexcept;
+		[[nodiscard]]
+		Task<SocketResult> ConnectAsync(_Maybenull_ IoContext* context, std::span<const std::byte> memory) const noexcept;
 		bool Close() noexcept;
 		bool Close(SocketClosingErrorCodes& error_code) noexcept;
 
