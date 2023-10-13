@@ -50,11 +50,13 @@ export namespace net
 		SocketResult Bind(const EndPoint& endpoint) const noexcept;
 		SocketResult Bind(EndPoint&& endpoint) const noexcept;
 
-		// Methods
+		// Opt-out Methods
 
 		SocketListeningResult Open() const noexcept;
 		bool Close() noexcept;
 		bool Close(SocketClosingErrorCodes& error_code) noexcept;
+
+		// Methods
 
 		// Synchronous Send & Receive (1)
 
