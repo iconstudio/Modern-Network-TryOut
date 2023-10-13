@@ -11,6 +11,7 @@ import Net.EndPoint;
 import <cstddef>;
 import <cstdint>;
 import <span>;
+import <expected>;
 
 export namespace net
 {
@@ -28,6 +29,8 @@ export namespace net
 		};
 
 	public:
+		using FactoryResult = std::expected<Socket, SocketErrorCodes>;
+
 		static const EmptySocketType EmptySocket;
 
 		Socket(EmptySocketType) noexcept;
@@ -75,13 +78,15 @@ export namespace net
 		bool IsAvailable() const noexcept;
 
 		[[nodiscard]]
-		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family);
+		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
 		[[nodiscard]]
-		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code);
+		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code) noexcept;
+		[[nodiscard]]
+		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out) noexcept;
 		[[nodiscard]]
 		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, SocketErrorCodes& error_code) noexcept;
 		[[nodiscard]]
-		static SocketErrorCodes TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out) noexcept;
+		static FactoryResult TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
 
 		constexpr Socket(Socket&&) noexcept = default;
 		constexpr Socket& operator=(Socket&&) noexcept = default;
