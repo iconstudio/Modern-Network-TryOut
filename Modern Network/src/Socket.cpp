@@ -76,9 +76,23 @@ noexcept
 	return *this = Socket{};
 }
 
-net::Socket::~Socket()
+Socket::~Socket()
 noexcept
 {}
+
+SocketResult
+Socket::Bind(const IpAddress& address, const std::uint16_t& port)
+const noexcept
+{
+	return this->Bind(EndPoint(address, port));
+}
+
+SocketResult
+Socket::Bind(IpAddress&& address, const std::uint16_t& port)
+const noexcept
+{
+	return this->Bind(EndPoint(std::move(address), port));
+}
 
 SocketResult
 Socket::Bind(const EndPoint& endpoint)

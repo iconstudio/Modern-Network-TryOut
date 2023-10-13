@@ -34,6 +34,8 @@ export namespace net
 		Socket& operator=(EmptySocketType) noexcept;
 		~Socket() noexcept;
 
+		SocketResult Bind(const IpAddress& address, const std::uint16_t& port) const noexcept;
+		SocketResult Bind(IpAddress&& address, const std::uint16_t& port) const noexcept;
 		SocketResult Bind(const EndPoint& endpoint) const noexcept;
 		SocketResult Bind(EndPoint&& endpoint) const noexcept;
 		SocketListeningResult Open() const noexcept;
