@@ -80,9 +80,7 @@ noexcept
 
 Socket::~Socket()
 noexcept
-{
-	Close();
-}
+{}
 
 SocketResult
 Socket::Bind(const IpAddress& address, const std::uint16_t& port)
