@@ -21,6 +21,9 @@ export namespace net
 		using type = ValuePromise<void, Init, Final>;
 		using super = IPromise<ValuePromise<void, Init, Final>, Init, Final>;
 		using handle_type = super::handle_type;
+
+		static constexpr void return_void() noexcept
+		{}
 	};
 
 	template<movable Value
