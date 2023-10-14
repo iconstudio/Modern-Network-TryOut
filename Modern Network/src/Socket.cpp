@@ -208,11 +208,16 @@ const noexcept
 	return 1;
 }
 
-Task<SocketResult>
-Socket::ConnectAsync(IoContext* context)
-const noexcept
+import <future>;
+
+Task<SocketResult> net::Socket::ConnectAsync(const EndPoint& endpoint) const noexcept
 {
-	return Task<SocketResult>();
+	co_return Connect(endpoint);
+}
+
+Task<SocketResult> net::Socket::ConnectAsync(EndPoint&& endpoint) const noexcept
+{
+	co_return Connect(std::move(endpoint));
 }
 
 bool

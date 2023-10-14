@@ -58,7 +58,9 @@ export namespace net
 		SocketResult Connect(const EndPoint& endpoint) const noexcept;
 		SocketResult Connect(EndPoint&& endpoint) const noexcept;
 		[[nodiscard]]
-		Task<SocketResult> ConnectAsync(_Maybenull_ IoContext* context) const noexcept;
+		Task<SocketResult> ConnectAsync(const EndPoint& endpoint) const noexcept;
+		[[nodiscard]]
+		Task<SocketResult> ConnectAsync(EndPoint&& endpoint) const noexcept;
 		bool Close() noexcept;
 		bool Close(SocketClosingErrorCodes& error_code) noexcept;
 
