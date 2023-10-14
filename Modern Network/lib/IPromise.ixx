@@ -1,7 +1,6 @@
 export module Net.Coroutine.IPromise;
 import Net.Constraints;
 import Net.Coroutine.Suspender;
-import Net.Coroutine.Promissory;
 import Net.Coroutine.Awaitable;
 import <coroutine>;
 
