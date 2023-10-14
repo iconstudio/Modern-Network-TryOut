@@ -64,6 +64,12 @@ export namespace net
 		}
 
 		[[nodiscard]]
+		constexpr value_type return_value() const noexcept
+		{
+			return myValue;
+		}
+
+		[[nodiscard]]
 		constexpr reference value() & noexcept
 		{
 			return myValue;
