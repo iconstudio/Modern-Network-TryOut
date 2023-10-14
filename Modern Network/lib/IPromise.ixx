@@ -6,13 +6,11 @@ import <coroutine>;
 
 export namespace net
 {
-	template<typename Promise
-		, Suspender Init = std::suspend_always
-		, Suspender Final = std::suspend_always>
+	template<Suspender Init = std::suspend_always, Suspender Final = std::suspend_always>
 	class [[nodiscard]] IPromise
 	{
 	public:
-		using type = IPromise<Promise, Init, Final>;
+		using type = IPromise<Init, Final>;
 		using handle_type = std::coroutine_handle<type>;
 
 		constexpr IPromise() noexcept = default;
@@ -42,19 +40,6 @@ export namespace net
 		virtual void unhandled_exception()
 		{
 			throw;
-		}
-
-	protected:
-		[[nodiscard]]
-		constexpr Promise* _Cast() noexcept
-		{
-			return static_cast<Promise*>(this);
-		}
-
-		[[nodiscard]]
-		constexpr const Promise* _Cast() const noexcept
-		{
-			return static_cast<const Promise*>(this);
 		}
 	};
 }

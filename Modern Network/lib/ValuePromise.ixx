@@ -15,11 +15,11 @@ export namespace net
 
 	template<Suspender Init, Suspender Final>
 	class [[nodiscard]] ValuePromise<void, Init, Final>
-		: public IPromise<ValuePromise<void, Init, Final>, Init, Final>
+		: public IPromise<Init, Final>
 	{
 	public:
 		using type = ValuePromise<void, Init, Final>;
-		using super = IPromise<ValuePromise<void, Init, Final>, Init, Final>;
+		using super = IPromise<Init, Final>;
 		using handle_type = super::handle_type;
 
 		static constexpr void return_void() noexcept
@@ -29,11 +29,11 @@ export namespace net
 	template<movable Value
 		, Suspender Init, Suspender Final>
 	class [[nodiscard]] ValuePromise<Value, Init, Final>
-		: public IPromise<ValuePromise<Value, Init, Final>, Init, Final>
+		: public IPromise<Init, Final>
 	{
 	public:
 		using type = ValuePromise<Value, Init, Final>;
-		using super = IPromise<ValuePromise<Value, Init, Final>, Init, Final>;
+		using super = IPromise<Init, Final>;
 		using handle_type = super::handle_type;
 
 		using value_type = Value;
