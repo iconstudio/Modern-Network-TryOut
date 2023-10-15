@@ -99,6 +99,8 @@ export namespace net
 		{
 			if (myHandle)
 			{
+				myHandle.resume();
+
 				promise_type& promise = myHandle.promise();
 				return promise.myValue;
 			}
@@ -113,6 +115,8 @@ export namespace net
 		{
 			if (myHandle)
 			{
+				myHandle.resume();
+
 				promise_type& promise = myHandle.promise();
 				return promise.myValue;
 			}
