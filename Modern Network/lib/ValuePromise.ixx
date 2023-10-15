@@ -63,10 +63,12 @@ export namespace net
 			return {};
 		}
 
+		template<typename U>
 		[[nodiscard]]
-		constexpr value_type return_value() const noexcept
+		constexpr void return_value(U&& value)
+			noexcept(nothrow_assignable<Value, U&&>)
 		{
-			return myValue;
+			yield_value(std::forward<U>(value));
 		}
 
 		[[nodiscard]]
