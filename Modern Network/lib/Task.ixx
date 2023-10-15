@@ -1,7 +1,7 @@
 export module Net.Task;
 import Net.Constraints;
-import Net.Coroutine;
-import Net.Coroutine.Suspender;
+export import Net.Coroutine;
+export import Net.Coroutine.Suspender;
 import Net.Coroutine.ValuePromise;
 
 export namespace net
