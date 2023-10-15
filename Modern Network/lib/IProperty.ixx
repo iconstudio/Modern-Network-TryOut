@@ -38,30 +38,6 @@ export namespace net
 		{}
 
 		[[nodiscard]]
-		constexpr T& value() & noexcept
-		{
-			return myValue;
-		}
-
-		[[nodiscard]]
-		constexpr const T& value() const& noexcept
-		{
-			return myValue;
-		}
-
-		[[nodiscard]]
-		constexpr T&& value() && noexcept
-		{
-			return std::move(myValue);
-		}
-
-		[[nodiscard]]
-		constexpr const T&& value() const&& noexcept
-		{
-			return std::move(myValue);
-		}
-
-		[[nodiscard]]
 		constexpr operator T& () & noexcept
 		{
 			return myValue;
@@ -162,30 +138,6 @@ export namespace net
 			requires constructible_from<T, U&&>
 		: myValue(std::move(other.myValue))
 		{}
-
-		[[nodiscard]]
-		constexpr T& value() & noexcept
-		{
-			return myValue;
-		}
-
-		[[nodiscard]]
-		constexpr const T& value() const& noexcept
-		{
-			return myValue;
-		}
-
-		[[nodiscard]]
-		constexpr T&& value() && noexcept
-		{
-			return std::move(myValue);
-		}
-
-		[[nodiscard]]
-		constexpr const T&& value() const&& noexcept
-		{
-			return std::move(myValue);
-		}
 
 		[[nodiscard]]
 		constexpr operator T& () & noexcept
