@@ -15,20 +15,21 @@ export namespace net
 	class Task<void, Init, Final> final
 	{
 	public:
+		struct promise_type;
+		using handle_type = std::coroutine_handle<promise_type>;
+
 		struct promise_type : public IPromise<Init, Final>
 		{
 			[[nodiscard]]
 			Task<void, Init, Final> get_return_object() noexcept
 			{
-				return Task{ std::coroutine_handle<promise_type>::from_promise(*this) };
+				return Task{ handle_type::from_promise(*this) };
 			}
 
 			static constexpr void return_void() noexcept
 			{}
 		};
 		static_assert(not Promissory<promise_type>);
-
-		using handle_type = std::coroutine_handle<promise_type>;
 
 		constexpr Task(const handle_type& handle) noexcept
 			: myHandle(handle)
@@ -57,12 +58,15 @@ export namespace net
 	class [[nodiscard]] Task<T, Init, Final> final
 	{
 	public:
+		struct promise_type;
+		using handle_type = std::coroutine_handle<promise_type>;
+
 		struct promise_type : public IPromise<Init, Final>
 		{
 			[[nodiscard]]
 			Task<T, Init, Final> get_return_object() noexcept
 			{
-				return Task{ std::coroutine_handle<promise_type>::from_promise(*this) };
+				return Task{ handle_type::from_promise(*this) };
 			}
 
 			template<convertible_to<T> U>
@@ -75,8 +79,6 @@ export namespace net
 			T myValue;
 		};
 		static_assert(not Promissory<promise_type>);
-
-		using handle_type = std::coroutine_handle<promise_type>;
 
 		constexpr Task(const handle_type& handle) noexcept
 			: myHandle(handle), reservedError("Cannot acquire a vale from the null promise")
