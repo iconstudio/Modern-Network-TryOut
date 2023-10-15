@@ -124,7 +124,9 @@
     <ClCompile Include="lib\IPv6Address.ixx" />
     <ClCompile Include="lib\NativeHandle.ixx" />
     <ClCompile Include="lib\IResourcePool.ixx" />
+    <ClCompile Include="lib\NetworkInitializationError.ixx" />
     <ClCompile Include="lib\Promissory.ixx" />
+    <ClCompile Include="lib\Property.ixx" />
     <ClCompile Include="lib\Socket.ixx" />
     <ClCompile Include="lib\SocketClosingErrorCodes.ixx" />
     <ClCompile Include="lib\SocketGeneralErrorCodes.ixx" />
@@ -144,8 +146,6 @@
     </ClCompile>
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\IpAddress.cpp" />
-    <ClCompile Include="src\NetworkInitializationError.ixx" />
-    <ClCompile Include="src\Property.ixx" />
     <ClCompile Include="src\Socket.cpp" />
     <ClCompile Include="src\SocketErrorCode.cpp" />
     <ClCompile Include="src\Socket_connectors.cpp" />

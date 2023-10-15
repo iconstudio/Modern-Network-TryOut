@@ -134,12 +134,6 @@
     <ClCompile Include="src\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\NetworkInitializationError.ixx">
-      <Filter>lib\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Property.ixx">
-      <Filter>lib\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="src\SocketErrorCode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -167,8 +161,14 @@
     <ClCompile Include="src\Socket_observers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\NetworkInitializationError.ixx">
+      <Filter>lib\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Property.ixx">
+      <Filter>lib\Utility</Filter>
+    </ClCompile>
     <ClCompile Include="lib\IProperty.ixx">
-      <Filter>lib</Filter>
+      <Filter>lib\Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
