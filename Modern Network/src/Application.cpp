@@ -58,7 +58,9 @@ net::Application::Awake()
 
 void
 net::Application::Start()
-{}
+{
+	serverSocket.Open();
+}
 
 void
 net::Application::Update(float)
