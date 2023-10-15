@@ -11,7 +11,6 @@ import Net.EndPoint;
 import <cstddef>;
 import <cstdint>;
 import <span>;
-import <expected>;
 
 export namespace net
 {
@@ -31,7 +30,7 @@ export namespace net
 	public:
 		// Type members
 
-		using FactoryResult = std::expected<Socket, SocketErrorCodes>;
+		using FactoryResult = expected<Socket, SocketErrorCodes>;
 
 		// Static members
 

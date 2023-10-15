@@ -4,12 +4,10 @@ module;
 #include <ws2ipdef.h>
 #include <WS2tcpip.h>
 #include <MSWSock.h>
-#include <type_traits>
 
 module Net.Socket;
 import <cstdint>;
-import <expected>;
-import <coroutine>;
+import <type_traits>;
 
 using namespace net;
 
@@ -38,7 +36,7 @@ const noexcept
 	{
 		if (auto error = AcquireSendingError(); error != SendingErrorCodes::PendedIoOperation)
 		{
-			return std::unexpected(std::move(error));
+			return unexpected(std::move(error));
 		}
 		else
 		{
@@ -109,7 +107,7 @@ const noexcept
 
 	if (0 != ::bind(myHandle, reinterpret_cast<const SOCKADDR*>(ptr), sizeof(sockaddr)))
 	{
-		return std::unexpected(AcquireSocketError());
+		return unexpected(AcquireSocketError());
 	}
 
 	return static_cast<unsigned int>(sizeof(sockaddr));
@@ -124,7 +122,7 @@ const noexcept
 
 	if (0 != ::bind(myHandle, reinterpret_cast<const SOCKADDR*>(ptr), sizeof(sockaddr)))
 	{
-		return std::unexpected(AcquireSocketError());
+		return unexpected(AcquireSocketError());
 	}
 
 	return static_cast<unsigned int>(sizeof(sockaddr));
@@ -137,7 +135,7 @@ const noexcept
 	const int open = ::listen(myHandle, SOMAXCONN);
 	if (SOCKET_ERROR == open)
 	{
-		return std::unexpected(AcquireListeningError());
+		return unexpected(AcquireListeningError());
 	}
 
 	return 0;
@@ -176,7 +174,7 @@ const noexcept
 		}
 		else
 		{
-			return std::unexpected(error_code);
+			return unexpected(error_code);
 		}
 	}
 
@@ -202,7 +200,7 @@ const noexcept
 		}
 		else
 		{
-			return std::unexpected(error_code);
+			return unexpected(error_code);
 		}
 	}
 
@@ -375,7 +373,7 @@ noexcept
 	}
 	else
 	{
-		return std::unexpected(AcquireSocketError());
+		return unexpected(AcquireSocketError());
 	}
 }
 
