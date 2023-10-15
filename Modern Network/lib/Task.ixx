@@ -34,17 +34,30 @@ export namespace net
 		constexpr Task(const handle_type& handle) noexcept
 			: myHandle(handle)
 		{}
-
 		constexpr Task(handle_type&& handle) noexcept
 			: myHandle(std::move(handle))
 		{}
-
 		~Task() noexcept(noexcept(myHandle.destroy()))
 		{
 			if (myHandle)
 			{
 				myHandle.destroy();
 			}
+		}
+
+		void operator()() const
+		{
+			myHandle();
+		}
+		void Resume() const
+		{
+			myHandle.resume();
+		}
+
+		[[nodiscard]]
+		bool IsDone() const noexcept
+		{
+			return myHandle.done();
 		}
 
 		[[nodiscard]]
@@ -83,17 +96,24 @@ export namespace net
 		constexpr Task(const handle_type& handle) noexcept
 			: myHandle(handle), reservedError("Cannot acquire a vale from the null promise")
 		{}
-
 		constexpr Task(handle_type&& handle) noexcept
 			: myHandle(std::move(handle)), reservedError("Cannot acquire a vale from the null promise")
 		{}
-
 		~Task() noexcept(noexcept(myHandle.destroy()))
 		{
 			if (myHandle)
 			{
 				myHandle.destroy();
 			}
+		}
+
+		void operator()() const
+		{
+			myHandle();
+		}
+		void Resume() const
+		{
+			myHandle.resume();
 		}
 
 		[[nodiscard]]
@@ -111,7 +131,6 @@ export namespace net
 				throw reservedError;
 			}
 		}
-
 		[[nodiscard]]
 		const T& Current() const
 		{
@@ -129,7 +148,16 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		constexpr bool operator==(const Task&) const noexcept = default;
+		bool IsDone() const noexcept
+		{
+			return myHandle.done();
+		}
+
+		[[nodiscard]]
+		constexpr bool operator==(const Task& other) const noexcept
+		{
+			return myHandle.address() == other.myHandle.address();
+		}
 
 	private:
 		handle_type myHandle;
