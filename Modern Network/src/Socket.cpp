@@ -222,13 +222,6 @@ noexcept
 	}
 }
 
-bool
-Socket::IsAvailable()
-const noexcept
-{
-	return myHandle != INVALID_SOCKET;
-}
-
 Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
 noexcept
