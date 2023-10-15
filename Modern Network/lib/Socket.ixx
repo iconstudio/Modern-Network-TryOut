@@ -69,6 +69,9 @@ export namespace net
 
 		// Methods
 
+		bool ReusableAddress() const noexcept;
+		void ReusableAddress(bool flag) const noexcept;
+
 		// Synchronous Send & Receive (1)
 
 		SocketSendingResult Send(std::span<const std::byte> memory) const noexcept;
@@ -125,6 +128,7 @@ export namespace net
 		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, SocketErrorCodes& error_code) noexcept;
 		[[nodiscard]]
 		static FactoryResult TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
+		static void SetAddressReusable(Socket& target, bool& flag) noexcept;
 
 		// Default methods
 
@@ -136,6 +140,7 @@ export namespace net
 
 		ReadonlyProperty<InternetProtocols> myProtocol;
 		ReadonlyProperty<IpAddressFamily> myFamily;
+		CustomProperty<bool, Socket> IsAddressReusable;
 
 		friend class AttentSocket;
 

@@ -7,6 +7,7 @@ module;
 
 module Net.Socket;
 import <type_traits>;
+import <functional>;
 
 using namespace net;
 
@@ -18,7 +19,9 @@ noexcept
 {}
 
 Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept
-	: Handler(sock), myProtocol(protocol), myFamily(family)
+	: Handler(sock)
+	, myProtocol(protocol), myFamily(family)
+	, IsAddressReusable(this, false, SetAddressReusable)
 {}
 
 Socket::Socket(EmptySocketType)
@@ -184,3 +187,8 @@ noexcept
 		return unexpected(AcquireSocketError());
 	}
 }
+
+void
+Socket::SetAddressReusable(Socket& target, bool& flag)
+noexcept
+{}
