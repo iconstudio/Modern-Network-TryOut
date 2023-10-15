@@ -8,7 +8,7 @@ export namespace net
 	template<typename T, typename Context, typename Setter, bool Copyable, bool Readonly>
 	class IProperty;
 
-	template<movable T, notvoids Context, bool Copyable, bool Readonly>
+	template<movable T, typename Context, bool Copyable, bool Readonly>
 	class IProperty<T, Context, void, Copyable, Readonly>
 	{
 	public:
