@@ -34,8 +34,6 @@ export namespace net
 			return {};
 		}
 
-		static constexpr void return_void() noexcept {}
-
 		[[noreturn]]
 		virtual void unhandled_exception()
 		{
