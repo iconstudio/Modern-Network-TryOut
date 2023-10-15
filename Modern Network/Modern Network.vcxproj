@@ -119,6 +119,7 @@
     <ClCompile Include="lib\IpAddress.ixx" />
     <ClCompile Include="lib\IpAddressFamily.ixx" />
     <ClCompile Include="lib\IPromise.ixx" />
+    <ClCompile Include="lib\IProperty.ixx" />
     <ClCompile Include="lib\IPv4Address.ixx" />
     <ClCompile Include="lib\IPv6Address.ixx" />
     <ClCompile Include="lib\NativeHandle.ixx" />
