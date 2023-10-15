@@ -17,12 +17,6 @@ export namespace net
 		virtual constexpr ~IPromise() noexcept = default;
 
 		[[nodiscard]]
-		virtual handle_type get_return_object() noexcept
-		{
-			return handle_type::from_promise(*this);
-		}
-
-		[[nodiscard]]
 		static constexpr std::decay_t<Init> initial_suspend() noexcept
 		{
 			return {};
