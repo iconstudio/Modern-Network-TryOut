@@ -14,7 +14,7 @@ int main()
 	std::println("=========== Awake ===========");
 	app.Awake();
 
-	std::println("===========Start ===========");
+	std::println("=========== Start ===========");
 	app.Start();
 
 	net::Socket test_socket1 = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
