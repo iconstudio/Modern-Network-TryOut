@@ -13,13 +13,13 @@ export namespace net
 		[[nodiscard]]
 		constexpr const void* const& GetPointer() const& noexcept
 		{
-			return nativePointer.value();
+			return nativePointer;
 		}
 
 		[[nodiscard]]
 		constexpr void* && GetPointer() && noexcept
 		{
-			return std::move(nativePointer).value();
+			return std::move(nativePointer);
 		}
 
 		[[nodiscard]]
