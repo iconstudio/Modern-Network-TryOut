@@ -211,14 +211,32 @@ const noexcept
 
 import <future>;
 
-Task<SocketResult> net::Socket::ConnectAsync(const EndPoint& endpoint) const noexcept
+Task<SocketResult>
+Socket::ConnectAsync(const EndPoint& endpoint)
+const noexcept
 {
-	co_return Connect(endpoint);
+	co_return this->Connect(endpoint);
 }
 
-Task<SocketResult> net::Socket::ConnectAsync(EndPoint&& endpoint) const noexcept
+Task<SocketResult>
+Socket::ConnectAsync(EndPoint&& endpoint)
+const noexcept
 {
-	co_return Connect(std::move(endpoint));
+	co_return this->Connect(std::move(endpoint));
+}
+
+Task<SocketResult>
+Socket::ConnectAsync(const IpAddress& address, const std::uint16_t& port)
+const noexcept
+{
+	co_return this->Connect(EndPoint(address, port));
+}
+
+Task<SocketResult>
+Socket::ConnectAsync(IpAddress&& address, const std::uint16_t& port)
+const noexcept
+{
+	co_return this->Connect(EndPoint(address, port));
 }
 
 bool

@@ -61,6 +61,10 @@ export namespace net
 		Task<SocketResult> ConnectAsync(const EndPoint& endpoint) const noexcept;
 		[[nodiscard]]
 		Task<SocketResult> ConnectAsync(EndPoint&& endpoint) const noexcept;
+		[[nodiscard]]
+		Task<SocketResult> ConnectAsync(const IpAddress& address, const std::uint16_t& port) const noexcept;
+		[[nodiscard]]
+		Task<SocketResult> ConnectAsync(IpAddress&& address, const std::uint16_t& port) const noexcept;
 		bool Close() noexcept;
 		bool Close(SocketClosingErrorCodes& error_code) noexcept;
 
