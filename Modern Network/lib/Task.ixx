@@ -18,7 +18,7 @@ export namespace net
 		struct promise_type : public IPromise<Init, Final>
 		{
 			[[nodiscard]]
-			Task get_return_object() noexcept
+			Task<void, Init, Final> get_return_object() noexcept
 			{
 				return Task{ std::coroutine_handle<promise_type>::from_promise(*this) };
 			}
@@ -53,14 +53,14 @@ export namespace net
 		handle_type myHandle;
 	};
 
-	template<typename T, Suspender Init, Suspender Final>
-	class [[nodiscard]] Task final
+	template<notvoids T, Suspender Init, Suspender Final>
+	class [[nodiscard]] Task<T, Init, Final> final
 	{
 	public:
 		struct promise_type : public IPromise<Init, Final>
 		{
 			[[nodiscard]]
-			Task get_return_object() noexcept
+			Task<T, Init, Final> get_return_object() noexcept
 			{
 				return Task{ std::coroutine_handle<promise_type>::from_promise(*this) };
 			}
