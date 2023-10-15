@@ -9,6 +9,7 @@ module;
 module Net.Socket;
 import <cstdint>;
 import <expected>;
+import <coroutine>;
 
 using namespace net;
 
