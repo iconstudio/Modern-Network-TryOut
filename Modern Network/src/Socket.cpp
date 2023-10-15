@@ -34,20 +34,6 @@ Socket::~Socket()
 noexcept
 {}
 
-SocketReceivingResult
-Socket::Receive(std::span<std::byte> memory)
-const noexcept
-{
-	return SocketReceivingResult();
-}
-
-SocketReceivingResult
-Socket::Receive(const std::byte* const& memory, size_t size)
-const noexcept
-{
-	return SocketReceivingResult();
-}
-
 SocketResult
 Socket::Bind(const IpAddress& address, const std::uint16_t& port)
 const noexcept
@@ -170,8 +156,6 @@ const noexcept
 
 	return 1;
 }
-
-import <future>;
 
 Task<SocketResult>
 Socket::ConnectAsync(const EndPoint& endpoint)
