@@ -12,7 +12,7 @@ export namespace net
 	class Task;
 
 	template<Suspender Init, Suspender Final>
-	class Task<void, Init, Final>
+	class Task<void, Init, Final> final
 	{
 	public:
 		struct promise_type : public IPromise<Init, Final>
@@ -38,7 +38,7 @@ export namespace net
 			: myHandle(std::move(handle))
 		{}
 
-		virtual ~Task() noexcept(noexcept(myHandle.destroy()))
+		~Task() noexcept(noexcept(myHandle.destroy()))
 		{
 			if (myHandle)
 			{
@@ -54,7 +54,7 @@ export namespace net
 	};
 
 	template<typename T, Suspender Init, Suspender Final>
-	class [[nodiscard]] Task
+	class [[nodiscard]] Task final
 	{
 	public:
 		struct promise_type : public IPromise<Init, Final>
@@ -86,7 +86,7 @@ export namespace net
 			: myHandle(std::move(handle)), reservedError("Cannot acquire a vale from the null promise")
 		{}
 
-		virtual ~Task() noexcept(noexcept(myHandle.destroy()))
+		~Task() noexcept(noexcept(myHandle.destroy()))
 		{
 			if (myHandle)
 			{
@@ -95,7 +95,7 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		virtual T& Current()
+		T& Current()
 		{
 			if (myHandle)
 			{
@@ -111,7 +111,7 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		virtual const T& Current() const
+		const T& Current() const
 		{
 			if (myHandle)
 			{
