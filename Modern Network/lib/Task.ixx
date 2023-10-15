@@ -14,20 +14,9 @@ export namespace net
 	{
 	public:
 		using promise_type = ValuePromise<void, Init, Final>;
-		using handle_type = std::coroutine_handle<promise_type>;
 		using super = Coroutine<ValuePromise<void, Init, Final>>;
 
-		constexpr Task() noexcept = default;
-
-		constexpr Task(const handle_type& handle)
-			noexcept(nothrow_copy_constructibles<handle_type>) requires(copyable<handle_type>)
-			: super(handle)
-		{}
-
-		constexpr Task(handle_type&& handle)
-			noexcept(nothrow_move_constructibles<handle_type>) requires(movable<handle_type>)
-			: super(std::move(handle))
-		{}
+		using super::super;
 
 		~Task() noexcept = default;
 	};
@@ -37,20 +26,9 @@ export namespace net
 	{
 	public:
 		using promise_type = ValuePromise<T, Init, Final>;
-		using handle_type = std::coroutine_handle<promise_type>;
 		using super = Coroutine<ValuePromise<T, Init, Final>>;
 
-		constexpr Task() noexcept = default;
-
-		constexpr Task(const handle_type& handle)
-			noexcept(nothrow_copy_constructibles<handle_type>) requires(copyable<handle_type>)
-			: super(handle)
-		{}
-
-		constexpr Task(handle_type&& handle)
-			noexcept(nothrow_move_constructibles<handle_type>) requires(movable<handle_type>)
-			: super(std::move(handle))
-		{}
+		using super::super;
 
 		~Task() noexcept = default;
 	};
