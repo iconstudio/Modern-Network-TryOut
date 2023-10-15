@@ -1,7 +1,6 @@
 export module Net.Property:IProperty;
 import Net.Constraints;
 import <type_traits>;
-import <functional>;
 
 export namespace net
 {
@@ -87,7 +86,7 @@ export namespace net
 	class IProperty<T, void, true, Copyable, Readonly>
 	{
 	public:
-		using functor_t = std::function<void(T&)>;
+		using functor_t = void(*)(T&);
 
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T>) = default;
@@ -98,7 +97,7 @@ export namespace net
 		constexpr IProperty(U&& trans_value, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_default_constructibles<T> and nothrow_constructible<functor_t, Fn&&>)
 			requires constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
-		: myValue(std::forward<U>(trans_value)), mySetter(std::forward<Fn>(setter))
+		: myValue(std::forward<U>(trans_value)), mySetter(static_cast<functor_t>(setter))
 		{}
 
 		template<bool C2, bool R2>
@@ -119,14 +118,14 @@ export namespace net
 		constexpr IProperty(const IProperty<U, X2, S2, C2, R2>& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, const U&> and nothrow_constructible<functor_t, Fn&&>)
 			requires Copyable and C2 and copy_constructibles<T, U> and constructible_from<T, const U&> and constructible_from<functor_t, Fn&&>
-		: myValue(other.myValue), mySetter(std::forward<Fn>(setter))
+		: myValue(other.myValue), mySetter(static_cast<functor_t>(setter))
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, invocables<T&> Fn>
 		constexpr IProperty(IProperty<U, X2, S2, C2, R2>&& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_constructible<functor_t, Fn&&>)
 			requires move_constructibles<T, U> and constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
-		: myValue(std::move(other.myValue)), mySetter(std::forward<Fn>(setter))
+		: myValue(std::move(other.myValue)), mySetter(static_cast<functor_t>(setter))
 		{}
 
 		[[nodiscard]]
@@ -154,20 +153,24 @@ export namespace net
 		}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2>
+			requires not Readonly and C2 and copy_assignables<T, U> and constructible_from<T, const U&>
 		constexpr IProperty& operator=(const IProperty<U, X2, S2, C2, R2>& other)
 			noexcept(nothrow_assignable<const U&, T>)
-			requires not Readonly and C2 and copy_assignables<T, U> and constructible_from<T, const U&>
 		{
 			myValue = other.myValue;
+			mySetter(myValue);
+
 			return *this;
 		}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2>
+			requires not Readonly and move_assignables<T, U> and constructible_from<T, U&&>
 		constexpr IProperty& operator=(IProperty<U, X2, S2, C2, R2>&& other)
 			noexcept(nothrow_assignable<U&&, T>)
-			requires not Readonly and move_assignables<T, U> and constructible_from<T, U&&>
 		{
 			myValue = std::move(other.myValue);
+			mySetter(myValue);
+
 			return *this;
 		}
 
@@ -180,7 +183,7 @@ export namespace net
 	class IProperty<T, Context, true, Copyable, Readonly>
 	{
 	public:
-		using functor_t = std::function<void(Context&, T&)>;
+		using functor_t = void(*)(Context&, T&);
 
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T>) = default;
@@ -192,7 +195,7 @@ export namespace net
 			noexcept(nothrow_constructible<T, U&&> and nothrow_default_constructibles<T> and nothrow_constructible<functor_t, Fn&&>) requires constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
 			: myContext(context)
 			, myValue(std::forward<U>(trans_value))
-			, mySetter(std::forward<Fn>(setter))
+			, mySetter(static_cast<functor_t>(setter))
 		{}
 
 		template<bool S2, bool C2, bool R2>
@@ -213,22 +216,22 @@ export namespace net
 			, mySetter(std::move(other.mySetter))
 		{}
 
-		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, invocables<T&> Fn>
+		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, invocables<Context&, T&> Fn>
 			requires Copyable and C2 and copy_constructibles<T, U> and constructible_from<T, const U&> and constructible_from<functor_t, Fn&&>
 		constexpr IProperty(Context* const& context, const IProperty<U, X2, S2, C2, R2>& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, const U&> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
 			, myValue(other.myValue)
-			, mySetter(std::forward<Fn>(setter))
+			, mySetter(static_cast<functor_t>(setter))
 		{}
 
-		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, invocables<T&> Fn>
+		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, invocables<Context&, T&> Fn>
 			requires move_constructibles<T, U> and constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
 		constexpr IProperty(Context* const& context, IProperty<U, X2, S2, C2, R2>&& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
 			, myValue(std::move(other.myValue))
-			, mySetter(std::forward<Fn>(setter))
+			, mySetter(static_cast<functor_t>(setter))
 		{}
 
 		[[nodiscard]]
@@ -256,25 +259,27 @@ export namespace net
 		}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2>
-		constexpr IProperty& operator=(const IProperty<U, X2, S2, C2, R2>& other)
-			noexcept(nothrow_assignable<const U&, T>)
 			requires not Readonly and C2 and copy_assignables<T, U> and constructible_from<T, const U&>
+		constexpr IProperty& operator=(const IProperty<U, X2, S2, C2, R2>& other)
 		{
 			myValue = other.myValue;
+			mySetter(*myContext, myValue);
+
 			return *this;
 		}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2>
-		constexpr IProperty& operator=(IProperty<U, X2, S2, C2, R2>&& other)
-			noexcept(nothrow_assignable<U&&, T>)
 			requires not Readonly and move_assignables<T, U> and constructible_from<T, U&&>
+		constexpr IProperty& operator=(IProperty<U, X2, S2, C2, R2>&& other)
 		{
 			myValue = std::move(other.myValue);
+			mySetter(*myContext, myValue);
+
 			return *this;
 		}
 
 	protected:
-		Context* myContext;
+		Context* const myContext;
 		T myValue;
 		functor_t mySetter;
 	};
