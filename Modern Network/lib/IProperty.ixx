@@ -1,7 +1,7 @@
 export module Net.Property:IProperty;
-export import Net.Constraints;
-export import <type_traits>;
-export import <functional>;
+import Net.Constraints;
+import <type_traits>;
+import <functional>;
 
 export namespace net
 {
@@ -278,10 +278,4 @@ export namespace net
 		T myValue;
 		functor_t mySetter;
 	};
-
-	template<typename T, typename Context, typename Fn, bool Copyable = copyable<T>, bool Readonly = false>
-	IProperty(T, Context, Fn) -> IProperty<T, Context, true, Copyable, Readonly>;
-
-	template<typename T, bool Copyable = copyable<T>, bool Readonly = false>
-	IProperty(T) -> IProperty<T, void, false, Copyable, Readonly>;
 }
