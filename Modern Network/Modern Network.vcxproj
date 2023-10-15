@@ -147,6 +147,11 @@
     <ClCompile Include="src\Property.ixx" />
     <ClCompile Include="src\Socket.cpp" />
     <ClCompile Include="src\SocketErrorCode.cpp" />
+    <ClCompile Include="src\Socket_binders.cpp" />
+    <ClCompile Include="src\Socket_connectors.cpp" />
+    <ClCompile Include="src\Socket_observers.cpp" />
+    <ClCompile Include="src\Socket_receivers.cpp" />
+    <ClCompile Include="src\Socket_senders.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -155,5 +155,20 @@
     <ClCompile Include="lib\SocketClosingErrorCodes.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="src\Socket_senders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Socket_receivers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Socket_connectors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Socket_observers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Socket_binders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
