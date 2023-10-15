@@ -39,8 +39,10 @@ int main()
 		std::println("connected! (1)");
 	}
 
-	connected = test_socket2.Connect(net::IPv4Address::Loopback, 52000);
-	if (connected.has_value())
+	auto connector = test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
+	auto& async_conn = connector.Current();
+	
+	if (async_conn.has_value())
 	{
 		std::println("connected! (2)");
 	}
