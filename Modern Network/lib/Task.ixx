@@ -1,8 +1,10 @@
 export module Net.Task;
 import Net.Constraints;
-export import Net.Coroutine;
-export import Net.Coroutine.Suspender;
-import Net.Coroutine.ValuePromise;
+import Net.Coroutine.Suspender;
+import Net.Coroutine.Promissory;
+import Net.Coroutine.IPromise;
+import <stdexcept>;
+import <coroutine>;
 
 export namespace net
 {
@@ -10,26 +12,121 @@ export namespace net
 	class Task;
 
 	template<Suspender Init, Suspender Final>
-	class Task<void, Init, Final> : public Coroutine<ValuePromise<void, Init, Final>>
+	class Task<void, Init, Final>
 	{
 	public:
-		using promise_type = ValuePromise<void, Init, Final>;
-		using super = Coroutine<ValuePromise<void, Init, Final>>;
+		struct promise_type : public IPromise<Init, Final>
+		{
+			[[nodiscard]]
+			Task get_return_object() noexcept
+			{
+				return Task{ std::coroutine_handle<promise_type>::from_promise(*this) };
+			}
 
-		using super::super;
+			static constexpr void return_void() noexcept
+			{}
+		};
+		static_assert(not Promissory<promise_type>);
 
-		~Task() noexcept = default;
+		using handle_type = std::coroutine_handle<promise_type>;
+
+		constexpr Task(const handle_type& handle) noexcept
+			: myHandle(handle)
+		{}
+
+		constexpr Task(handle_type&& handle) noexcept
+			: myHandle(std::move(handle))
+		{}
+
+		virtual ~Task() noexcept(noexcept(myHandle.destroy()))
+		{
+			if (myHandle)
+			{
+				myHandle.destroy();
+			}
+		}
+
+		[[nodiscard]]
+		constexpr bool operator==(const Task&) const noexcept = default;
+
+	private:
+		handle_type myHandle;
 	};
 
 	template<typename T, Suspender Init, Suspender Final>
-	class [[nodiscard]] Task : public Coroutine<ValuePromise<T, Init, Final>>
+	class [[nodiscard]] Task
 	{
 	public:
-		using promise_type = ValuePromise<T, Init, Final>;
-		using super = Coroutine<ValuePromise<T, Init, Final>>;
+		struct promise_type : public IPromise<Init, Final>
+		{
+			[[nodiscard]]
+			Task get_return_object() noexcept
+			{
+				return Task{ std::coroutine_handle<promise_type>::from_promise(*this) };
+			}
 
-		using super::super;
+			template<convertible_to<T> U>
+			constexpr void return_value(U&& value)
+				noexcept(nothrow_assignable<T, U&&>)
+			{
+				myValue = std::forward<U>(value);
+			}
 
-		~Task() noexcept = default;
+			T myValue;
+		};
+		static_assert(not Promissory<promise_type>);
+
+		using handle_type = std::coroutine_handle<promise_type>;
+
+		constexpr Task(const handle_type& handle) noexcept
+			: myHandle(handle), reservedError("Cannot acquire a vale from the null promise")
+		{}
+
+		constexpr Task(handle_type&& handle) noexcept
+			: myHandle(std::move(handle)), reservedError("Cannot acquire a vale from the null promise")
+		{}
+
+		virtual ~Task() noexcept(noexcept(myHandle.destroy()))
+		{
+			if (myHandle)
+			{
+				myHandle.destroy();
+			}
+		}
+
+		[[nodiscard]]
+		virtual T& Current()
+		{
+			if (myHandle)
+			{
+				promise_type& promise = myHandle.promise();
+				return promise.myValue;
+			}
+			else
+			{
+				throw reservedError;
+			}
+		}
+
+		[[nodiscard]]
+		virtual const T& Current() const
+		{
+			if (myHandle)
+			{
+				promise_type& promise = myHandle.promise();
+				return promise.myValue;
+			}
+			else
+			{
+				throw reservedError;
+			}
+		}
+
+		[[nodiscard]]
+		constexpr bool operator==(const Task&) const noexcept = default;
+
+	private:
+		handle_type myHandle;
+		std::runtime_error reservedError;
 	};
 }
