@@ -71,6 +71,8 @@ net::Application::Awake()
 
 		throw ServerSetupError{ formatted_msg.c_str() };
 	}
+
+	serverSocket.IsAddressReusable = true;
 }
 
 void
