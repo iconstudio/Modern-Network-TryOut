@@ -6,6 +6,9 @@ module;
 module Net.Socket;
 import <type_traits>;
 
+net::SocketOptioningResult RawSetOption(const net::NativeSocket& sock, int option, const void* buffer, int buff_size) noexcept;
+net::SocketOptioningResult RawGetOption(const net::NativeSocket& sock, int option, const void* const buffer, int buff_size) noexcept;
+
 using namespace net;
 
 const Socket::EmptySocketType Socket::EmptySocket = {};
@@ -201,5 +204,27 @@ noexcept
 {
 	::BOOL iflag = static_cast<::BOOL>(flag);
 
-	::setsockopt(target.myHandle, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(std::addressof(iflag)), sizeof(iflag));
+	RawSetOption(target.myHandle, SO_REUSEADDR, std::addressof(iflag), sizeof(iflag));
+}
+
+net::SocketOptioningResult
+RawSetOption(const net::NativeSocket& sock, int option, const void* buffer, int buff_size)
+noexcept
+{
+	if (0 == ::setsockopt(sock
+		, SOL_SOCKET
+		, option
+		, reinterpret_cast<const char*>(buffer), buff_size))
+	{
+		return 1;
+	}
+
+	return unexpected(AcquireSocketOptionsError());
+}
+
+net::SocketOptioningResult
+RawGetOption(const net::NativeSocket& sock, int option, const void* const buffer, int buff_size)
+noexcept
+{
+	return net::SocketOptioningResult();
 }
