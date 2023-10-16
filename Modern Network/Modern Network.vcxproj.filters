@@ -28,6 +28,9 @@
     <Filter Include="lib\Utility">
       <UniqueIdentifier>{41665156-a67f-4f57-a3fa-ac4e8319ab13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\Errors">
+      <UniqueIdentifier>{d70af050-d48d-449c-a4c5-885efabc538e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.hpp">
@@ -161,9 +164,6 @@
     <ClCompile Include="src\Socket_observers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lib\NetworkInitializationError.ixx">
-      <Filter>lib\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="lib\Property.ixx">
       <Filter>lib\Utility</Filter>
     </ClCompile>
@@ -172,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="lib\SocketOptions.ixx">
       <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\NetworkInitializationError.ixx">
+      <Filter>lib\Errors</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
