@@ -89,6 +89,16 @@ noexcept
 	}
 }
 
+bool net::Socket::ReusableAddress() const noexcept
+{
+	return IsAddressReusable;
+}
+
+void net::Socket::ReusableAddress(bool flag) noexcept
+{
+	IsAddressReusable = flag;
+}
+
 Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
 noexcept
@@ -188,4 +198,8 @@ noexcept
 void
 Socket::SetAddressReusable(Socket& target, bool& flag)
 noexcept
-{}
+{
+	::BOOL iflag = static_cast<::BOOL>(flag);
+
+	::setsockopt(target.myHandle, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(std::addressof(iflag)), sizeof(iflag));
+}
