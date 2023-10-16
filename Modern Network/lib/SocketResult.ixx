@@ -12,6 +12,8 @@ export namespace net
 
 	using SocketListeningResult = std::expected<int, SocketOpenErrorCodes>;
 
+	using SocketOptioningResult = std::expected<int, SocketOptionErrorCodes>;
+
 	using std::bad_expected_access;
 	using std::expected;
 	using std::unexpected;
