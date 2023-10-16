@@ -44,8 +44,6 @@ net::Application::~Application() noexcept
 void
 net::Application::Awake()
 {
-	RIO_EXTENSION_FUNCTION_TABLE rio_table{};
-
 	serverSocket = Socket::Create(InternetProtocols::TCP, IpAddressFamily::IPv4);
 
 	serverSocket.Bind(IPv4Address::Loopback, 52000).or_else(
@@ -55,6 +53,24 @@ net::Application::Awake()
 
 		throw ServerSetupError{ formatted_msg.c_str() };
 	});
+	
+	RIO_EXTENSION_FUNCTION_TABLE rio_table{};
+	GUID rio_fn_id = WSAID_MULTIPLE_RIO;
+	DWORD dwBytes = 0;
+
+	if (0 != WSAIoctl(serverSocket.GetHandle(), SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER,
+		std::addressof(rio_fn_id),
+		sizeof(GUID),
+		(void**)std::addressof(rio_table),
+		sizeof(rio_table),
+		std::addressof(dwBytes),
+		nullptr, nullptr))
+	{
+		constexpr auto startup_notify_msg = "Cannot bind the address to the listener (Code: {})";
+		auto formatted_msg = std::format(startup_notify_msg, ::WSAGetLastError());
+
+		throw ServerSetupError{ formatted_msg.c_str() };
+	}
 }
 
 void
