@@ -71,7 +71,7 @@ export namespace net
 		// Methods
 
 		bool ReusableAddress() const noexcept;
-		void ReusableAddress(bool flag) const noexcept;
+		void ReusableAddress(bool flag) noexcept;
 
 		// Synchronous Send & Receive (1)
 
