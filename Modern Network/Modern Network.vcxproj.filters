@@ -179,5 +179,8 @@
     <ClCompile Include="lib\ServerSetupError.ixx">
       <Filter>lib\Errors</Filter>
     </ClCompile>
+    <ClCompile Include="lib\SocketOptionErrorCodes.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

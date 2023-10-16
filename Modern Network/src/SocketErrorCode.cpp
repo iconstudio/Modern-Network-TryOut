@@ -23,6 +23,14 @@ noexcept
 	return static_cast<net::ReceivingErrorCodes>(WSAGetLastError());
 }
 
+
+net::SocketOptionErrorCodes
+net::AcquireSocketOptionsError()
+noexcept
+{
+	return static_cast<net::SocketOptionErrorCodes>(WSAGetLastError());
+}
+
 net::SocketOpenErrorCodes
 net::AcquireListeningError()
 noexcept
