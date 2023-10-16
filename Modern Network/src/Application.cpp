@@ -9,6 +9,7 @@ import Net.Socket;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
 import Net.Exception.NetworkInitializationError;
+import Net.Exception.ServerSetupError;
 import <type_traits>;
 import <utility>;
 import <format>;
@@ -52,7 +53,7 @@ net::Application::Awake()
 		constexpr auto startup_notify_msg = "Cannot bind the address to the listener (Code: {})";
 		auto formatted_msg = std::format(startup_notify_msg, static_cast<int>(error_code));
 
-		throw NetworkInitializationError{ formatted_msg.c_str() };
+		throw ServerSetupError{ formatted_msg.c_str() };
 	});
 }
 
