@@ -25,7 +25,7 @@ const noexcept
 	}
 	else
 	{
-		if (auto error = AcquireReceivingError(); error != SendingErrorCodes::PendedIoOperation)
+		if (auto error = AcquireReceivingError(); error != SocketErrorCodes::PendedIoOperation)
 		{
 			return unexpected(std::move(error));
 		}
@@ -58,7 +58,7 @@ const noexcept
 	}
 	else
 	{
-		if (auto error = AcquireReceivingError(); error != SendingErrorCodes::PendedIoOperation)
+		if (auto error = AcquireReceivingError(); error != SocketErrorCodes::PendedIoOperation)
 		{
 			return unexpected(std::move(error));
 		}
