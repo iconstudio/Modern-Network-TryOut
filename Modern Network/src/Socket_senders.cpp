@@ -31,6 +31,18 @@ const noexcept
 	return RawSend(myHandle, buffer, nullptr, nullptr);
 }
 
+bool
+net::Socket::Send(std::span<const std::byte> memory, net::SendingErrorCodes& error_code)
+const noexcept
+{
+	return Send(memory).and_then([](const unsigned int& bytes) noexcept -> expected<bool, SendingErrorCodes> {
+		return true;
+	}).or_else([&](net::SendingErrorCodes&& tr_error_code) noexcept -> expected<bool, SendingErrorCodes>{
+		error_code = std::move(tr_error_code);
+		return false;
+	}).value_or(false);
+}
+
 net::SocketSendingResult
 Send(const net::NativeSocket& sock, ::WSABUF& buffer, void* context, ::LPWSAOVERLAPPED_COMPLETION_ROUTINE routine)
 noexcept

@@ -82,10 +82,10 @@ export namespace net
 
 		// Synchronous Send & Receive (2)
 
-		bool Send(std::span<const std::byte> memory, SocketSendingResult& error) const noexcept;
-		bool Send(_In_reads_bytes_(size)const std::byte* const& memory, size_t size, SocketSendingResult& error) const noexcept;
-		bool Receive(std::span<std::byte> memory, SocketReceivingResult& error) const noexcept;
-		bool Receive(_In_reads_bytes_(size)const std::byte* const& memory, size_t size, SocketReceivingResult& error) const noexcept;
+		bool Send(std::span<const std::byte> memory, SendingErrorCodes& error_code) const noexcept;
+		bool Send(_In_reads_bytes_(size)const std::byte* const& memory, size_t size, SendingErrorCodes& error_code) const noexcept;
+		bool Receive(std::span<std::byte> memory, ReceivingErrorCodes& error_code) const noexcept;
+		bool Receive(_In_reads_bytes_(size)const std::byte* const& memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
 
 		// Maybe asynchronous Send & Receive (1)
 
