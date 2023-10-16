@@ -131,6 +131,7 @@
     <ClCompile Include="lib\SocketClosingErrorCodes.ixx" />
     <ClCompile Include="lib\SocketGeneralErrorCodes.ixx" />
     <ClCompile Include="lib\SocketOpenErrorCodes.ixx" />
+    <ClCompile Include="lib\SocketOptions.ixx" />
     <ClCompile Include="lib\SocketReceivingErrorCodes.ixx" />
     <ClCompile Include="lib\SocketResult.ixx" />
     <ClCompile Include="lib\SocketErrorCode.ixx" />

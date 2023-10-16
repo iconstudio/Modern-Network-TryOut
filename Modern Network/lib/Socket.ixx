@@ -1,6 +1,7 @@
 export module Net.Socket;
 export import Net.Socket.ErrorCode;
 export import :Result;
+export import :Options;
 import Net.Handler;
 import Net.Property;
 import Net.IoContext;
