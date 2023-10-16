@@ -18,7 +18,7 @@ export namespace net
 		WSAEBADF = 10009,
 		WSAEACCES = 10013,
 		WSAEFAULT = 10014,
-		DidNotBind = 10022,
+		WSAEINVAL = 10022,
 		WSAEMFILE = 10024,
 		NonBlockedOperation = 10035, // EWOULDBLOCK
 		YetInProgress = 10036,

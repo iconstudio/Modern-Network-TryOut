@@ -12,7 +12,7 @@ export namespace net
 		WSAEFAULT = (std::int32_t)SocketErrorCodes::WSAEFAULT,
 		YetInProgress = (std::int32_t)SocketErrorCodes::YetInProgress,
 		BlockingCallsInterrupted = (std::int32_t)SocketErrorCodes::BlockingCallsInterrupted,
-		DidNotBind = (std::int32_t)SocketErrorCodes::DidNotBind,
+		WSAEINVAL = (std::int32_t)SocketErrorCodes::WSAEINVAL,
 		WSAEMSGSIZE = (std::int32_t)SocketErrorCodes::WSAEMSGSIZE,
 		NetworkIsDown = (std::int32_t)SocketErrorCodes::NetworkIsDown,
 		WSAENETRESET = (std::int32_t)SocketErrorCodes::WSAENETRESET,

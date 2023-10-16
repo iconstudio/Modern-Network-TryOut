@@ -10,7 +10,7 @@ export namespace net
 		NetworkIsDown = (std::int32_t)SocketErrorCodes::NetworkIsDown,
 		CannotUseThisAddress = (std::int32_t)SocketErrorCodes::CannotUseThisAddress,
 		YetInProgress = (std::int32_t)SocketErrorCodes::YetInProgress,
-		DidNotBind = (std::int32_t)SocketErrorCodes::DidNotBind,
+		WSAEINVAL = (std::int32_t)SocketErrorCodes::WSAEINVAL,
 		AlreadyConnected = (std::int32_t)SocketErrorCodes::WSAEISCONN,
 		NotASocket = (std::int32_t)SocketErrorCodes::NotASocket,
 		CouldNotUseThis = (std::int32_t)SocketErrorCodes::WSAEMFILE,
