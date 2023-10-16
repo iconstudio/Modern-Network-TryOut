@@ -155,6 +155,16 @@ export namespace net
 			return std::move(myValue);
 		}
 
+		template<convertible_to<T> U>
+			requires not Readonly and assignable_from<T&, U&&>
+		constexpr IProperty& operator=(U&& value)
+		{
+			myValue = std::forward<U>(value);
+			mySetter(myValue);
+
+			return *this;
+		}
+
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2>
 			requires not Readonly and C2 and copy_assignables<T, U> and constructible_from<T, const U&>
 		constexpr IProperty& operator=(const IProperty<U, X2, S2, C2, R2>& other)
@@ -261,6 +271,16 @@ export namespace net
 		constexpr operator const T && () const&& noexcept
 		{
 			return std::move(myValue);
+		}
+
+		template<convertible_to<T> U>
+			requires not Readonly and assignable_from<T&, U&&>
+		constexpr IProperty& operator=(U&& value)
+		{
+			myValue = std::forward<U>(value);
+			mySetter(*myContext, myValue);
+
+			return *this;
 		}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2>
