@@ -7,7 +7,7 @@ module Net.Socket;
 import <type_traits>;
 
 net::SocketOptioningResult RawSetOption(const net::NativeSocket& sock, int option, const void* buffer, int buff_size) noexcept;
-net::SocketOptioningResult RawGetOption(const net::NativeSocket& sock, int option, const void* const buffer, int buff_size) noexcept;
+net::SocketOptioningResult RawGetOption(const net::NativeSocket& sock, int option) noexcept;
 
 using namespace net;
 
@@ -223,8 +223,18 @@ noexcept
 }
 
 net::SocketOptioningResult
-RawGetOption(const net::NativeSocket& sock, int option, const void* const buffer, int buff_size)
+RawGetOption(const net::NativeSocket& sock, int option)
 noexcept
 {
-	return net::SocketOptioningResult();
+	int result = 0;
+
+	if (0 == ::getsockopt(sock
+		, SOL_SOCKET
+		, option
+		, reinterpret_cast<char*>(std::addressof(result)), sizeof(int)))
+	{
+		return result;
+	}
+
+	return unexpected(AcquireSocketOptionsError());
 }
