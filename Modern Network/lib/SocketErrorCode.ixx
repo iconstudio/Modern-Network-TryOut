@@ -20,7 +20,7 @@ export namespace net
 	[[nodiscard]]
 	ReceivingErrorCodes AcquireReceivingError() noexcept;
 	[[nodiscard]]
-	SocketOptionErrorCodes AcquireSocketOptionsError() noexcept;
+	SocketOptionErrorCodes AcquireSocketOptionError() noexcept;
 
 	[[nodiscard]]
 	constexpr bool operator==(const SocketErrorCodes& lhs, const SendingErrorCodes& rhs) noexcept

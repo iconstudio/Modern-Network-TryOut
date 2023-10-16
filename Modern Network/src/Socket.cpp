@@ -219,7 +219,7 @@ noexcept
 		return 1;
 	}
 
-	return unexpected(AcquireSocketOptionsError());
+	return unexpected(AcquireSocketOptionError());
 }
 
 net::SocketOptioningResult
@@ -236,5 +236,5 @@ noexcept
 		return result;
 	}
 
-	return unexpected(AcquireSocketOptionsError());
+	return unexpected(AcquireSocketOptionError());
 }
