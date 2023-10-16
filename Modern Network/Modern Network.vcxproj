@@ -127,6 +127,7 @@
     <ClCompile Include="lib\NetworkInitializationError.ixx" />
     <ClCompile Include="lib\Promissory.ixx" />
     <ClCompile Include="lib\Property.ixx" />
+    <ClCompile Include="lib\ServerSetupError.ixx" />
     <ClCompile Include="lib\Socket.ixx" />
     <ClCompile Include="lib\SocketClosingErrorCodes.ixx" />
     <ClCompile Include="lib\SocketGeneralErrorCodes.ixx" />
