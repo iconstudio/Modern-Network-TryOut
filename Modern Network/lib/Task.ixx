@@ -55,7 +55,8 @@ export namespace net
 		}
 
 	private:
+		const static inline std::runtime_error reservedError{ "Cannot acquire a vale from the null promise" };
+
 		handle_type myHandle;
-		std::runtime_error reservedError{ "Cannot acquire a vale from the null promise" };
 	};
 }
