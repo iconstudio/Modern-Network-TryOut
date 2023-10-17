@@ -145,11 +145,9 @@ export namespace net
 
 		constexpr Task(const handle_type& handle) noexcept
 			: myHandle(handle)
-			, reservedError("Cannot acquire a vale from the null promise")
 		{}
 		constexpr Task(handle_type&& handle) noexcept
 			: myHandle(std::move(handle))
-			, reservedError("Cannot acquire a vale from the null promise")
 		{}
 		~Task() noexcept(noexcept(myHandle.destroy()))
 		{
@@ -189,6 +187,6 @@ export namespace net
 
 	private:
 		handle_type myHandle;
-		std::runtime_error reservedError;
+		std::runtime_error reservedError{ "Cannot acquire a vale from the null promise" };
 	};
 }
