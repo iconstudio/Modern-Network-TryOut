@@ -5,7 +5,6 @@ import Net.Application;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
 import Net.Socket;
-import Net.Task;
 
 void Worker()
 {
@@ -33,6 +32,7 @@ void Worker()
 
 	auto connector = test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
 	connector();
+	auto b = connector.Result();
 
 	//if (async_conn.has_value())
 	{

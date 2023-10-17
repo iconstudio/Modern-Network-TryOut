@@ -31,7 +31,7 @@ export namespace net
 
 			T await_resume() { return valueHandle.get(); }
 
-			std::future<T> valueHandle;
+			std::shared_future<T> valueHandle;
 		};
 
 		struct promise_type
@@ -105,7 +105,12 @@ export namespace net
 
 		Awaiter operator co_await()
 		{
-			return Awaiter{ myHandle.promise().get_future() };
+			return Awaiter{ myHandle.promise().get_future().share() };
+		}
+
+		T Result() const
+		{
+			return myHandle.promise().get_future().get();
 		}
 
 		[[nodiscard]]
