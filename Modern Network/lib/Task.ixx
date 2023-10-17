@@ -5,6 +5,7 @@ import Net.Constraints;
 import Net.Coroutine.Suspender;
 import Net.Coroutine.Promissory;
 import Net.Coroutine.IPromise;
+import <exception>;
 import <stdexcept>;
 import <coroutine>;
 import <thread>;
@@ -96,6 +97,30 @@ export namespace net
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
 
+		struct task_starter
+		{
+			bool await_ready() const noexcept
+			{
+				return false;
+			}
+
+			void await_suspend(handle_type handle) const noexcept
+			{
+				std::thread([this, &handle] {
+					valueHandle.wait();
+					handle();
+				}).detach();
+			}
+
+			[[nodiscard]]
+			T await_resume()
+			{
+				return valueHandle.get();
+			}
+
+			std::future<T> valueHandle;
+		};
+
 		struct promise_type
 		{
 			[[nodiscard]]
@@ -108,18 +133,38 @@ export namespace net
 			constexpr void return_value(U&& value)
 				noexcept(nothrow_assignable<T, U&&>)
 			{
-				myValue = std::forward<U>(value);
+				myHandle.set_value(std::forward<U>(value));
 			}
 
-			T myValue;
+			[[nodiscard]]
+			task_starter initial_suspend() noexcept
+			{
+				return { myHandle.get_future() };
+			}
+
+			[[nodiscard]]
+			static constexpr std::suspend_never final_suspend() noexcept
+			{
+				return {};
+			}
+
+			[[noreturn]]
+			void unhandled_exception()
+			{
+				myHandle.set_exception_at_thread_exit(std::current_exception());
+			}
+
+			std::promise<T> myHandle;
 		};
 		static_assert(not Promissory<promise_type>);
 
 		constexpr Task(const handle_type& handle) noexcept
-			: myHandle(handle), reservedError("Cannot acquire a vale from the null promise")
+			: myHandle(handle)
+			, reservedError("Cannot acquire a vale from the null promise")
 		{}
 		constexpr Task(handle_type&& handle) noexcept
-			: myHandle(std::move(handle)), reservedError("Cannot acquire a vale from the null promise")
+			: myHandle(std::move(handle))
+			, reservedError("Cannot acquire a vale from the null promise")
 		{}
 		~Task() noexcept(noexcept(myHandle.destroy()))
 		{
@@ -129,43 +174,11 @@ export namespace net
 			}
 		}
 
-		void operator()() const
-		{
-			myHandle();
-		}
 		void Resume() const
 		{
-			myHandle.resume();
-		}
-
-		[[nodiscard]]
-		T& Current()
-		{
-			if (myHandle)
+			if (myHandle && !myHandle.done())
 			{
 				myHandle.resume();
-
-				promise_type& promise = myHandle.promise();
-				return promise.myValue;
-			}
-			else
-			{
-				throw reservedError;
-			}
-		}
-		[[nodiscard]]
-		const T& Current() const
-		{
-			if (myHandle)
-			{
-				myHandle.resume();
-
-				promise_type& promise = myHandle.promise();
-				return promise.myValue;
-			}
-			else
-			{
-				throw reservedError;
 			}
 		}
 
@@ -173,6 +186,14 @@ export namespace net
 		bool IsDone() const noexcept
 		{
 			return myHandle.done();
+		}
+
+		void operator()() const
+		{
+			if (myHandle && !myHandle.done())
+			{
+				myHandle();
+			}
 		}
 
 		[[nodiscard]]
@@ -185,29 +206,4 @@ export namespace net
 		handle_type myHandle;
 		std::runtime_error reservedError;
 	};
-
-	template <notvoids T, typename Init, typename Final>
-	auto operator co_await(Task<T>& task) noexcept
-		requires(!std::is_reference_v<T>)
-	{
-		struct awaiter
-		{
-			bool await_ready() const noexcept
-			{
-				return this->wait_for(0s) != std::future_status::timeout;
-			}
-
-			void await_suspend(std::coroutine_handle<> handle) const
-			{
-				std::thread([this, &handle] {
-					this->wait();
-					handle();
-				}).detach();
-			}
-
-			T await_resume() { return this->get(); }
-		};
-
-		return awaiter{ std::move(task) };
-	}
 }
