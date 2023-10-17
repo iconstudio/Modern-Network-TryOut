@@ -1,6 +1,7 @@
 module;
 #define _RESUMABLE_FUNCTIONS_SUPPORTED
 export module Net.Task;
+import :Promise;
 import Net.Constraints;
 import Net.Coroutine.Suspender;
 import Net.Coroutine.Promissory;
@@ -10,137 +11,16 @@ import <stdexcept>;
 import <coroutine>;
 import <future>;
 
-export namespace net
+namespace net
 {
-	template<typename T = void>
-	class Task;
+	export template<typename T = void> class Task;
 
-	template<>
-	class Task<void> final
+	export template<typename T> class [[nodiscard]] Task final
 	{
 	public:
-		struct promise_type;
+		using promise_type = TaskPromise<T>;
 		using handle_type = std::coroutine_handle<promise_type>;
 
-		struct promise_type
-		{
-			[[nodiscard]]
-			Task<void> get_return_object() noexcept
-			{
-				return Task{ handle_type::from_promise(*this) };
-			}
-
-			[[nodiscard]]
-			static constexpr std::suspend_always initial_suspend() noexcept
-			{
-				return {};
-			}
-
-			[[nodiscard]]
-			static constexpr std::suspend_always final_suspend() noexcept
-			{
-				return {};
-			}
-
-			static constexpr void return_void() noexcept
-			{}
-
-			[[noreturn]]
-			static void unhandled_exception()
-			{
-				throw;
-			}
-		};
-		static_assert(not Promissory<promise_type>);
-
-		constexpr Task(const handle_type& handle) noexcept
-			: myHandle(handle)
-		{}
-		constexpr Task(handle_type&& handle) noexcept
-			: myHandle(std::move(handle))
-		{}
-		~Task() noexcept(noexcept(myHandle.destroy()))
-		{
-			if (myHandle)
-			{
-				myHandle.destroy();
-			}
-		}
-
-		void operator()() const
-		{
-			myHandle();
-		}
-		void Resume() const
-		{
-			myHandle.resume();
-		}
-
-		[[nodiscard]]
-		bool IsDone() const noexcept
-		{
-			return myHandle.done();
-		}
-
-		[[nodiscard]]
-		constexpr bool operator==(const Task&) const noexcept = default;
-
-	private:
-		handle_type myHandle;
-	};
-
-	template<notvoids T>
-	class [[nodiscard]] Task<T> final
-	{
-	public:
-		struct promise_type;
-		struct TaskEngine;
-		using handle_type = std::coroutine_handle<promise_type>;
-
-		struct TaskEngine
-		{
-			bool await_ready() const noexcept;
-
-			void await_suspend(handle_type handle) const;
-
-			T await_resume();
-
-			std::future<T> valueHandle;
-		};
-
-		struct promise_type
-		{
-			[[nodiscard]]
-			Task<T> get_return_object() noexcept
-			{
-				return Task{ handle_type::from_promise(*this) };
-			}
-
-			template<convertible_to<T> U>
-			constexpr void return_value(U&& value)
-				noexcept(nothrow_assignable<T, U&&>)
-			{
-				myHandle.set_value(std::forward<U>(value));
-			}
-
-			TaskEngine initial_suspend() noexcept
-			{
-				return TaskEngine{ myHandle.get_future() };
-			}
-
-			static constexpr std::suspend_always final_suspend() noexcept
-			{
-				return {};
-			}
-
-			[[noreturn]]
-			void unhandled_exception()
-			{
-				myHandle.set_exception_at_thread_exit(std::current_exception());
-			}
-
-			std::promise<T> myHandle;
-		};
 		static_assert(not Promissory<promise_type>);
 
 		constexpr Task(const handle_type& handle) noexcept

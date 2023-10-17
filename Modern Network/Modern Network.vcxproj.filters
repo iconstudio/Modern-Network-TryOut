@@ -185,5 +185,8 @@
     <ClCompile Include="src\Task.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\TaskPromise.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
