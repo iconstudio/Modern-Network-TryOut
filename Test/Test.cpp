@@ -2,21 +2,13 @@
 
 import <print>;
 import Net.Application;
-import Net.Socket;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
+import Net.Socket;
+import Net.Task;
 
-int main()
+void Worker()
 {
-	std::println("=========== Init ===========");
-	net::Application app{};
-
-	std::println("=========== Awake ===========");
-	app.Awake();
-
-	std::println("=========== Start ===========");
-	app.Start();
-
 	net::Socket test_socket1 = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
 	auto binded = test_socket1.Bind(net::IPv4Address::Loopback, 52001);
@@ -40,12 +32,26 @@ int main()
 	}
 
 	auto connector = test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
-	auto& async_conn = connector.Current();
-	
-	if (async_conn.has_value())
+	connector();
+
+	//if (async_conn.has_value())
 	{
-		std::println("connected! (2)");
+		//std::println("connected! (2)");
 	}
+}
+
+int main()
+{
+	std::println("=========== Init ===========");
+	net::Application app{};
+
+	std::println("=========== Awake ===========");
+	app.Awake();
+
+	std::println("=========== Start ===========");
+	app.Start();
+
+	Worker();
 
 	std::println("=========== Update ===========");
 	while (true)
