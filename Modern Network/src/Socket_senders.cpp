@@ -35,9 +35,25 @@ bool
 net::Socket::Send(std::span<const std::byte> memory, net::SendingErrorCodes& error_code)
 const noexcept
 {
-	return Send(memory).and_then([](const unsigned int& bytes) noexcept -> expected<bool, SendingErrorCodes> {
+	return Send(memory).and_then(
+		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
 		return true;
-	}).or_else([&](net::SendingErrorCodes&& tr_error_code) noexcept -> expected<bool, SendingErrorCodes>{
+	}).or_else(
+		[&](net::SendingErrorCodes&& tr_error_code) noexcept -> expected<bool, SendingErrorCodes>{
+		error_code = std::move(tr_error_code);
+		return false;
+	}).value_or(false);
+}
+
+bool
+net::Socket::Send(const std::byte* const& memory, size_t size, net::SendingErrorCodes& error_code)
+const noexcept
+{
+	return Send(memory, size).and_then(
+		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
+		return true;
+	}).or_else(
+		[&](net::SendingErrorCodes&& tr_error_code) noexcept -> expected<bool, SendingErrorCodes> {
 		error_code = std::move(tr_error_code);
 		return false;
 	}).value_or(false);
