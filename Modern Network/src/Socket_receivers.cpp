@@ -68,3 +68,31 @@ const noexcept
 		}
 	}
 }
+
+bool
+net::Socket::Receive(std::span<std::byte> memory, net::ReceivingErrorCodes& error_code)
+const noexcept
+{
+	return Receive(memory).and_then(
+		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
+		return true;
+	}).or_else(
+		[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
+		error_code = std::move(tr_error_code);
+		return false;
+	}).value_or(false);
+}
+
+bool
+net::Socket::Receive(const std::byte* const& memory, size_t size, net::ReceivingErrorCodes& error_code)
+const noexcept
+{
+	return Receive(memory, size).and_then(
+		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
+		return true;
+	}).or_else(
+		[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
+		error_code = std::move(tr_error_code);
+		return false;
+	}).value_or(false);
+}
