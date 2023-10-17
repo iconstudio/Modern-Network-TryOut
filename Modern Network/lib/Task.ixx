@@ -108,6 +108,7 @@ export namespace net
 			return Awaiter{ myHandle.promise().get_future().share() };
 		}
 
+		[[nodiscard]]
 		T Result() const
 		{
 			return myHandle.promise().get_future().get();
