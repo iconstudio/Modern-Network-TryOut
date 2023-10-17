@@ -8,7 +8,6 @@ import Net.Coroutine.IPromise;
 import <exception>;
 import <stdexcept>;
 import <coroutine>;
-import <thread>;
 import <future>;
 
 export namespace net
@@ -95,28 +94,16 @@ export namespace net
 	{
 	public:
 		struct promise_type;
+		struct TaskEngine;
 		using handle_type = std::coroutine_handle<promise_type>;
 
 		struct TaskEngine
 		{
-			bool await_ready() const noexcept
-			{
-				return false;
-			}
+			bool await_ready() const noexcept;
 
-			void await_suspend(handle_type handle) const noexcept
-			{
-				std::thread([this, &handle] {
-					valueHandle.wait();
-					handle();
-				}).detach();
-			}
+			void await_suspend(handle_type handle) const;
 
-			[[nodiscard]]
-			T await_resume()
-			{
-				return valueHandle.get();
-			}
+			T await_resume();
 
 			std::future<T> valueHandle;
 		};
@@ -136,7 +123,6 @@ export namespace net
 				myHandle.set_value(std::forward<U>(value));
 			}
 
-			[[nodiscard]]
 			TaskEngine initial_suspend() noexcept
 			{
 				return TaskEngine{ myHandle.get_future() };
