@@ -97,7 +97,7 @@ export namespace net
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
 
-		struct task_starter
+		struct TaskEngine
 		{
 			bool await_ready() const noexcept
 			{
@@ -137,9 +137,9 @@ export namespace net
 			}
 
 			[[nodiscard]]
-			task_starter initial_suspend() noexcept
+			TaskEngine initial_suspend() noexcept
 			{
-				return { myHandle.get_future() };
+				return TaskEngine{ myHandle.get_future() };
 			}
 
 			[[nodiscard]]
