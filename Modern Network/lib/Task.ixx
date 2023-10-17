@@ -8,7 +8,7 @@ import <coroutine>;
 
 export namespace net
 {
-	template<typename T = void, Suspender Init = std::suspend_always, Suspender Final = std::suspend_always>
+	template<typename T = void, Suspender Init = std::suspend_always, Suspender Final = std::suspend_never>
 	class Task;
 
 	template<Suspender Init, Suspender Final>
