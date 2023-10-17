@@ -1,27 +1,16 @@
-module;
-#define _RESUMABLE_FUNCTIONS_SUPPORTED
 export module Net.Task;
 import :Promise;
-import Net.Constraints;
-import Net.Coroutine.Suspender;
-import Net.Coroutine.Promissory;
-import Net.Coroutine.IPromise;
-import <exception>;
-import <stdexcept>;
-import <coroutine>;
-import <future>;
+export import <stdexcept>;
+export import <coroutine>;
 
-namespace net
+export namespace net
 {
-	export template<typename T = void> class Task;
-
-	export template<typename T> class [[nodiscard]] Task final
+	template<typename T>
+	class [[nodiscard]] Task final
 	{
 	public:
 		using promise_type = TaskPromise<T>;
 		using handle_type = std::coroutine_handle<promise_type>;
-
-		static_assert(not Promissory<promise_type>);
 
 		constexpr Task(const handle_type& handle) noexcept
 			: myHandle(handle)

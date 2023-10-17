@@ -1,4 +1,7 @@
 export module Net.Task:Promise;
+import Net.Constraints;
+import <future>;
+import <coroutine>;
 
 export namespace net
 {
@@ -9,7 +12,7 @@ export namespace net
 	{
 		bool await_ready() const noexcept;
 
-		void await_suspend(handle_type handle) const;
+		void await_suspend(std::coroutine_handle<> handle) const;
 
 		T await_resume();
 
@@ -20,40 +23,18 @@ export namespace net
 	struct TaskPromise
 	{
 		[[nodiscard]]
-		Task<T> get_return_object() noexcept
-		{
-			return Task{ handle_type::from_promise(*this) };
-		}
-
+		Task<T> get_return_object() noexcept;
 		template<typename U>
-		void return_value(U&& value) noexcept(not same_as<T, void> ? nothrow_assignable<T, U&&> : true)
-		{
-			if constexpr (same_as<T, void>)
-			{
-				myHandle.set_value();
-			}
-			else
-			{
-				myHandle.set_value(std::forward<U>(value));
-				static_assert(not convertible_to<T, U>);
-			}
-		}
+		void return_value(U&& value);
 
-		TaskEngine initial_suspend() noexcept
-		{
-			return TaskEngine{ myHandle.get_future() };
-		}
-
+		TaskEngine<T> initial_suspend() noexcept;
 		static constexpr std::suspend_always final_suspend() noexcept
 		{
 			return {};
 		}
 
 		[[noreturn]]
-		void unhandled_exception()
-		{
-			myHandle.set_exception_at_thread_exit(std::current_exception());
-		}
+		void unhandled_exception();
 
 		std::promise<T> myHandle;
 	};
