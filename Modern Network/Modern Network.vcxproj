@@ -155,6 +155,7 @@
     <ClCompile Include="src\Socket_observers.cpp" />
     <ClCompile Include="src\Socket_receivers.cpp" />
     <ClCompile Include="src\Socket_senders.cpp" />
+    <ClCompile Include="src\Task.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
