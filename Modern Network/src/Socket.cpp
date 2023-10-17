@@ -227,11 +227,12 @@ RawGetOption(const net::NativeSocket& sock, int option)
 noexcept
 {
 	int result = 0;
+	int len = sizeof(int);
 
 	if (0 == ::getsockopt(sock
 		, SOL_SOCKET
 		, option
-		, reinterpret_cast<char*>(std::addressof(result)), sizeof(int)))
+		, reinterpret_cast<char*>(std::addressof(result)), std::addressof(len)))
 	{
 		return result;
 	}
