@@ -1,3 +1,5 @@
+module;
+#define _RESUMABLE_FUNCTIONS_SUPPORTED
 export module Net.Task;
 import Net.Constraints;
 import Net.Coroutine.Suspender;
@@ -5,29 +7,49 @@ import Net.Coroutine.Promissory;
 import Net.Coroutine.IPromise;
 import <stdexcept>;
 import <coroutine>;
+import <thread>;
+import <future>;
 
 export namespace net
 {
-	template<typename T = void, Suspender Init = std::suspend_always, Suspender Final = std::suspend_never>
+	template<typename T = void>
 	class Task;
 
-	template<Suspender Init, Suspender Final>
-	class Task<void, Init, Final> final
+	template<>
+	class Task<void> final
 	{
 	public:
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
 
-		struct promise_type : public IPromise<Init, Final>
+		struct promise_type
 		{
 			[[nodiscard]]
-			Task<void, Init, Final> get_return_object() noexcept
+			Task<void> get_return_object() noexcept
 			{
 				return Task{ handle_type::from_promise(*this) };
 			}
 
+			[[nodiscard]]
+			static constexpr std::suspend_always initial_suspend() noexcept
+			{
+				return {};
+			}
+
+			[[nodiscard]]
+			static constexpr std::suspend_never final_suspend() noexcept
+			{
+				return {};
+			}
+
 			static constexpr void return_void() noexcept
 			{}
+
+			[[noreturn]]
+			static void unhandled_exception()
+			{
+				throw;
+			}
 		};
 		static_assert(not Promissory<promise_type>);
 
@@ -67,17 +89,17 @@ export namespace net
 		handle_type myHandle;
 	};
 
-	template<notvoids T, Suspender Init, Suspender Final>
-	class [[nodiscard]] Task<T, Init, Final> final
+	template<notvoids T>
+	class [[nodiscard]] Task<T> final
 	{
 	public:
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
 
-		struct promise_type : public IPromise<Init, Final>
+		struct promise_type
 		{
 			[[nodiscard]]
-			Task<T, Init, Final> get_return_object() noexcept
+			Task<T> get_return_object() noexcept
 			{
 				return Task{ handle_type::from_promise(*this) };
 			}
@@ -163,4 +185,29 @@ export namespace net
 		handle_type myHandle;
 		std::runtime_error reservedError;
 	};
+
+	template <notvoids T, typename Init, typename Final>
+	auto operator co_await(Task<T>& task) noexcept
+		requires(!std::is_reference_v<T>)
+	{
+		struct awaiter
+		{
+			bool await_ready() const noexcept
+			{
+				return this->wait_for(0s) != std::future_status::timeout;
+			}
+
+			void await_suspend(std::coroutine_handle<> handle) const
+			{
+				std::thread([this, &handle] {
+					this->wait();
+					handle();
+				}).detach();
+			}
+
+			T await_resume() { return this->get(); }
+		};
+
+		return awaiter{ std::move(task) };
+	}
 }
