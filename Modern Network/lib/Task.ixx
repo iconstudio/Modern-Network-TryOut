@@ -38,7 +38,7 @@ export namespace net
 			}
 
 			[[nodiscard]]
-			static constexpr std::suspend_never final_suspend() noexcept
+			static constexpr std::suspend_always final_suspend() noexcept
 			{
 				return {};
 			}
@@ -142,8 +142,7 @@ export namespace net
 				return TaskEngine{ myHandle.get_future() };
 			}
 
-			[[nodiscard]]
-			static constexpr std::suspend_never final_suspend() noexcept
+			static constexpr std::suspend_always final_suspend() noexcept
 			{
 				return {};
 			}
