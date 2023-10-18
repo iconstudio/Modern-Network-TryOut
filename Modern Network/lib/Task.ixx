@@ -1,9 +1,11 @@
+module;
+#include <stdexcept>
+#include <thread>
+#include <future>
+
 export module Net.Task;
 import :Promise;
-import <stdexcept>;
-import <thread>;
-import <future>;
-export import <coroutine>;
+import <coroutine>;
 
 export namespace net
 {
