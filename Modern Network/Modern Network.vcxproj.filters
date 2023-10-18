@@ -188,8 +188,5 @@
     <ClCompile Include="lib\TaskPromise.ixx">
       <Filter>lib\Coroutine</Filter>
     </ClCompile>
-    <ClCompile Include="lib\TaskDefinitions.ixx">
-      <Filter>lib\Coroutine</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

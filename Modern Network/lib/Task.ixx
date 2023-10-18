@@ -5,7 +5,6 @@ module;
 
 export module Net.Task;
 import :Promise;
-import Net.Task.Definitions;
 import <coroutine>;
 
 export namespace net
