@@ -5,6 +5,7 @@ import Net.Application;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
 import Net.Socket;
+import Net.Task;
 
 void Worker()
 {

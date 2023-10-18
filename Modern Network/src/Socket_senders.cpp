@@ -1,7 +1,9 @@
 module;
 #pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
+
 module Net.Socket;
+import Net.Task;
 
 net::SocketSendingResult RawSend(const net::NativeSocket& sock, ::WSABUF& buffer, void* context, ::LPWSAOVERLAPPED_COMPLETION_ROUTINE routine) noexcept;
 
@@ -39,7 +41,7 @@ const noexcept
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
 		return true;
 	}).or_else(
-		[&](net::SendingErrorCodes&& tr_error_code) noexcept -> expected<bool, SendingErrorCodes>{
+		[&](net::SendingErrorCodes&& tr_error_code) noexcept -> expected<bool, SendingErrorCodes> {
 		error_code = std::move(tr_error_code);
 		return false;
 	}).value_or(false);

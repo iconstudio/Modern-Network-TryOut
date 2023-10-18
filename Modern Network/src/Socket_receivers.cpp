@@ -1,7 +1,9 @@
 module;
 #pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
+
 module Net.Socket;
+import Net.Task;
 
 net::SocketReceivingResult
 net::Socket::Receive(std::span<std::byte> memory)

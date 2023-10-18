@@ -5,7 +5,7 @@ export import :Options;
 import Net.Handler;
 import Net.Property;
 import Net.IoContext;
-import Net.Task;
+import Net.Task.Definitions;
 import Net.IpAddress;
 import Net.InternetProtocols;
 import Net.EndPoint;
