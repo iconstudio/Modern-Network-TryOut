@@ -27,10 +27,10 @@ net::Coroutine Worker2()
 	//auto connector = test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
 	//auto b = co_await connector;
 
-	auto c = co_await test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
+	auto sdsc = co_await test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
 
 	//if (b.has_value())
-	if (c.has_value())
+	if (sdsc.has_value())
 	{
 		std::println("connected! (2)");
 	}

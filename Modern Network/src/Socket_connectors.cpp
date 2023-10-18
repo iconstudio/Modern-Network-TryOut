@@ -143,7 +143,7 @@ net::Task<net::SocketResult>
 net::Socket::ConnectAsync(net::IpAddress&& address, const std::uint16_t& port)
 const noexcept
 {
-	co_return this->Connect(EndPoint(address, port));
+	co_return this->Connect(EndPoint(std::move(address), port));
 }
 
 [[nodiscard]]
