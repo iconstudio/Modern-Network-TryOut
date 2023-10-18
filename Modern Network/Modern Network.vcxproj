@@ -140,6 +140,7 @@
     <ClCompile Include="lib\SocketSendingErrorCodes.ixx" />
     <ClCompile Include="lib\Suspender.ixx" />
     <ClCompile Include="lib\Task.ixx" />
+    <ClCompile Include="lib\TaskDefinitions.ixx" />
     <ClCompile Include="lib\TaskPromise.ixx" />
     <ClCompile Include="lib\Traits.ixx" />
     <ClCompile Include="lib\ValuePromise.ixx" />

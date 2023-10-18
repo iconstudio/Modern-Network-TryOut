@@ -5,13 +5,11 @@ module;
 
 export module Net.Task;
 import :Promise;
+import Net.Task.Definitions;
 import <coroutine>;
 
 export namespace net
 {
-	template<typename T = void>
-	class Task;
-
 	template<typename T>
 	class [[nodiscard]] Task final
 	{
