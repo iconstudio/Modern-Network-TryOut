@@ -194,5 +194,11 @@
     <ClCompile Include="lib\IAwaitable.ixx">
       <Filter>lib\Coroutine</Filter>
     </ClCompile>
+    <ClCompile Include="lib\ConcurrentAwaiter.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ConcurrentAwaiter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
