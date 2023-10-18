@@ -5,7 +5,7 @@ module;
 module Net.Coroutine.Awaiter.Timed;
 
 void
-net::WaitForSeconds::await_suspend(std::coroutine_handle<> handle)
+net::WaitForSeconds::await_suspend(std::coroutine_handle<void> handle)
 const
 {
 	//using namespace std::chrono_literals;

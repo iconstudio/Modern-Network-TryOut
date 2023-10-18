@@ -1,27 +1,28 @@
 export module Net.Coroutine.Awaiter.Timed;
+import Net.Coroutine.IAwaitable;
 import <coroutine>;
 
 export namespace net
 {
-	class WaitForSeconds
+	class WaitForSeconds : public IAwaitable<float>
 	{
 	public:
 		constexpr WaitForSeconds(const float& wait_seconds) noexcept
-			: seconds(wait_seconds)
+			: IAwaitable(), seconds(wait_seconds)
 		{}
 
 		constexpr WaitForSeconds(float&& wait_seconds) noexcept
-			: seconds(static_cast<float&&>(wait_seconds))
+			: IAwaitable(), seconds(static_cast<float&&>(wait_seconds))
 		{}
 
-		static constexpr bool await_ready() noexcept
+		constexpr bool await_ready() noexcept override
 		{
 			return false;
 		}
 
-		void await_suspend(std::coroutine_handle<> handle) const;
+		void await_suspend(std::coroutine_handle<void> handle) const override;
 
-		constexpr float await_resume() const noexcept
+		constexpr float await_resume() const noexcept override
 		{
 			return seconds;
 		}
