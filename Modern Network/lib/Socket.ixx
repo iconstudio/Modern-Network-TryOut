@@ -4,9 +4,9 @@ module;
 #include <span>
 
 export module Net.Socket;
-export import Net.Socket.ErrorCode;
 export import :Result;
 export import :Options;
+export import Net.Socket.ErrorCode;
 import Net.Handler;
 import Net.Property;
 import Net.IoContext;
