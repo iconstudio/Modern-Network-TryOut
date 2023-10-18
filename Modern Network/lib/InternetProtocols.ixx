@@ -1,5 +1,6 @@
+module;
+#include <cstdint>
 export module Net.InternetProtocols;
-import <cstdint>;
 
 export namespace net
 {

@@ -1,6 +1,5 @@
 export module Net.Property:IProperty;
 import Net.Constraints;
-import <type_traits>;
 
 export namespace net
 {
@@ -21,7 +20,7 @@ export namespace net
 			requires constructible_from<T, U&&>
 		constexpr IProperty(U&& trans_value)
 			noexcept(nothrow_constructible<T, U&&>)
-			: myValue(std::forward<U>(trans_value))
+			: myValue(static_cast<U&&>(trans_value))
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2>
@@ -35,7 +34,7 @@ export namespace net
 			requires move_constructibles<T, U> and constructible_from<T, U&&>
 		constexpr IProperty(IProperty<U, X2, S2, C2, R2>&& other)
 			noexcept(nothrow_constructible<T, U&&>)
-			: myValue(std::move(other.myValue))
+			: myValue(static_cast<U&&>(other.myValue))
 		{}
 
 		[[nodiscard]]
@@ -53,13 +52,13 @@ export namespace net
 		[[nodiscard]]
 		constexpr operator T && () && noexcept
 		{
-			return std::move(myValue);
+			return static_cast<T&&>(myValue);
 		}
 
 		[[nodiscard]]
 		constexpr operator const T && () const&& noexcept
 		{
-			return std::move(myValue);
+			return static_cast<const T&&>(myValue);
 		}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2>
@@ -76,7 +75,7 @@ export namespace net
 		constexpr IProperty& operator=(IProperty<U, X2, S2, C2, R2>&& other)
 			noexcept(nothrow_assignable<U&&, T>)
 		{
-			myValue = std::move(other.myValue);
+			myValue = static_cast<T>(other.myValue);
 			return *this;
 		}
 
@@ -100,7 +99,7 @@ export namespace net
 		constexpr IProperty(U&& trans_value, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_default_constructibles<T> and nothrow_constructible<functor_t, Fn&&>)
 			requires constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
-		: myValue(std::forward<U>(trans_value)), mySetter(static_cast<functor_t>(setter))
+		: myValue(static_cast<U&&>(trans_value)), mySetter(static_cast<functor_t>(setter))
 		{}
 
 		template<bool C2, bool R2>
@@ -114,21 +113,21 @@ export namespace net
 		constexpr IProperty(IProperty<T, void, true, C2, R2>&& other)
 			noexcept(nothrow_move_constructibles<T>)
 			requires move_constructibles<T>
-		: myValue(other.myValue), mySetter(std::move(other.mySetter))
+		: myValue(other.myValue), mySetter(static_cast<functor_t&&>(other.mySetter))
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, invocables<T&> Fn>
 			requires Copyable and C2 and copy_constructibles<T, U> and constructible_from<T, const U&> and constructible_from<functor_t, Fn&&>
 		constexpr IProperty(const IProperty<U, X2, S2, C2, R2>& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, const U&> and nothrow_constructible<functor_t, Fn&&>)
-			: myValue(other.myValue), mySetter(static_cast<functor_t>(setter))
+			: myValue(other.myValue), mySetter(setter)
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, invocables<T&> Fn>
 			requires move_constructibles<T, U> and constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
 		constexpr IProperty(IProperty<U, X2, S2, C2, R2>&& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_constructible<functor_t, Fn&&>)
-			: myValue(std::move(other.myValue)), mySetter(static_cast<functor_t>(setter))
+			: myValue(static_cast<U&&>(other.myValue)), mySetter(static_cast<functor_t&&>(setter))
 		{}
 
 		[[nodiscard]]
@@ -146,20 +145,20 @@ export namespace net
 		[[nodiscard]]
 		constexpr operator T && () && noexcept
 		{
-			return std::move(myValue);
+			return static_cast<T&&>(myValue);
 		}
 
 		[[nodiscard]]
 		constexpr operator const T && () const&& noexcept
 		{
-			return std::move(myValue);
+			return static_cast<const T&&>(myValue);
 		}
 
 		template<convertible_to<T> U>
 			requires not Readonly and assignable_from<T&, U&&>
 		constexpr IProperty& operator=(U&& value)
 		{
-			myValue = std::forward<U>(value);
+			myValue = static_cast<U&&>(value);
 			mySetter(myValue);
 
 			return *this;
@@ -181,7 +180,7 @@ export namespace net
 		constexpr IProperty& operator=(IProperty<U, X2, S2, C2, R2>&& other)
 			noexcept(nothrow_assignable<U&&, T>)
 		{
-			myValue = std::move(other.myValue);
+			myValue = static_cast<U&&>(other.myValue);
 			mySetter(myValue);
 
 			return *this;
@@ -209,7 +208,7 @@ export namespace net
 		constexpr IProperty(Context* const& context, U&& trans_value, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_default_constructibles<T> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
-			, myValue(std::forward<U>(trans_value))
+			, myValue(static_cast<U&&>(trans_value))
 			, mySetter(static_cast<functor_t>(setter))
 		{}
 
@@ -228,7 +227,7 @@ export namespace net
 			noexcept(nothrow_move_constructibles<T>)
 			: myContext(other.myContext)
 			, myValue(other.myValue)
-			, mySetter(std::move(other.mySetter))
+			, mySetter(static_cast<functor_t&&>(other.mySetter))
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, invocables<Context&, T&> Fn>
@@ -237,7 +236,7 @@ export namespace net
 			noexcept(nothrow_constructible<T, const U&> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
 			, myValue(other.myValue)
-			, mySetter(static_cast<functor_t>(setter))
+			, mySetter(setter)
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, invocables<Context&, T&> Fn>
@@ -245,8 +244,8 @@ export namespace net
 		constexpr IProperty(Context* const& context, IProperty<U, X2, S2, C2, R2>&& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
-			, myValue(std::move(other.myValue))
-			, mySetter(static_cast<functor_t>(setter))
+			, myValue(static_cast<U&&>(other.myValue))
+			, mySetter(static_cast<functor_t&&>(setter))
 		{}
 
 		[[nodiscard]]
@@ -264,20 +263,20 @@ export namespace net
 		[[nodiscard]]
 		constexpr operator T && () && noexcept
 		{
-			return std::move(myValue);
+			return static_cast<T&&>(myValue);
 		}
 
 		[[nodiscard]]
 		constexpr operator const T && () const&& noexcept
 		{
-			return std::move(myValue);
+			return static_cast<const T&&>(myValue);
 		}
 
 		template<convertible_to<T> U>
 			requires not Readonly and assignable_from<T&, U&&>
 		constexpr IProperty& operator=(U&& value)
 		{
-			myValue = std::forward<U>(value);
+			myValue = static_cast<U&&>(value);
 			mySetter(*myContext, myValue);
 
 			return *this;
@@ -297,7 +296,7 @@ export namespace net
 			requires not Readonly and move_assignables<T, U> and constructible_from<T, U&&>
 		constexpr IProperty& operator=(IProperty<U, X2, S2, C2, R2>&& other)
 		{
-			myValue = std::move(other.myValue);
+			myValue = static_cast<U&&>(other.myValue);
 			mySetter(*myContext, myValue);
 
 			return *this;

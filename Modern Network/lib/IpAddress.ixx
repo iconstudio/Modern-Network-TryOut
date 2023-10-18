@@ -1,8 +1,7 @@
 export module Net.IpAddress;
-export import :IpAddressFamily;
-import <type_traits>;
 import <string_view>;
 import <memory>;
+export import :IpAddressFamily;
 
 export namespace net
 {
@@ -40,12 +39,12 @@ export namespace net
 		[[nodiscard]]
 		constexpr IpAddressFamily&& GetFamily() && noexcept
 		{
-			return std::move(addressFamily);
+			return static_cast<IpAddressFamily&&>(addressFamily);
 		}
 		[[nodiscard]]
 		constexpr std::unique_ptr<char[]>&& GetAddress() && noexcept
 		{
-			return std::move(addressBuffer);
+			return static_cast<std::unique_ptr<char[]>&&>(addressBuffer);
 		}
 
 		[[nodiscard]]

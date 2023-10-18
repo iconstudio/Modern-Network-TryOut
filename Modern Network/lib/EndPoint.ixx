@@ -1,8 +1,10 @@
+module;
+#include <cstdint>
+#include <type_traits>
+#include <string_view>
+
 export module Net.EndPoint;
 import Net.IpAddress;
-import <cstdint>;
-import <type_traits>;
-import <string_view>;
 
 export namespace net
 {

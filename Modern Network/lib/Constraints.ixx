@@ -1,3 +1,7 @@
+module;
+#include <type_traits>
+#include <concepts>
+
 export module Net.Constraints;
 export import Net.Traits;
 

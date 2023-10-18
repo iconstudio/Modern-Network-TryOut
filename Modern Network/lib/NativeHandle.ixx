@@ -1,6 +1,5 @@
 export module Net.NativeHandle;
 import Net.Property;
-import <compare>;
 
 export namespace net
 {
@@ -19,7 +18,7 @@ export namespace net
 		[[nodiscard]]
 		constexpr void* && GetPointer() && noexcept
 		{
-			return std::move(nativePointer);
+			return static_cast<void* &&>(nativePointer);
 		}
 
 		[[nodiscard]]
@@ -29,7 +28,6 @@ export namespace net
 		}
 
 		constexpr bool operator==(const NativeHandle&) const noexcept = default;
-		constexpr std::strong_ordering operator<=>(const NativeHandle&) const noexcept = default;
 
 		constexpr NativeHandle(NativeHandle&&) noexcept = default;
 		constexpr NativeHandle& operator=(NativeHandle&&) noexcept = default;

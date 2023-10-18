@@ -1,6 +1,7 @@
+module;
+#include <type_traits>
+#include <utility>
 export module Net.Traits;
-export import <type_traits>;
-export import <utility>;
 
 export namespace net
 {

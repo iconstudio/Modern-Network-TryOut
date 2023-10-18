@@ -1,6 +1,6 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
+#include <print>
 
-import <print>;
 import Net.Application;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
