@@ -140,6 +140,7 @@
     <ClCompile Include="lib\SocketSendingErrorCodes.ixx" />
     <ClCompile Include="lib\Suspender.ixx" />
     <ClCompile Include="lib\Task.ixx" />
+    <ClCompile Include="lib\TimedAwaiter.ixx" />
     <ClCompile Include="lib\Traits.ixx" />
     <ClCompile Include="lib\ValuePromise.ixx" />
     <ClCompile Include="Modern Network.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="src\Socket_receivers.cpp" />
     <ClCompile Include="src\Socket_senders.cpp" />
     <ClCompile Include="src\Task.cpp" />
+    <ClCompile Include="src\TimedAwaiter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
