@@ -11,9 +11,8 @@ const
 	//using namespace std::chrono_literals;
 
 	//std::chrono::milliseconds time = std::chrono::milliseconds((long long)(seconds * 1000));
-	std::thread([this, handle] {
-		::Sleep(seconds * 1000);
-		//std::this_thread::sleep_for(time);
-		handle();
-	}).detach();
+	//std::this_thread::sleep_for(time);
+
+	::Sleep(seconds * 1000);
+	handle();
 }

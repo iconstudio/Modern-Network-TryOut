@@ -3,8 +3,17 @@ import <coroutine>;
 
 export namespace net
 {
-	struct WaitForSeconds
+	class WaitForSeconds
 	{
+	public:
+		constexpr WaitForSeconds(const float& wait_seconds) noexcept
+			: seconds(wait_seconds)
+		{}
+
+		constexpr WaitForSeconds(float&& wait_seconds) noexcept
+			: seconds(static_cast<float&&>(wait_seconds))
+		{}
+
 		static constexpr bool await_ready() noexcept
 		{
 			return false;
@@ -12,8 +21,10 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<> handle) const;
 
-		static constexpr void await_resume() noexcept
-		{}
+		constexpr float await_resume() const noexcept
+		{
+			return seconds;
+		}
 
 		float seconds;
 	};
