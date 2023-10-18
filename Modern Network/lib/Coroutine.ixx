@@ -6,7 +6,7 @@ export import <coroutine>;
 
 export namespace net
 {
-	class [[nodiscard]] Coroutine
+	class Coroutine
 	{
 	public:
 		struct promise_type;
