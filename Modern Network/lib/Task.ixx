@@ -1,32 +1,14 @@
 module;
 #include <stdexcept>
-#include <thread>
 #include <future>
 
 export module Net.Task;
 import Net.Constraints;
+import Net.Coroutine.Awaiter.Concurrent;
 import <coroutine>;
 
 export namespace net
 {
-	struct ConcurrentAwaiter
-	{
-		static constexpr bool await_ready() noexcept
-		{
-			return false;
-		}
-
-		void await_suspend(std::coroutine_handle<void> handle)
-		{
-			std::thread([&handle] {
-				handle();
-			}).detach();
-		}
-
-		static constexpr void await_resume() noexcept
-		{}
-	};
-
 	template<typename T = void>
 	class Task;
 
