@@ -4,7 +4,7 @@ import <coroutine>;
 
 export namespace net
 {
-	class WaitForSeconds : public IAwaitable<float>
+	class WaitForSeconds final : public IAwaitable<float>
 	{
 	public:
 		constexpr WaitForSeconds(const float& wait_seconds) noexcept
