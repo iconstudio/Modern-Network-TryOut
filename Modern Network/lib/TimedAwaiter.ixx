@@ -7,12 +7,12 @@ export namespace net
 	class WaitForSeconds final : public IAwaitable<float>
 	{
 	public:
-		constexpr WaitForSeconds(const float& wait_seconds) noexcept
-			: IAwaitable(), seconds(wait_seconds)
+		constexpr WaitForSeconds(const float& time) noexcept
+			: IAwaitable(), myTime(time)
 		{}
 
-		constexpr WaitForSeconds(float&& wait_seconds) noexcept
-			: IAwaitable(), seconds(static_cast<float&&>(wait_seconds))
+		constexpr WaitForSeconds(float&& time) noexcept
+			: IAwaitable(), myTime(static_cast<float&&>(time))
 		{}
 
 		constexpr bool await_ready() noexcept override
@@ -24,9 +24,61 @@ export namespace net
 
 		constexpr float await_resume() const noexcept override
 		{
-			return seconds;
+			return myTime;
 		}
 
-		float seconds;
+		float myTime;
+	};
+
+	class WaitForMilliseconds final : public IAwaitable<float>
+	{
+	public:
+		constexpr WaitForMilliseconds(const float& time) noexcept
+			: IAwaitable(), myTime(time)
+		{}
+
+		constexpr WaitForMilliseconds(float&& time) noexcept
+			: IAwaitable(), myTime(static_cast<float&&>(time))
+		{}
+
+		constexpr bool await_ready() noexcept override
+		{
+			return false;
+		}
+
+		void await_suspend(std::coroutine_handle<void> handle) const override;
+
+		constexpr float await_resume() const noexcept override
+		{
+			return myTime;
+		}
+
+		float myTime;
+	};
+
+	class WaitForMinutes final : public IAwaitable<float>
+	{
+	public:
+		constexpr WaitForMinutes(const float& time) noexcept
+			: IAwaitable(), myTime(time)
+		{}
+
+		constexpr WaitForMinutes(float&& time) noexcept
+			: IAwaitable(), myTime(static_cast<float&&>(time))
+		{}
+
+		constexpr bool await_ready() noexcept override
+		{
+			return false;
+		}
+
+		void await_suspend(std::coroutine_handle<void> handle) const override;
+
+		constexpr float await_resume() const noexcept override
+		{
+			return myTime;
+		}
+
+		float myTime;
 	};
 }
