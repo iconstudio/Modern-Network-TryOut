@@ -191,5 +191,8 @@
     <ClCompile Include="src\TimedAwaiter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\IAwaitable.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

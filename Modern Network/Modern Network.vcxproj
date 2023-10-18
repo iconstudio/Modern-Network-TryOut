@@ -112,6 +112,7 @@
     <ClCompile Include="lib\EndPoint.ixx" />
     <ClCompile Include="lib\FixedString.ixx" />
     <ClCompile Include="lib\Handler.ixx" />
+    <ClCompile Include="lib\IAwaitable.ixx" />
     <ClCompile Include="lib\InternetProtocols.ixx" />
     <ClCompile Include="lib\IObject.ixx" />
     <ClCompile Include="lib\IoContext.ixx" />
