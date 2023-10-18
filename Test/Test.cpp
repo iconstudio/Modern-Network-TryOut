@@ -39,6 +39,8 @@ void Worker()
 	{
 		std::println("connected! (2)");
 	}
+
+	std::println("Worker done!");
 }
 
 int main()
