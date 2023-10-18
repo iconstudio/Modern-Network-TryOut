@@ -4,7 +4,6 @@ module;
 #include <future>
 
 export module Net.Task;
-import :Promise;
 import <coroutine>;
 
 export namespace net
@@ -20,13 +19,21 @@ export namespace net
 		{
 			bool await_ready() const noexcept
 			{
-				using namespace std::chrono_literals;
-				return valueHandle.wait_for(0s) != std::future_status::timeout;
+				return false;
 			}
 
-			void await_suspend(handle_type cont) const;
+			void await_suspend(handle_type handle) const
+			{
+				std::thread([this, handle] {
+					valueHandle.wait();
+					handle();
+				}).detach();
+			}
 
-			T await_resume() { return valueHandle.get(); }
+			T await_resume()
+			{
+				return valueHandle.get();
+			}
 
 			std::shared_future<T> valueHandle;
 		};
@@ -100,7 +107,8 @@ export namespace net
 			}
 		}
 
-		Awaiter operator co_await()
+		[[nodiscard]]
+		Awaiter GetAwaiter()
 		{
 			return Awaiter{ myHandle.promise().get_future().share() };
 		}
@@ -124,11 +132,14 @@ export namespace net
 	};
 
 	template<typename T>
-	void Task<T>::Awaiter::await_suspend(Task<T>::handle_type cont) const
+	Task<T>::awaiter operator co_await(Task<T>& task)
 	{
-		std::thread([this, cont] {
-			valueHandle.wait();
-			cont();
-		}).detach();
+		return task.GetAwaiter();
+	}
+
+	template<typename T>
+	Task<T>::awaiter operator co_await(Task<T>&& task)
+	{
+		return task.GetAwaiter();
 	}
 }
