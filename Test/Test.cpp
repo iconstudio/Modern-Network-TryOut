@@ -34,9 +34,9 @@ void Worker()
 	connector();
 	auto b = connector.Result();
 
-	//if (async_conn.has_value())
+	if (b.has_value())
 	{
-		//std::println("connected! (2)");
+		std::println("connected! (2)");
 	}
 }
 
