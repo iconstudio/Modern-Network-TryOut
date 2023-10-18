@@ -11,6 +11,32 @@ import Net.IpAddress;
 import Net.IpAddress.IPv4;
 import Net.Socket;
 import Net.Task;
+import Net.Coroutine;
+import Net.Coroutine.Awaiter.Timed;
+
+net::Coroutine Worker2()
+{
+	net::Socket test_socket2 = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
+
+	auto binded = test_socket2.Bind(net::IPv4Address::Loopback, 52002);
+	if (binded.has_value())
+	{
+		std::println("binded! (2)");
+	}
+
+	//auto connector = test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
+	//auto b = co_await connector;
+
+	auto c = co_await test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
+
+	//if (b.has_value())
+	if (c.has_value())
+	{
+		std::println("connected! (2)");
+	}
+
+	co_return;
+}
 
 void Worker()
 {
@@ -22,29 +48,13 @@ void Worker()
 		std::println("binded! (1)");
 	}
 
-	net::Socket test_socket2 = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
-
-	binded = test_socket2.Bind(net::IPv4Address::Loopback, 52002);
-	if (binded.has_value())
-	{
-		std::println("binded! (2)");
-	}
-
 	auto connected = test_socket1.Connect(net::IPv4Address::Loopback, 52000);
 	if (connected.has_value())
 	{
 		std::println("connected! (1)");
 	}
 
-	auto connector = test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
-	connector();
-
-	auto b = connector.Result();
-
-	if (b.has_value())
-	{
-		std::println("connected! (2)");
-	}
+	Worker2();
 
 	std::println("Worker done!");
 }

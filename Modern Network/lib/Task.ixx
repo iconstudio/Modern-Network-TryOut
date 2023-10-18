@@ -8,8 +8,26 @@ import <coroutine>;
 
 export namespace net
 {
+	struct ConcurrentAwaiter
+	{
+		static constexpr bool await_ready() noexcept
+		{
+			return false;
+		}
+
+		void await_suspend(std::coroutine_handle<void> handle)
+		{
+			std::thread([&handle] {
+				handle();
+			}).detach();
+		}
+
+		static constexpr void await_resume() noexcept
+		{}
+	};
+
 	template<typename T>
-	class [[nodiscard]] Task final
+	class Task final
 	{
 	public:
 		struct promise_type;
@@ -19,10 +37,10 @@ export namespace net
 		{
 			bool await_ready() const noexcept
 			{
-				return false;
+				return true;
 			}
 
-			void await_suspend(handle_type handle) const
+			void await_suspend(std::coroutine_handle<void> handle) const noexcept
 			{
 				std::thread([this, handle] {
 					valueHandle.wait();
@@ -30,7 +48,7 @@ export namespace net
 				}).detach();
 			}
 
-			T await_resume()
+			const T& await_resume() const noexcept
 			{
 				return valueHandle.get();
 			}
@@ -43,13 +61,9 @@ export namespace net
 			[[nodiscard]]
 			Task<T> get_return_object() noexcept
 			{
-				return Task(handle_type::from_promise(*this));
-			}
+				myValueHandle = myHandle.get_future();
 
-			[[nodiscard]]
-			std::future<T> get_future()
-			{
-				return myHandle.get_future();
+				return Task(handle_type::from_promise(*this), myValueHandle.share());
 			}
 
 			template<typename U>
@@ -58,7 +72,7 @@ export namespace net
 				myHandle.set_value(std::forward<U>(value));
 			}
 
-			static constexpr std::suspend_always initial_suspend() noexcept
+			ConcurrentAwaiter initial_suspend() noexcept
 			{
 				return {};
 			}
@@ -75,14 +89,23 @@ export namespace net
 			}
 
 			std::promise<T> myHandle;
+			std::future<T> myValueHandle;
 		};
 
-		constexpr Task(const handle_type& handle) noexcept
-			: myHandle(handle)
+		constexpr Task(const handle_type& handle, const std::shared_future<T>& future) noexcept
+			: myHandle(handle), valueHandle(future)
 		{}
 
-		constexpr Task(handle_type&& handle) noexcept
-			: myHandle(std::move(handle))
+		constexpr Task(const handle_type& handle, std::shared_future<T>&& future) noexcept
+			: myHandle(handle), valueHandle(std::move(future))
+		{}
+
+		constexpr Task(handle_type&& handle, const std::shared_future<T>& future) noexcept
+			: myHandle(std::move(handle)), valueHandle(future)
+		{}
+
+		constexpr Task(handle_type&& handle, std::shared_future<T>&& future) noexcept
+			: myHandle(std::move(handle)), valueHandle(std::move(future))
 		{}
 
 		~Task() noexcept(noexcept(myHandle.destroy()))
@@ -108,15 +131,21 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		Awaiter GetAwaiter()
+		Awaiter operator co_await() & noexcept
 		{
-			return Awaiter{ myHandle.promise().get_future().share() };
+			return Awaiter{ valueHandle };
+		}
+
+		[[nodiscard]]
+		Awaiter operator co_await() && noexcept
+		{
+			return Awaiter{ std::move(valueHandle) };
 		}
 
 		[[nodiscard]]
 		T Result() const
 		{
-			return myHandle.promise().get_future().get();
+			return valueHandle.get();
 		}
 
 		[[nodiscard]]
@@ -129,17 +158,6 @@ export namespace net
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
+		std::shared_future<T> valueHandle;
 	};
-
-	template<typename T>
-	Task<T>::awaiter operator co_await(Task<T>& task)
-	{
-		return task.GetAwaiter();
-	}
-
-	template<typename T>
-	Task<T>::awaiter operator co_await(Task<T>&& task)
-	{
-		return task.GetAwaiter();
-	}
 }
