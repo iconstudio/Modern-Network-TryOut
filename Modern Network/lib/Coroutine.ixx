@@ -23,7 +23,7 @@ export namespace net
 			static constexpr void return_void() noexcept
 			{}
 
-			static constexpr std::suspend_always initial_suspend() noexcept
+			static constexpr std::suspend_never initial_suspend() noexcept
 			{
 				return {};
 			}
