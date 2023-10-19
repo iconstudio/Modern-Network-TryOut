@@ -17,6 +17,7 @@ export namespace net
 	{
 	public:
 		struct promise_type;
+		struct finalizer;
 		using handle_type = std::coroutine_handle<promise_type>;
 		using promise_handle_type = std::promise<T>;
 		using future_type = std::future<T>;
@@ -43,7 +44,7 @@ export namespace net
 				return {};
 			}
 
-			static constexpr std::suspend_always final_suspend() noexcept
+			finalizer final_suspend() const noexcept
 			{
 				return {};
 			}
@@ -55,7 +56,23 @@ export namespace net
 			}
 
 			promise_handle_type myHandle;
+			std::coroutine_handle<void> contextHandle;
 			future_type myValueHandle;
+		};
+
+		struct finalizer
+		{
+			static constexpr bool await_ready() noexcept { return false; }
+			static constexpr void await_resume() noexcept {}
+
+			void await_suspend(handle_type handle) const noexcept
+			{
+				promise_type& my_promise = handle.promise();
+				if (std::coroutine_handle<void> previous = my_promise.contextHandle; previous)
+				{
+					previous();
+				}
+			}
 		};
 
 		Task(const handle_type& handle, const public_future_type& future) noexcept
@@ -89,6 +106,9 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
 		{
+			promise_type& my_promise = myHandle.promise();
+			my_promise.contextHandle = myHandle;
+
 			valueHandle.wait();
 			handle();
 		}
@@ -128,7 +148,6 @@ export namespace net
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
-		std::coroutine_handle<> contextHandle;
 		public_future_type valueHandle;
 	};
 
@@ -137,6 +156,7 @@ export namespace net
 	{
 	public:
 		struct promise_type;
+		struct finalizer;
 		using handle_type = std::coroutine_handle<promise_type>;
 		using promise_handle_type = std::promise<void>;
 		using future_type = std::future<void>;
@@ -162,7 +182,7 @@ export namespace net
 				return {};
 			}
 
-			static constexpr std::suspend_always final_suspend() noexcept
+			finalizer final_suspend() const noexcept
 			{
 				return {};
 			}
@@ -174,7 +194,23 @@ export namespace net
 			}
 
 			promise_handle_type myHandle;
+			std::coroutine_handle<void> contextHandle;
 			future_type myValueHandle;
+		};
+
+		struct finalizer
+		{
+			static constexpr bool await_ready() noexcept { return false; }
+			static constexpr void await_resume() noexcept {}
+
+			void await_suspend(handle_type handle) const noexcept
+			{
+				promise_type& my_promise = handle.promise();
+				if (std::coroutine_handle<void> previous = my_promise.contextHandle; previous)
+				{
+					previous();
+				}
+			}
 		};
 
 		Task(const handle_type& handle, const public_future_type& future) noexcept
@@ -208,6 +244,9 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
 		{
+			promise_type& my_promise = myHandle.promise();
+			my_promise.contextHandle = myHandle;
+
 			valueHandle.wait();
 			handle();
 		}
@@ -244,7 +283,6 @@ export namespace net
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
-		std::coroutine_handle<> contextHandle;
 		public_future_type valueHandle;
 	};
 }
