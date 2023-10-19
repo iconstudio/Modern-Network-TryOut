@@ -22,29 +22,6 @@ export namespace net
 		using future_type = std::future<T>;
 		using public_future_type = std::shared_future<T>;
 
-		struct Awaiter
-		{
-			bool await_ready() const noexcept
-			{
-				return true;
-			}
-
-			void await_suspend(std::coroutine_handle<void> handle) const noexcept
-			{
-				std::thread([this, handle] {
-					valueHandle.wait();
-					handle();
-				}).detach();
-			}
-
-			const T& await_resume() const
-			{
-				return valueHandle.get();
-			}
-
-			public_future_type valueHandle;
-		};
-
 		struct promise_type
 		{
 			[[nodiscard]]
@@ -105,6 +82,24 @@ export namespace net
 			}
 		}
 
+		static constexpr bool await_ready() noexcept
+		{
+			return true;
+		}
+
+		void await_suspend(std::coroutine_handle<void> handle) const noexcept
+		{
+			std::thread([this, handle] {
+				valueHandle.wait();
+				handle();
+			}).detach();
+		}
+
+		const T& await_resume() const
+		{
+			return valueHandle.get();
+		}
+
 		[[nodiscard]]
 		bool IsDone() const noexcept
 		{
@@ -117,18 +112,6 @@ export namespace net
 			{
 				myHandle();
 			}
-		}
-
-		[[nodiscard]]
-		Awaiter operator co_await() & noexcept
-		{
-			return Awaiter{ valueHandle };
-		}
-
-		[[nodiscard]]
-		Awaiter operator co_await() && noexcept
-		{
-			return Awaiter{ std::move(valueHandle) };
 		}
 
 		[[nodiscard]]
@@ -159,27 +142,6 @@ export namespace net
 		using promise_handle_type = std::promise<void>;
 		using future_type = std::future<void>;
 		using public_future_type = std::shared_future<void>;
-
-		struct Awaiter
-		{
-			bool await_ready() const noexcept
-			{
-				return true;
-			}
-
-			void await_suspend(std::coroutine_handle<void> handle) const noexcept
-			{
-				std::thread([this, handle] {
-					valueHandle.wait();
-					handle();
-				}).detach();
-			}
-
-			void await_resume() const noexcept
-			{}
-
-			public_future_type valueHandle;
-		};
 
 		struct promise_type
 		{
@@ -240,6 +202,22 @@ export namespace net
 			}
 		}
 
+		static constexpr bool await_ready() noexcept
+		{
+			return true;
+		}
+
+		void await_suspend(std::coroutine_handle<void> handle) const noexcept
+		{
+			std::thread([this, handle] {
+				valueHandle.wait();
+				handle();
+			}).detach();
+		}
+
+		void await_resume() const noexcept
+		{}
+
 		[[nodiscard]]
 		bool IsDone() const noexcept
 		{
@@ -252,18 +230,6 @@ export namespace net
 			{
 				myHandle();
 			}
-		}
-
-		[[nodiscard]]
-		Awaiter operator co_await() & noexcept
-		{
-			return Awaiter{ valueHandle };
-		}
-
-		[[nodiscard]]
-		Awaiter operator co_await() && noexcept
-		{
-			return Awaiter{ std::move(valueHandle) };
 		}
 
 		void Result() const
