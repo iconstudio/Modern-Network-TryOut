@@ -89,10 +89,8 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
 		{
-			std::thread([this, handle] {
-				valueHandle.wait();
-				handle();
-			}).detach();
+			valueHandle.wait();
+			handle();
 		}
 
 		const T& await_resume() const
@@ -130,6 +128,7 @@ export namespace net
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
+		std::coroutine_handle<> contextHandle;
 		public_future_type valueHandle;
 	};
 
@@ -209,10 +208,8 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
 		{
-			std::thread([this, handle] {
-				valueHandle.wait();
-				handle();
-			}).detach();
+			valueHandle.wait();
+			handle();
 		}
 
 		void await_resume() const noexcept
@@ -247,6 +244,7 @@ export namespace net
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
+		std::coroutine_handle<> contextHandle;
 		public_future_type valueHandle;
 	};
 }
