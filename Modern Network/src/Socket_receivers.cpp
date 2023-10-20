@@ -59,7 +59,7 @@ const noexcept
 bool
 net::Socket::Receive(std::span<std::byte> memory
 	, net::ReceivingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Receive(memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
@@ -74,7 +74,7 @@ const noexcept
 bool
 net::Socket::Receive(const std::byte* const& memory, size_t size
 	, net::ReceivingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Receive(memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
@@ -89,7 +89,7 @@ const noexcept
 net::SocketReceivingResult
 net::Socket::Receive(IoContext* context
 	, std::span<std::byte> memory)
-const noexcept
+	const noexcept
 {
 	::WSABUF buffer
 	{
@@ -124,7 +124,7 @@ const noexcept
 net::SocketReceivingResult
 net::Socket::Receive(IoContext* context
 	, const std::byte* const& memory, size_t size)
-const noexcept
+	const noexcept
 {
 	::WSABUF buffer
 	{
@@ -160,7 +160,7 @@ bool
 net::Socket::Receive(IoContext* context
 	, std::span<std::byte> memory
 	, ReceivingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Receive(context, memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
@@ -176,7 +176,7 @@ bool
 net::Socket::Receive(IoContext* context
 	, const std::byte* const& memory, size_t size
 	, ReceivingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Receive(context, memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
@@ -186,4 +186,62 @@ const noexcept
 		error_code = std::move(tr_error_code);
 		return false;
 	}).value_or(false);
+}
+
+net::Task<net::SocketReceivingResult>
+net::Socket::ReceiveAsync(net::IoContext* context
+	, std::span<std::byte> memory)
+	const noexcept
+{
+	if (SocketReceivingResult sent = Receive(context, memory); not sent)
+	{
+		co_return std::move(sent);
+	}
+
+	static ::DWORD flags = 0;
+	::DWORD transferred_bytes = 0;
+
+	::BOOL result = ::WSAGetOverlappedResult(myHandle
+		, reinterpret_cast<::LPWSAOVERLAPPED>(context)
+		, std::addressof(transferred_bytes)
+		, TRUE
+		, std::addressof(flags));
+
+	if (FALSE == result)
+	{
+		co_return net::unexpected(net::AcquireReceivingError());
+	}
+	else
+	{
+		co_return transferred_bytes;
+	}
+}
+
+net::Task<net::SocketReceivingResult>
+net::Socket::ReceiveAsync(net::IoContext* context
+	, const std::byte* const& memory, size_t size)
+	const noexcept
+{
+	if (SocketReceivingResult sent = Receive(context, memory, size); not sent)
+	{
+		co_return std::move(sent);
+	}
+
+	static ::DWORD flags = 0;
+	::DWORD transferred_bytes = 0;
+
+	::BOOL result = ::WSAGetOverlappedResult(myHandle
+		, reinterpret_cast<::LPWSAOVERLAPPED>(context)
+		, std::addressof(transferred_bytes)
+		, TRUE
+		, std::addressof(flags));
+
+	if (FALSE == result)
+	{
+		co_return net::unexpected(net::AcquireReceivingError());
+	}
+	else
+	{
+		co_return transferred_bytes;
+	}
 }
