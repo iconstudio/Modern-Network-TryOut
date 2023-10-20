@@ -1,4 +1,4 @@
-export module Net.ResourcePool;
+export module Net.IResourcePool;
 import <memory_resource>;
 
 export namespace net
