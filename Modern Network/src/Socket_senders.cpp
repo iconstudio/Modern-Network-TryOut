@@ -36,7 +36,7 @@ const noexcept
 bool
 net::Socket::Send(std::span<const std::byte> memory
 	, net::SendingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Send(memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -51,7 +51,7 @@ const noexcept
 bool
 net::Socket::Send(const std::byte* const& memory, size_t size
 	, net::SendingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Send(memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -66,7 +66,7 @@ const noexcept
 net::SocketSendingResult
 net::Socket::Send(net::IoContext* context
 	, std::span<const std::byte> memory)
-const noexcept
+	const noexcept
 {
 	::WSABUF buffer
 	{
@@ -80,7 +80,7 @@ const noexcept
 net::SocketSendingResult
 net::Socket::Send(net::IoContext* context
 	, const std::byte* const& memory, size_t size)
-const noexcept
+	const noexcept
 {
 	::WSABUF buffer
 	{
@@ -95,7 +95,7 @@ bool
 net::Socket::Send(net::IoContext* context
 	, std::span<const std::byte> memory
 	, net::SendingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Send(context, memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -111,7 +111,7 @@ bool
 net::Socket::Send(net::IoContext* context
 	, const std::byte* const& memory
 	, size_t size, net::SendingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Send(context, memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -123,10 +123,68 @@ const noexcept
 	}).value_or(false);
 }
 
+net::Task<net::SocketSendingResult>
+net::Socket::SendAsync(net::IoContext* context
+	, std::span<const std::byte> memory)
+	const noexcept
+{
+	if (SocketSendingResult sent = Send(context, memory); not sent)
+	{
+		co_return std::move(sent);
+	}
+
+	static ::DWORD flags = 0;
+	::DWORD transferred_bytes = 0;
+
+	::BOOL result = ::WSAGetOverlappedResult(myHandle
+		, reinterpret_cast<::LPWSAOVERLAPPED>(context)
+		, std::addressof(transferred_bytes)
+		, TRUE
+		, std::addressof(flags));
+
+	if (FALSE == result)
+	{
+		co_return net::unexpected(net::AcquireSendingError());
+	}
+	else
+	{
+		co_return transferred_bytes;
+	}
+}
+
+net::Task<net::SocketSendingResult>
+net::Socket::SendAsync(net::IoContext* context
+	, const std::byte* const& memory, size_t size)
+	const noexcept
+{
+	if (SocketSendingResult sent = Send(context, memory, size); not sent)
+	{
+		co_return std::move(sent);
+	}
+
+	static ::DWORD flags = 0;
+	::DWORD transferred_bytes = 0;
+
+	::BOOL result = ::WSAGetOverlappedResult(myHandle
+		, reinterpret_cast<::LPWSAOVERLAPPED>(context)
+		, std::addressof(transferred_bytes)
+		, TRUE
+		, std::addressof(flags));
+
+	if (FALSE == result)
+	{
+		co_return net::unexpected(net::AcquireSendingError());
+	}
+	else
+	{
+		co_return transferred_bytes;
+	}
+}
+
 net::SocketSendingResult
 RawSend(const net::NativeSocket& sock
 	, ::WSABUF& buffer)
-noexcept
+	noexcept
 {
 	if (::DWORD bytes = 0; 0 == ::WSASend(sock
 		, std::addressof(buffer), 1
@@ -147,7 +205,7 @@ RawSendEx(const net::NativeSocket& sock
 	, ::WSABUF& buffer
 	, void* context
 	, ::LPWSAOVERLAPPED_COMPLETION_ROUTINE routine)
-noexcept
+	noexcept
 {
 	if (::DWORD bytes = 0; 0 == ::WSASend(sock
 		, std::addressof(buffer), 1
