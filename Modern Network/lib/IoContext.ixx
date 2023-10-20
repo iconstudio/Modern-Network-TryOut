@@ -7,8 +7,9 @@ export namespace net
 	class IoContext
 	{
 	public:
-		constexpr IoContext() = default;
-		constexpr ~IoContext() = default;
+		constexpr IoContext() noexcept = default;
+		constexpr ~IoContext() noexcept
+		{}
 
 		std::uint64_t ioLower;
 		std::uint64_t ioUpper;
