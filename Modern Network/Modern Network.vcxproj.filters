@@ -80,7 +80,7 @@
     <ClCompile Include="lib\SocketResult.ixx">
       <Filter>lib</Filter>
     </ClCompile>
-    <ClCompile Include="lib\SocketErrorCode.ixx">
+    <ClCompile Include="lib\ErrorCode.ixx">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="src\Socket.cpp">
