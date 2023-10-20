@@ -127,6 +127,7 @@
     <ClCompile Include="lib\IPv6Address.ixx" />
     <ClCompile Include="lib\NativeHandle.ixx" />
     <ClCompile Include="lib\IResourcePool.ixx" />
+    <ClCompile Include="lib\Net.ixx" />
     <ClCompile Include="lib\NetworkInitializationError.ixx" />
     <ClCompile Include="lib\Promissory.ixx" />
     <ClCompile Include="lib\Property.ixx" />
