@@ -19,7 +19,9 @@ export namespace net
 		IpAddress(const IpAddressFamily& family, std::string_view address);
 		IpAddress(const IpAddress& other);
 		IpAddress& operator=(const IpAddress& other);
-		~IpAddress() = default;
+
+		~IpAddress()
+		{}
 
 		[[nodiscard]]
 		SerializedIpAddress Serialize() const noexcept;
