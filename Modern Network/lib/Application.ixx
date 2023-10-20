@@ -1,5 +1,6 @@
 export module Net.Application;
 import Net.IObject;
+import Net.Socket;
 
 export namespace net
 {
@@ -12,6 +13,9 @@ export namespace net
 		void Awake() override;
 		void Start() override;
 		void Update(float) override;
+
+		[[nodiscard]]
+		static Socket& Listener() noexcept;
 
 	private:
 		Application(const Application&) = delete;
