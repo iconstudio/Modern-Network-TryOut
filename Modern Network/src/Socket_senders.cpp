@@ -3,7 +3,6 @@ module;
 #include <WinSock2.h>
 
 module Net.Socket;
-import Net.Task;
 
 net::SocketSendingResult RawSend(const net::NativeSocket& sock, ::WSABUF& buffer) noexcept;
 net::SocketSendingResult RawSendEx(const net::NativeSocket& sock, ::WSABUF& buffer, void* context, ::LPWSAOVERLAPPED_COMPLETION_ROUTINE routine) noexcept;
