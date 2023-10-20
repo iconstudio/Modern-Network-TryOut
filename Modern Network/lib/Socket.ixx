@@ -86,8 +86,8 @@ export namespace net
 
 		SocketSendingResult Send(_Maybenull_ IoContext* context, std::span<const std::byte> memory) const noexcept;
 		SocketSendingResult Send(_Maybenull_ IoContext* context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size) const noexcept;
-		bool Send(_Maybenull_ IoContext* context, std::span<const std::byte> memory, SocketSendingResult& error_code) const noexcept;
-		bool Send(_Maybenull_ IoContext* context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size, SocketSendingResult& error_code) const noexcept;
+		bool Send(_Maybenull_ IoContext* context, std::span<const std::byte> memory, SendingErrorCodes& error_code) const noexcept;
+		bool Send(_Maybenull_ IoContext* context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size, SendingErrorCodes& error_code) const noexcept;
 
 		// Synchronous Receive
 
