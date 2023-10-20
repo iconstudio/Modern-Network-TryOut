@@ -31,6 +31,9 @@
     <Filter Include="lib\Errors">
       <UniqueIdentifier>{d70af050-d48d-449c-a4c5-885efabc538e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\Containers">
+      <UniqueIdentifier>{c147cacd-4bff-4a80-b8f7-b259e509ac3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.hpp">
