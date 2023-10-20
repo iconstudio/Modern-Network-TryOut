@@ -47,6 +47,12 @@ export namespace net
 	}
 
 	[[nodiscard]]
+	constexpr bool operator==(const ErrorCodes& lhs, const SocketOptionErrorCodes& rhs) noexcept
+	{
+		return static_cast<std::int32_t>(lhs) == static_cast<std::int32_t>(rhs);
+	}
+
+	[[nodiscard]]
 	constexpr bool operator==(const SendingErrorCodes& lhs, const ReceivingErrorCodes& rhs) noexcept
 	{
 		return static_cast<std::int32_t>(lhs) == static_cast<std::int32_t>(rhs);
