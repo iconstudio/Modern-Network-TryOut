@@ -3,17 +3,18 @@ module;
 #include <WinSock2.h>
 #include <MSWSock.h>
 #include <minwindef.h>
+#include <type_traits>
+#include <utility>
+#include <format>
+#include <print>
 
 module Net.Application;
+import Net;
 import Net.Socket;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
 import Net.Exception.NetworkInitializationError;
 import Net.Exception.ServerSetupError;
-import <type_traits>;
-import <utility>;
-import <format>;
-import <print>;
 
 using namespace net;
 
@@ -21,15 +22,13 @@ Socket serverSocket = Socket::EmptySocket;
 
 net::Application::Application()
 {
-	WSADATA version_data{};
-
-	NetworkInitializationError startup_error;
-
-	const int startup = ::WSAStartup(MAKEWORD(2, 2), std::addressof(version_data));
-	if (0 != startup)
+	auto error = core::Initialize();
+	if (error)
 	{
+		NetworkInitializationError startup_error;
+
 		constexpr auto startup_notify_msg = "Error on Network Initialization (Code: {})";
-		auto formatted_msg = std::format(startup_notify_msg, startup);
+		auto formatted_msg = std::format(startup_notify_msg, static_cast<unsigned int>(error.value()));
 		startup_error = NetworkInitializationError{ formatted_msg.c_str() };
 
 		throw startup_error;
@@ -38,7 +37,7 @@ net::Application::Application()
 
 net::Application::~Application() noexcept
 {
-	::WSACleanup();
+	core::Annihilate();
 }
 
 void
