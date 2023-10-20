@@ -52,18 +52,20 @@ net::Application::Awake()
 
 		throw ServerSetupError{ formatted_msg.c_str() };
 	});
-	
+
+	constexpr DWORD rio_control = SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER;
 	RIO_EXTENSION_FUNCTION_TABLE rio_table{};
 	GUID rio_fn_id = WSAID_MULTIPLE_RIO;
-	DWORD dwBytes = 0;
+	DWORD _ = 0;
 
-	if (0 != WSAIoctl(serverSocket.GetHandle(), SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER,
-		std::addressof(rio_fn_id),
-		sizeof(GUID),
-		(void**)std::addressof(rio_table),
-		sizeof(rio_table),
-		std::addressof(dwBytes),
-		nullptr, nullptr))
+	if (0 != WSAIoctl(serverSocket.GetHandle()
+		, rio_control
+		, std::addressof(rio_fn_id)
+		, sizeof(GUID)
+		, (void**)std::addressof(rio_table)
+		, sizeof(rio_table)
+		, std::addressof(_)
+		, nullptr, nullptr))
 	{
 		constexpr auto startup_notify_msg = "Cannot bind the address to the listener (Code: {})";
 		auto formatted_msg = std::format(startup_notify_msg, ::WSAGetLastError());
