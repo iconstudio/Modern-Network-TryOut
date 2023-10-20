@@ -155,6 +155,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\ConcurrentAwaiter.cpp" />
     <ClCompile Include="src\IpAddress.cpp" />
+    <ClCompile Include="src\Net.cpp" />
     <ClCompile Include="src\Socket.cpp" />
     <ClCompile Include="src\SocketErrorCode.cpp" />
     <ClCompile Include="src\Socket_connectors.cpp" />
