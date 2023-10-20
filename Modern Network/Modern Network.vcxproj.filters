@@ -203,5 +203,8 @@
     <ClCompile Include="src\ConcurrentAwaiter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\ConcurrentStack.ixx">
+      <Filter>lib\Containers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

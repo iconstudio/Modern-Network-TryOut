@@ -108,6 +108,7 @@
     <ClCompile Include="lib\Application.ixx" />
     <ClCompile Include="lib\Awaitable.ixx" />
     <ClCompile Include="lib\ConcurrentAwaiter.ixx" />
+    <ClCompile Include="lib\ConcurrentStack.ixx" />
     <ClCompile Include="lib\Constraints.ixx" />
     <ClCompile Include="lib\Coroutine.ixx" />
     <ClCompile Include="lib\EndPoint.ixx" />
