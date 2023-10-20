@@ -6,15 +6,15 @@ export namespace net
 {
 	enum class SocketOpenErrorCodes : std::int32_t
 	{
-		NotInitializedSocketSystem = (std::int32_t)SocketErrorCodes::NotInitializedSocketSystem,
-		NetworkIsDown = (std::int32_t)SocketErrorCodes::NetworkIsDown,
-		CannotUseThisAddress = (std::int32_t)SocketErrorCodes::CannotUseThisAddress,
-		YetInProgress = (std::int32_t)SocketErrorCodes::YetInProgress,
-		WSAEINVAL = (std::int32_t)SocketErrorCodes::WSAEINVAL,
-		AlreadyConnected = (std::int32_t)SocketErrorCodes::WSAEISCONN,
-		NotASocket = (std::int32_t)SocketErrorCodes::NotASocket,
-		CouldNotUseThis = (std::int32_t)SocketErrorCodes::WSAEMFILE,
-		NoBufferStorage = (std::int32_t)SocketErrorCodes::NoBufferStorage,
-		NoSupportOperation = (std::int32_t)SocketErrorCodes::NoSupportOperation
+		NotInitializedSocketSystem = (std::int32_t)ErrorCodes::NotInitializedSocketSystem,
+		NetworkIsDown = (std::int32_t)ErrorCodes::NetworkIsDown,
+		CannotUseThisAddress = (std::int32_t)ErrorCodes::CannotUseThisAddress,
+		YetInProgress = (std::int32_t)ErrorCodes::YetInProgress,
+		WSAEINVAL = (std::int32_t)ErrorCodes::WSAEINVAL,
+		AlreadyConnected = (std::int32_t)ErrorCodes::WSAEISCONN,
+		NotASocket = (std::int32_t)ErrorCodes::NotASocket,
+		CouldNotUseThis = (std::int32_t)ErrorCodes::WSAEMFILE,
+		NoBufferStorage = (std::int32_t)ErrorCodes::NoBufferStorage,
+		NoSupportOperation = (std::int32_t)ErrorCodes::NoSupportOperation
 	};
 }

@@ -2,11 +2,11 @@ module;
 #include <WinSock2.h>
 module Net.ErrorCode;
 
-net::SocketErrorCodes
-net::AcquireSocketError()
+net::ErrorCodes
+net::AcquireNetworkError()
 noexcept
 {
-	return static_cast<SocketErrorCodes>(::WSAGetLastError());
+	return static_cast<ErrorCodes>(::WSAGetLastError());
 }
 
 net::SocketOpenErrorCodes

@@ -47,7 +47,7 @@ net::Application::Awake()
 	serverSocket = Socket::Create(InternetProtocols::TCP, IpAddressFamily::IPv4);
 
 	serverSocket.Bind(IPv4Address::Loopback, 52000).or_else(
-		[](SocketErrorCodes&& error_code) -> std::expected<unsigned int, SocketErrorCodes> {
+		[](ErrorCodes&& error_code) -> std::expected<unsigned int, ErrorCodes> {
 		constexpr auto startup_notify_msg = "Cannot bind the address to the listener (Code: {})";
 		auto formatted_msg = std::format(startup_notify_msg, static_cast<int>(error_code));
 

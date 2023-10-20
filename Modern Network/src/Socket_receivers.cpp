@@ -110,7 +110,7 @@ net::Socket::Receive(IoContext* context
 	}
 	else
 	{
-		if (auto error = AcquireReceivingError(); error != SocketErrorCodes::PendedIoOperation)
+		if (auto error = AcquireReceivingError(); error != ErrorCodes::PendedIoOperation)
 		{
 			return unexpected(std::move(error));
 		}
@@ -145,7 +145,7 @@ net::Socket::Receive(IoContext* context
 	}
 	else
 	{
-		if (auto error = AcquireReceivingError(); error != SocketErrorCodes::PendedIoOperation)
+		if (auto error = AcquireReceivingError(); error != ErrorCodes::PendedIoOperation)
 		{
 			return unexpected(std::move(error));
 		}

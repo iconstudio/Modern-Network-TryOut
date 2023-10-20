@@ -31,7 +31,7 @@ const noexcept
 
 	if (0 != ::bind(myHandle, reinterpret_cast<const SOCKADDR*>(ptr), sizeof(sockaddr)))
 	{
-		return unexpected(AcquireSocketError());
+		return unexpected(AcquireNetworkError());
 	}
 
 	return static_cast<unsigned int>(sizeof(sockaddr));
@@ -46,7 +46,7 @@ const noexcept
 
 	if (0 != ::bind(myHandle, reinterpret_cast<const SOCKADDR*>(ptr), sizeof(sockaddr)))
 	{
-		return unexpected(AcquireSocketError());
+		return unexpected(AcquireNetworkError());
 	}
 
 	return static_cast<unsigned int>(sizeof(sockaddr));
@@ -78,8 +78,8 @@ const noexcept
 		, nullptr, nullptr
 		, nullptr, nullptr))
 	{
-		auto error_code = AcquireSocketError();
-		if (error_code == SocketErrorCodes::NonBlockedOperation)
+		auto error_code = AcquireNetworkError();
+		if (error_code == ErrorCodes::NonBlockedOperation)
 		{
 			return 0;
 		}
@@ -104,8 +104,8 @@ const noexcept
 		, nullptr, nullptr
 		, nullptr, nullptr))
 	{
-		auto error_code = AcquireSocketError();
-		if (error_code == SocketErrorCodes::NonBlockedOperation)
+		auto error_code = AcquireNetworkError();
+		if (error_code == ErrorCodes::NonBlockedOperation)
 		{
 			return 0;
 		}

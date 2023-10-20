@@ -131,7 +131,7 @@ noexcept
 }
 
 Socket
-Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code)
+Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family, ErrorCodes& error_code)
 noexcept
 {
 	if (Socket result = Create(protocol, family); result.IsAvailable())
@@ -140,7 +140,7 @@ noexcept
 	}
 	else
 	{
-		error_code = AcquireSocketError();
+		error_code = AcquireNetworkError();
 		return EmptySocket;
 	}
 }
@@ -165,7 +165,7 @@ noexcept
 }
 
 bool
-Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, SocketErrorCodes& error_code)
+Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, ErrorCodes& error_code)
 noexcept
 {
 	if (Socket result = Create(protocol, family); result.IsAvailable())
@@ -179,7 +179,7 @@ noexcept
 	}
 	else
 	{
-		error_code = AcquireSocketError();
+		error_code = AcquireNetworkError();
 		return false;
 	}
 }
@@ -194,7 +194,7 @@ noexcept
 	}
 	else
 	{
-		return unexpected(AcquireSocketError());
+		return unexpected(AcquireNetworkError());
 	}
 }
 

@@ -33,7 +33,7 @@ export namespace net
 	public:
 		// Type members
 
-		using FactoryResult = expected<Socket, SocketErrorCodes>;
+		using FactoryResult = expected<Socket, ErrorCodes>;
 
 		// Static members
 
@@ -124,11 +124,11 @@ export namespace net
 		[[nodiscard]]
 		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
 		[[nodiscard]]
-		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family, SocketErrorCodes& error_code) noexcept;
+		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family, ErrorCodes& error_code) noexcept;
 		[[nodiscard]]
 		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out) noexcept;
 		[[nodiscard]]
-		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, SocketErrorCodes& error_code) noexcept;
+		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, ErrorCodes& error_code) noexcept;
 		[[nodiscard]]
 		static FactoryResult TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
 		static void SetAddressReusable(Socket& target, bool& flag) noexcept;

@@ -3,7 +3,7 @@ import <cstdint>;
 
 export namespace net
 {
-	enum class SocketErrorCodes : std::int32_t
+	enum class ErrorCodes : std::int32_t
 	{
 		PendedIoOperation = 997,
 		WSA_IO_INCOMPLETE = 996,
