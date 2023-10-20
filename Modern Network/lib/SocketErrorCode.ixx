@@ -1,4 +1,4 @@
-export module Net.Socket.ErrorCode;
+export module Net.ErrorCode;
 export import :General;
 export import :Open;
 export import :Option;

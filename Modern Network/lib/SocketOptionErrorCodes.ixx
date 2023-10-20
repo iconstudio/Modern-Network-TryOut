@@ -1,4 +1,4 @@
-export module Net.Socket.ErrorCode:Option;
+export module Net.ErrorCode:Option;
 import :General;
 import <cstdint>;
 

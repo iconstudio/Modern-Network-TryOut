@@ -1,4 +1,4 @@
-export module Net.Socket.ErrorCode:Receiving;
+export module Net.ErrorCode:Receiving;
 import :General;
 import <cstdint>;
 

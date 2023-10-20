@@ -1,4 +1,4 @@
-export module Net.Socket.ErrorCode:Closing;
+export module Net.ErrorCode:Closing;
 import :General;
 import <cstdint>;
 

@@ -1,4 +1,4 @@
-export module Net.Socket.ErrorCode:Open;
+export module Net.ErrorCode:Open;
 import :General;
 import <cstdint>;
 

@@ -1,6 +1,6 @@
 module;
 #include <WinSock2.h>
-module Net.Socket.ErrorCode;
+module Net.ErrorCode;
 
 net::SocketErrorCodes
 net::AcquireSocketError()
