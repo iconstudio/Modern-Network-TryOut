@@ -25,6 +25,9 @@ export namespace net
 	class Task;
 
 	template<notvoids T>
+	class TaskResultDelegate;
+
+	template<notvoids T>
 	class Task<T> final
 	{
 	public:
@@ -139,6 +142,9 @@ export namespace net
 		{
 			return myHandle.address() == other.myHandle.address();
 		}
+
+		template<notvoids T>
+		friend class TaskResultDelegate;
 
 	private:
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
@@ -260,5 +266,28 @@ export namespace net
 
 		handle_type myHandle;
 		public_future_type valueHandle;
+	};
+
+	template<notvoids T>
+	class TaskResultDelegate
+	{
+	public:
+		static constexpr bool await_ready() noexcept
+		{
+			return true;
+		}
+
+		void await_suspend(std::coroutine_handle<void> handle) const noexcept
+		{
+			sharedHandle.wait();
+			handle();
+		}
+
+		decltype(auto) await_resume() const
+		{
+			return sharedHandle.get();
+		}
+
+		std::shared_future<T> sharedHandle;
 	};
 }
