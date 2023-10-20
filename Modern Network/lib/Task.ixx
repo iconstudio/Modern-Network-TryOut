@@ -165,27 +165,11 @@ export namespace net
 		struct promise_type
 		{
 			[[nodiscard]]
-			Task<void> get_return_object() noexcept
-			{
-				myValueHandle = myHandle.get_future();
+			Task<void> get_return_object() noexcept;
+			void return_void();
 
-				return Task(handle_type::from_promise(*this), myValueHandle.share());
-			}
-
-			void return_void()
-			{
-				myHandle.set_value();
-			}
-
-			coroutine::ConcurrentAwaiter initial_suspend() noexcept
-			{
-				return {};
-			}
-
-			finalizer final_suspend() const noexcept
-			{
-				return {};
-			}
+			coroutine::ConcurrentAwaiter initial_suspend() noexcept;
+			finalizer final_suspend() const noexcept;
 
 			[[noreturn]]
 			void unhandled_exception()
