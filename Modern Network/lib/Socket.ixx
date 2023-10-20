@@ -100,8 +100,8 @@ export namespace net
 
 		SocketReceivingResult Receive(_Maybenull_ IoContext* context, std::span<std::byte> memory) const noexcept;
 		SocketReceivingResult Receive(_Maybenull_ IoContext* context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size) const noexcept;
-		bool Receive(_Maybenull_ IoContext* context, std::span<std::byte> memory, SocketReceivingResult& error_code) const noexcept;
-		bool Receive(_Maybenull_ IoContext* context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size, SocketReceivingResult& error_code) const noexcept;
+		bool Receive(_Maybenull_ IoContext* context, std::span<std::byte> memory, ReceivingErrorCodes& error_code) const noexcept;
+		bool Receive(_Maybenull_ IoContext* context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
 
 		// Asynchronous Send & Receive
 
