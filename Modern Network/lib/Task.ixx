@@ -167,10 +167,7 @@ export namespace net
 			TaskFinalizer final_suspend() const noexcept;
 
 			[[noreturn]]
-			void unhandled_exception()
-			{
-				myHandle.set_exception_at_thread_exit(std::current_exception());
-			}
+			void unhandled_exception();
 
 			promise_handle_type myHandle;
 			std::coroutine_handle<void> contextHandle;

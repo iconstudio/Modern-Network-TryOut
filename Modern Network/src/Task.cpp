@@ -33,3 +33,10 @@ const noexcept
 {
 	return {};
 }
+
+[[noreturn]]
+void
+net::Task<void>::promise_type::unhandled_exception()
+{
+	myHandle.set_exception_at_thread_exit(std::current_exception());
+}
