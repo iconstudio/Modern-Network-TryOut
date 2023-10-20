@@ -5,10 +5,7 @@ module;
 #include <minwindef.h>
 #include <type_traits>
 #include <utility>
-#include <format>
-
 module Net;
-import Net.Exception.NetworkInitializationError;
 
 std::optional<net::ErrorCodes>
 net::core::Initialize()
