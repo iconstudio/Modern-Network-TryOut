@@ -1,9 +1,5 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
 #include <print>
-#include <exception>
-#include <coroutine>
-#include <thread>
-#include <future>
 
 import Net.Constraints;
 import Net.Application;
@@ -63,6 +59,7 @@ void Worker()
 
 int main()
 {
+	std::println("=========$ Server $=========");
 	std::println("=========== Init ===========");
 	net::Application app{};
 
@@ -75,6 +72,8 @@ int main()
 	Worker();
 
 	std::println("=========== Update ===========");
+
+	char buffer[512]{};
 	while (true)
 	{
 		app.Update(0);
