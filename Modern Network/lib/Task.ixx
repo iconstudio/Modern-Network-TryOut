@@ -7,6 +7,18 @@ import Net.Constraints;
 import Net.Coroutine.Awaiter.Concurrent;
 import <coroutine>;
 
+namespace net
+{
+	struct TaskFinalizer
+	{
+		static constexpr bool await_ready() noexcept { return false; }
+		static constexpr void await_resume() noexcept {}
+
+		void await_suspend(std::coroutine_handle<void>) const noexcept
+		{}
+	};
+}
+
 export namespace net
 {
 	template<typename T = void>
@@ -17,7 +29,6 @@ export namespace net
 	{
 	public:
 		struct promise_type;
-		struct finalizer;
 		using handle_type = std::coroutine_handle<promise_type>;
 		using promise_handle_type = std::promise<T>;
 		using future_type = std::future<T>;
@@ -44,7 +55,7 @@ export namespace net
 				return {};
 			}
 
-			finalizer final_suspend() const noexcept
+			TaskFinalizer final_suspend() const noexcept
 			{
 				return {};
 			}
@@ -58,21 +69,6 @@ export namespace net
 			promise_handle_type myHandle;
 			std::coroutine_handle<void> contextHandle;
 			future_type myValueHandle;
-		};
-
-		struct finalizer
-		{
-			static constexpr bool await_ready() noexcept { return false; }
-			static constexpr void await_resume() noexcept {}
-
-			void await_suspend(handle_type handle) const noexcept
-			{
-				promise_type& my_promise = handle.promise();
-				if (std::coroutine_handle<void> previous = my_promise.contextHandle; previous)
-				{
-					previous();
-				}
-			}
 		};
 
 		Task(const handle_type& handle, const public_future_type& future) noexcept
@@ -156,7 +152,6 @@ export namespace net
 	{
 	public:
 		struct promise_type;
-		struct finalizer;
 		using handle_type = std::coroutine_handle<promise_type>;
 		using promise_handle_type = std::promise<void>;
 		using future_type = std::future<void>;
@@ -169,7 +164,7 @@ export namespace net
 			void return_void();
 
 			coroutine::ConcurrentAwaiter initial_suspend() noexcept;
-			finalizer final_suspend() const noexcept;
+			TaskFinalizer final_suspend() const noexcept;
 
 			[[noreturn]]
 			void unhandled_exception()
@@ -182,7 +177,7 @@ export namespace net
 			future_type myValueHandle;
 		};
 
-		struct finalizer
+		struct TaskFinalizer
 		{
 			static constexpr bool await_ready() noexcept { return false; }
 			static constexpr void await_resume() noexcept {}

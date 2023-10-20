@@ -27,7 +27,7 @@ noexcept
 	return {};
 }
 
-net::Task<void>::finalizer
+net::TaskFinalizer
 net::Task<void>::promise_type::final_suspend()
 const noexcept
 {
