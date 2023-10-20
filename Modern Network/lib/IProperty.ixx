@@ -7,13 +7,13 @@ export namespace net
 	class IProperty;
 
 	template<movable T, typename Context, bool Copyable, bool Readonly>
-	class IProperty<T, Context, false, Copyable, Readonly>
+	class IProperty<T, Context, false, Copyable, Readonly> final
 	{
 	public:
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T>)
 			requires default_initializable<T> = default;
-		virtual constexpr ~IProperty()
+		constexpr ~IProperty()
 			noexcept(nothrow_destructibles<T>) = default;
 
 		template<convertible_to<T> U>
@@ -84,7 +84,7 @@ export namespace net
 	};
 
 	template<movable T, bool Copyable, bool Readonly>
-	class IProperty<T, void, true, Copyable, Readonly>
+	class IProperty<T, void, true, Copyable, Readonly> final
 	{
 	public:
 		using functor_t = void(*)(T&);
@@ -92,7 +92,7 @@ export namespace net
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T>)
 			requires default_initializable<T> = default;
-		virtual constexpr ~IProperty()
+		constexpr ~IProperty()
 			noexcept(nothrow_destructibles<T>) = default;
 
 		template<convertible_to<T> U, invocables<T&> Fn>
@@ -192,7 +192,7 @@ export namespace net
 	};
 
 	template<movable T, typename Context, bool Copyable, bool Readonly>
-	class IProperty<T, Context, true, Copyable, Readonly>
+	class IProperty<T, Context, true, Copyable, Readonly> final
 	{
 	public:
 		using functor_t = void(*)(Context&, T&);
@@ -200,7 +200,7 @@ export namespace net
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T>)
 			requires default_initializable<T> = default;
-		virtual constexpr ~IProperty()
+		constexpr ~IProperty()
 			noexcept(nothrow_destructibles<T>) = default;
 
 		template<convertible_to<T> U, invocables<Context&, T&> Fn>
