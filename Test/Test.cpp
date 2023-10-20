@@ -24,7 +24,7 @@ net::Coroutine Worker2()
 		std::println("binded! (2)");
 	}
 
-	auto a = co_await net::WaitForSeconds(3);
+	auto a = co_await net::coroutine::WaitForSeconds(3);
 
 	//auto connector = test_socket2.ConnectAsync(net::IPv4Address::Loopback, 52000);
 	//auto b = co_await connector;

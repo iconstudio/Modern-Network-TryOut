@@ -4,9 +4,9 @@ export module Net.Coroutine;
 import Net.Coroutine.Promissory;
 export import <coroutine>;
 
-export namespace net
+export namespace net::coroutine
 {
-	class Coroutine
+	class Coroutine final
 	{
 	public:
 		struct promise_type;
@@ -48,7 +48,7 @@ export namespace net
 			: myHandle(static_cast<handle_type&&>(handle))
 		{}
 
-		virtual ~Coroutine() noexcept(noexcept(myHandle.destroy()))
+		~Coroutine() noexcept(noexcept(myHandle.destroy()))
 		{
 			if (myHandle)
 			{
@@ -84,4 +84,9 @@ export namespace net
 	private:
 		handle_type myHandle;
 	};
+}
+
+export namespace net
+{
+	using Coroutine = coroutine::Coroutine;
 }

@@ -1,7 +1,7 @@
 export module Net.Coroutine.IAwaitable;
 import <coroutine>;
 
-export namespace net
+export namespace net::coroutine
 {
 	template<typename R = void, typename H = std::coroutine_handle<void>>
 	class IAwaitable

@@ -2,7 +2,7 @@ export module Net.Coroutine.Suspender;
 import <concepts>;
 import <coroutine>;
 
-export namespace net
+export namespace net::coroutine
 {
 	template<typename W>
 	concept Suspender = requires(W object, std::coroutine_handle<void> handle)

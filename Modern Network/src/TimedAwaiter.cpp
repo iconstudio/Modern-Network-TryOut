@@ -5,7 +5,7 @@ module;
 module Net.Coroutine.Awaiter.Timed;
 
 void
-net::WaitForSeconds::await_suspend(std::coroutine_handle<void> handle)
+net::coroutine::WaitForSeconds::await_suspend(std::coroutine_handle<void> handle)
 const
 {
 	//using namespace std::chrono_literals;
@@ -18,7 +18,7 @@ const
 }
 
 void
-net::WaitForMilliseconds::await_suspend(std::coroutine_handle<void> handle)
+net::coroutine::WaitForMilliseconds::await_suspend(std::coroutine_handle<void> handle)
 const
 {
 	::Sleep(static_cast<DWORD>(myTime));
@@ -26,7 +26,7 @@ const
 }
 
 void
-net::WaitForMinutes::await_suspend(std::coroutine_handle<void> handle)
+net::coroutine::WaitForMinutes::await_suspend(std::coroutine_handle<void> handle)
 const
 {
 	::Sleep(static_cast<DWORD>(myTime * 60000));

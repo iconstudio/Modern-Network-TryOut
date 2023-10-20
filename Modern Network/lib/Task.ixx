@@ -39,7 +39,7 @@ export namespace net
 				myHandle.set_value(std::forward<U>(value));
 			}
 
-			ConcurrentAwaiter initial_suspend() noexcept
+			coroutine::ConcurrentAwaiter initial_suspend() noexcept
 			{
 				return {};
 			}
@@ -177,7 +177,7 @@ export namespace net
 				myHandle.set_value();
 			}
 
-			ConcurrentAwaiter initial_suspend() noexcept
+			coroutine::ConcurrentAwaiter initial_suspend() noexcept
 			{
 				return {};
 			}

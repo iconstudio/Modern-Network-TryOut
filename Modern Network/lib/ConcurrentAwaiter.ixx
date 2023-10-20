@@ -1,7 +1,7 @@
 export module Net.Coroutine.Awaiter.Concurrent;
 import <coroutine>;
 
-export namespace net
+export namespace net::coroutine
 {
 	struct [[nodiscard]] ConcurrentAwaiter
 	{

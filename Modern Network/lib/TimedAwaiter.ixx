@@ -2,7 +2,7 @@ export module Net.Coroutine.Awaiter.Timed;
 import Net.Coroutine.IAwaitable;
 import <coroutine>;
 
-export namespace net
+export namespace net::coroutine
 {
 	class [[nodiscard]] WaitForSeconds final : public IAwaitable<float>
 	{

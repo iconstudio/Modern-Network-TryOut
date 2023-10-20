@@ -4,7 +4,7 @@ import Net.Coroutine.Suspender;
 import Net.Coroutine.Awaitable;
 import <coroutine>;
 
-export namespace net
+export namespace net::coroutine
 {
 	template<Suspender Init = std::suspend_always, Suspender Final = std::suspend_always>
 	class [[nodiscard]] IPromise

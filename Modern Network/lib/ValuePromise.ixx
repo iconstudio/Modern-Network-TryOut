@@ -7,7 +7,7 @@ import <type_traits>;
 import <concepts>;
 import <coroutine>;
 
-export namespace net
+export namespace net::coroutine
 {
 	template<typename V
 		, Suspender Init = std::suspend_always, Suspender Final = std::suspend_always>
