@@ -86,7 +86,6 @@ void
 net::Application::Update(float)
 {}
 
-static
 net::Socket&
 net::Application::Listener()
 noexcept
