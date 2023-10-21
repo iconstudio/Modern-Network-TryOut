@@ -20,20 +20,6 @@ net::Task<void>::promise_type::return_void()
 	myHandle.set_value();
 }
 
-net::coroutine::ConcurrentAwaiter
-net::Task<void>::promise_type::initial_suspend()
-noexcept
-{
-	return {};
-}
-
-net::TaskFinalizer
-net::Task<void>::promise_type::final_suspend()
-const noexcept
-{
-	return {};
-}
-
 [[noreturn]]
 void
 net::Task<void>::promise_type::unhandled_exception()

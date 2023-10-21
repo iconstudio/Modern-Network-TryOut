@@ -7,18 +7,6 @@ import Net.Constraints;
 import Net.Coroutine.Awaiter.Concurrent;
 import <coroutine>;
 
-namespace net
-{
-	struct TaskFinalizer
-	{
-		static constexpr bool await_ready() noexcept { return false; }
-		static constexpr void await_resume() noexcept {}
-
-		void await_suspend(std::coroutine_handle<void>) const noexcept
-		{}
-	};
-}
-
 export namespace net
 {
 	template<typename T = void>
@@ -55,7 +43,7 @@ export namespace net
 				return {};
 			}
 
-			TaskFinalizer final_suspend() const noexcept
+			static constexpr std::suspend_always final_suspend() noexcept
 			{
 				return {};
 			}
@@ -67,7 +55,6 @@ export namespace net
 			}
 
 			promise_handle_type myHandle;
-			std::coroutine_handle<void> contextHandle;
 			future_type myValueHandle;
 		};
 
@@ -102,9 +89,6 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
 		{
-			promise_type& my_promise = myHandle.promise();
-			my_promise.contextHandle = myHandle;
-
 			valueHandle.wait();
 			handle();
 		}
@@ -164,29 +148,17 @@ export namespace net
 			void return_void();
 
 			coroutine::ConcurrentAwaiter initial_suspend() noexcept;
-			TaskFinalizer final_suspend() const noexcept;
+
+			static constexpr std::suspend_always final_suspend() noexcept
+			{
+				return {};
+			}
 
 			[[noreturn]]
 			void unhandled_exception();
 
 			promise_handle_type myHandle;
-			std::coroutine_handle<void> contextHandle;
 			future_type myValueHandle;
-		};
-
-		struct TaskFinalizer
-		{
-			static constexpr bool await_ready() noexcept { return false; }
-			static constexpr void await_resume() noexcept {}
-
-			void await_suspend(handle_type handle) const noexcept
-			{
-				promise_type& my_promise = handle.promise();
-				if (std::coroutine_handle<void> previous = my_promise.contextHandle; previous)
-				{
-					previous();
-				}
-			}
 		};
 
 		Task(const handle_type& handle, const public_future_type& future) noexcept
@@ -220,9 +192,6 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
 		{
-			promise_type& my_promise = myHandle.promise();
-			my_promise.contextHandle = myHandle;
-
 			valueHandle.wait();
 			handle();
 		}
