@@ -147,7 +147,7 @@ export namespace net
 			Task<void> get_return_object() noexcept;
 			void return_void();
 
-			coroutine::ConcurrentAwaiter initial_suspend() const noexcept const noexcept
+			coroutine::ConcurrentAwaiter initial_suspend() const noexcept
 			{
 				return {};
 			}
