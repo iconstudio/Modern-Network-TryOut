@@ -38,7 +38,7 @@ export namespace net
 				myHandle.set_value(std::forward<U>(value));
 			}
 
-			coroutine::ConcurrentAwaiter initial_suspend() noexcept
+			coroutine::ConcurrentAwaiter initial_suspend() const noexcept
 			{
 				return {};
 			}
@@ -147,7 +147,10 @@ export namespace net
 			Task<void> get_return_object() noexcept;
 			void return_void();
 
-			coroutine::ConcurrentAwaiter initial_suspend() noexcept;
+			coroutine::ConcurrentAwaiter initial_suspend() const noexcept const noexcept
+			{
+				return {};
+			}
 
 			static constexpr std::suspend_always final_suspend() noexcept
 			{
