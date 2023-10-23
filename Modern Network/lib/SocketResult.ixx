@@ -4,7 +4,11 @@ import <expected>;
 
 export namespace net
 {
+	class Socket;
+
 	using SocketResult = std::expected<unsigned int, ErrorCodes>;
+
+	using AcceptingResult = std::expected<Socket, ErrorCodes>;
 
 	using SocketReceivingResult = std::expected<unsigned int, ReceivingErrorCodes>;
 
