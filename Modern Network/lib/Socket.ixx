@@ -19,7 +19,8 @@ export namespace net
 {
 	using NativeSocket = std::uintptr_t;
 
-	class AttentSocket;
+	struct AttentSocket;
+	struct SocketConnectum;
 
 	class [[nodiscard]] Socket final : public Handler<NativeSocket>
 	{
@@ -45,12 +46,17 @@ export namespace net
 		Socket& operator=(EmptySocketType) noexcept;
 		~Socket() noexcept;
 
-		// Opt-in interfaces
+		// Opt-in Interfaces
 
 		SocketResult Bind(const IpAddress& address, const std::uint16_t& port) const noexcept;
 		SocketResult Bind(IpAddress&& address, const std::uint16_t& port) const noexcept;
 		SocketResult Bind(const EndPoint& endpoint) const noexcept;
 		SocketResult Bind(EndPoint&& endpoint) const noexcept;
+
+		bool ReusableAddress() const noexcept;
+		void ReusableAddress(bool flag) noexcept;
+		bool Close() noexcept;
+		bool Close(SocketClosingErrorCodes& error_code) noexcept;
 
 		// Opt-out Methods
 
@@ -67,13 +73,6 @@ export namespace net
 		Task<SocketResult> ConnectAsync(const IpAddress& address, const std::uint16_t& port) const noexcept;
 		[[nodiscard]]
 		Task<SocketResult> ConnectAsync(IpAddress&& address, const std::uint16_t& port) const noexcept;
-		bool Close() noexcept;
-		bool Close(SocketClosingErrorCodes& error_code) noexcept;
-
-		// Methods
-
-		bool ReusableAddress() const noexcept;
-		void ReusableAddress(bool flag) noexcept;
 
 		// Synchronous Send
 
@@ -155,9 +154,14 @@ export namespace net
 		Socket& operator=(const Socket&) = delete;
 	};
 
-	class [[nodiscard]] AttentSocket
+	struct [[nodiscard]] AttentSocket
 	{
-	public:
 		Socket Socket = Socket::EmptySocket;
+	};
+
+	struct [[nodiscard]] SocketConnectum
+	{
+		Socket Client;
+		EndPoint Address;
 	};
 }
