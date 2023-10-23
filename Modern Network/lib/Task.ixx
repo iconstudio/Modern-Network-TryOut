@@ -35,7 +35,7 @@ export namespace net
 			template<typename U>
 			void return_value(U&& value)
 			{
-				myHandle.set_value(std::forward<U>(value));
+				myHandle.set_value(std::forward_like<T>(value));
 			}
 
 			static constexpr std::suspend_always initial_suspend() noexcept
