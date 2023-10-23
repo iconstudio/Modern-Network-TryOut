@@ -1,10 +1,10 @@
 module;
 #include <stdexcept>
 #include <future>
+#include <thread>
 
 export module Net.Task;
 import Net.Constraints;
-import Net.Coroutine.Awaiter.Concurrent;
 import <coroutine>;
 
 export namespace net
@@ -38,7 +38,7 @@ export namespace net
 				myHandle.set_value(std::forward<U>(value));
 			}
 
-			coroutine::ConcurrentAwaiter initial_suspend() const noexcept
+			static constexpr std::suspend_always initial_suspend() noexcept
 			{
 				return {};
 			}
@@ -89,8 +89,10 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
 		{
-			valueHandle.wait();
-			handle();
+			std::thread([this, &handle] {
+				valueHandle.wait();
+				myHandle();
+			}).detach();
 		}
 
 		const T& await_resume() const
@@ -147,7 +149,7 @@ export namespace net
 			Task<void> get_return_object() noexcept;
 			void return_void();
 
-			coroutine::ConcurrentAwaiter initial_suspend() const noexcept
+			static constexpr std::suspend_always initial_suspend() noexcept
 			{
 				return {};
 			}
@@ -195,8 +197,10 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
 		{
-			valueHandle.wait();
-			handle();
+			std::thread([this, &handle] {
+				valueHandle.wait();
+				myHandle();
+			}).detach();
 		}
 
 		void await_resume() const noexcept
