@@ -11,6 +11,7 @@ import Net.Coroutine.Awaiter.Timed;
 import Net.Coroutine.Awaiter.Concurrent;
 
 net::Socket listener = net::Socket::EmptySocket;
+net::Socket client = net::Socket::EmptySocket;
 
 net::Coroutine Worker()
 {
@@ -31,7 +32,7 @@ net::Coroutine Worker()
 		{
 			break;
 		}
-		auto sent = co_await listener.SendAsync(&listen_context, buffer, recv_size);
+		auto sent = co_await client.SendAsync(&listen_context, buffer, recv_size);
 	}
 
 	co_return;
@@ -53,6 +54,8 @@ int main()
 	}
 
 	listener.IsAddressReusable = true;
+
+	client = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
 	std::println("=========== Start ===========");
 
