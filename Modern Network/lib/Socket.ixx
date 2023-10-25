@@ -151,7 +151,7 @@ export namespace net
 		ReadonlyProperty<IpAddressFamily> myFamily;
 		CustomProperty<bool, Socket> IsAddressReusable;
 
-		friend class AttentSocket;
+		friend struct AttentSocket;
 
 	private:
 		Socket() noexcept;
