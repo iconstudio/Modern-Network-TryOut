@@ -162,7 +162,7 @@ const noexcept
 	::SOCKADDR_STORAGE address{};
 	int address_blen = sizeof(SOCKADDR_STORAGE);
 
-	NativeSocket client = ::WSAAccept(myHandle, std::addressof(address), std::addressof(address_blen), nullptr, nullptr);
+	NativeSocket client = ::WSAAccept(myHandle, reinterpret_cast<::SOCKADDR*>(std::addressof(address)), std::addressof(address_blen), nullptr, 0);
 	if (INVALID_SOCKET == client)
 	{
 		return std::unexpected(AcquireNetworkError());
