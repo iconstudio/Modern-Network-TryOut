@@ -23,7 +23,7 @@ net::Coroutine Worker()
 
 	while (true)
 	{
-		auto recv = co_await listener.ReceiveAsync(&listen_context, std::span{ buffer });
+		auto recv = co_await client.ReceiveAsync(&listen_context, std::span{ buffer });
 		if (recv.has_value())
 		{
 			recv_size = recv.value();
@@ -55,14 +55,17 @@ int main()
 
 	listener.IsAddressReusable = true;
 
-	client = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
-
 	std::println("=========== Start ===========");
 
 	if (listener.Open().has_value())
 	{
 		std::println("The listener is opened!");
 	}
+
+	auto acceptance = listener.Accept();
+	client = std::move(acceptance.value());
+
+	//client = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
 	std::println("=========== Update ===========");
 
