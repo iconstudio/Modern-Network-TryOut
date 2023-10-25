@@ -146,6 +146,33 @@ const noexcept
 	co_return this->Connect(EndPoint(std::move(address), port));
 }
 
+net::AcceptingResult
+net::Socket::Accept()
+const noexcept
+{
+	EndPoint temp;
+
+	return Accept(temp);
+}
+
+net::AcceptingResult
+net::Socket::Accept(EndPoint& endpoint)
+const noexcept
+{
+	::SOCKADDR_STORAGE address{};
+	int address_blen = sizeof(SOCKADDR_STORAGE);
+
+	NativeSocket client = ::WSAAccept(myHandle, std::addressof(address), std::addressof(address_blen), nullptr, nullptr);
+	if (INVALID_SOCKET == client)
+	{
+		return std::unexpected(AcquireNetworkError());
+	}
+
+	const IpAddressFamily family = (address.ss_family == AF_INET ? IpAddressFamily::IPv4 : (address.ss_family == AF_INET6 ? IpAddressFamily::IPv6 : IpAddressFamily::Unknown));
+
+	return Socket{ client, myProtocol, family };
+}
+
 [[nodiscard]]
 ::SOCKADDR_STORAGE
 SerializeEndpoint(const net::EndPoint& endpoint)

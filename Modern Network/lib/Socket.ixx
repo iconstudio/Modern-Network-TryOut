@@ -74,6 +74,13 @@ export namespace net
 		[[nodiscard]]
 		Task<SocketResult> ConnectAsync(IpAddress&& address, const std::uint16_t& port) const noexcept;
 
+		// Synchronous Accept
+
+		[[nodiscard]]
+		AcceptingResult Accept() const noexcept;
+		[[nodiscard]]
+		AcceptingResult Accept(EndPoint& endpoint) const noexcept;
+
 		// Synchronous Send
 
 		SocketSendingResult Send(std::span<const std::byte> memory) const noexcept;
