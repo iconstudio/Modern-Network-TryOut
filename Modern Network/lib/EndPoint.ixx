@@ -10,7 +10,17 @@ export namespace net
 {
 	struct [[nodiscard]] EndPoint final
 	{
+	private:
+		struct [[nodiscard]] EmptyEndPointType final
+		{
+			constexpr EmptyEndPointType() noexcept = default;
+			constexpr ~EmptyEndPointType() noexcept = default;
+		};
+
 	public:
+		static const EmptyEndPointType EmptyEndPoint;
+
+		EndPoint(EmptyEndPointType) noexcept;
 		EndPoint(const IpAddress& ip, const std::uint16_t& port) noexcept;
 		EndPoint(IpAddress&& ip, const std::uint16_t& port) noexcept;
 		~EndPoint() noexcept = default;

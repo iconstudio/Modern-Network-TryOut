@@ -150,7 +150,7 @@ net::AcceptingResult
 net::Socket::Accept()
 const noexcept
 {
-	EndPoint temp;
+	EndPoint temp{ EndPoint::EmptyEndPoint };
 
 	return Accept(temp);
 }
