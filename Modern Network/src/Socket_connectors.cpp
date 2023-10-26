@@ -162,13 +162,75 @@ const noexcept
 	::SOCKADDR_STORAGE address{};
 	int address_blen = sizeof(SOCKADDR_STORAGE);
 
-	NativeSocket client = ::WSAAccept(myHandle, reinterpret_cast<::SOCKADDR*>(std::addressof(address)), std::addressof(address_blen), nullptr, 0);
+	SOCKADDR* rawaddr = reinterpret_cast<::SOCKADDR*>(std::addressof(address));
+
+	NativeSocket client = ::WSAAccept(myHandle, rawaddr, std::addressof(address_blen), nullptr, 0);
 	if (INVALID_SOCKET == client)
 	{
 		return std::unexpected(AcquireNetworkError());
 	}
 
-	const IpAddressFamily family = (address.ss_family == AF_INET ? IpAddressFamily::IPv4 : (address.ss_family == AF_INET6 ? IpAddressFamily::IPv6 : IpAddressFamily::Unknown));
+	IpAddress ip{ IpAddressFamily::Unknown, "" };
+	IpAddressFamily family;
+	std::uint16_t port;
+
+	switch (address.ss_family)
+	{
+		case AF_INET:
+		{
+			family = IpAddressFamily::IPv4;
+
+			::SOCKADDR_IN* addr = reinterpret_cast<::SOCKADDR_IN*>(std::addressof(address));
+			port = ::ntohs(addr->sin_port);
+
+			try
+			{
+				ip = IpAddress{ IpAddressFamily::IPv4, ::inet_ntoa(addr->sin_addr) };
+			}
+			catch (...)
+			{
+				return std::unexpected(AcquireNetworkError());
+			}
+		}
+		break;
+
+		case AF_INET6:
+		{
+			family = IpAddressFamily::IPv6;
+
+			::SOCKADDR_IN6* addr = reinterpret_cast<::SOCKADDR_IN6*>(std::addressof(address));
+			port = ::ntohs(addr->sin6_port);
+
+			wchar_t ip_wbuffer[32]{};
+			::DWORD wblen = sizeof(ip_wbuffer);
+
+			if (SOCKET_ERROR == WSAAddressToString(addr, sizeof(address), nullptr, ip_wbuffer, std::addressof(wblen)))
+			{
+				return std::unexpected(AcquireNetworkError());
+			}
+
+			try
+			{
+				size_t mb_result = 0;
+				char ip_buffer[32]{};
+				::mbstowcs_s(std::addressof(mb_result), ip_wbuffer, ip_buffer, ::strlen(ip_buffer) + 1);
+			}
+			catch (...)
+			{
+				return std::unexpected(AcquireNetworkError());
+			}
+
+			ip = IpAddress{ IpAddressFamily::IPv6, std::move(ip_buffer) };
+		}
+		break;
+
+		default:
+		{
+			family = IpAddressFamily::Unknown;
+		}
+		break;
+	}
+	endpoint = EndPoint{ std::move(ip), port };
 
 	return Socket{ client, myProtocol, family };
 }
