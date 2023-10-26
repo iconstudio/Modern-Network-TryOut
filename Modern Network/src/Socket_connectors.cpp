@@ -1,6 +1,7 @@
 module;
 #pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
+#include <WS2tcpip.h>
 #include <ws2ipdef.h>
 
 module Net.Socket;
@@ -185,7 +186,10 @@ const noexcept
 
 			try
 			{
-				ip = IpAddress{ IpAddressFamily::IPv4, ::inet_ntoa(addr->sin_addr) };
+				char ip_buffer[20]{};
+
+				const char* ip_address = ::inet_ntop(AF_INET, addr, ip_buffer, sizeof(ip_buffer));
+				ip = IpAddress{ IpAddressFamily::IPv4, std::move(ip_address) };
 			}
 			catch (...)
 			{
@@ -204,7 +208,7 @@ const noexcept
 			wchar_t ip_wbuffer[32]{};
 			::DWORD wblen = sizeof(ip_wbuffer);
 
-			if (SOCKET_ERROR == WSAAddressToString(addr, sizeof(address), nullptr, ip_wbuffer, std::addressof(wblen)))
+			if (SOCKET_ERROR == WSAAddressToString(rawaddr, sizeof(address), nullptr, ip_wbuffer, std::addressof(wblen)))
 			{
 				return std::unexpected(AcquireNetworkError());
 			}
@@ -214,13 +218,13 @@ const noexcept
 				size_t mb_result = 0;
 				char ip_buffer[32]{};
 				::mbstowcs_s(std::addressof(mb_result), ip_wbuffer, ip_buffer, ::strlen(ip_buffer) + 1);
+
+				ip = IpAddress{ IpAddressFamily::IPv6, std::move(ip_buffer) };
 			}
 			catch (...)
 			{
 				return std::unexpected(AcquireNetworkError());
 			}
-
-			ip = IpAddress{ IpAddressFamily::IPv6, std::move(ip_buffer) };
 		}
 		break;
 
