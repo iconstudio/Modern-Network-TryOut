@@ -55,26 +55,6 @@ export namespace net
 		constexpr IpAddress(IpAddress&&) noexcept = default;
 		constexpr IpAddress& operator=(IpAddress&&) noexcept = default;
 
-	private:
-		[[nodiscard]]
-		static constexpr size_t
-			GetSizeOfFamilyBuffer(const IpAddressFamily& family)
-			noexcept
-		{
-			if (IpAddressFamily::IPv4 == family)
-			{
-				return 16;
-			}
-			else if (IpAddressFamily::IPv6 == family)
-			{
-				return 48;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-
 		IpAddressFamily addressFamily;
 		std::unique_ptr<char[]> addressBuffer;
 	};

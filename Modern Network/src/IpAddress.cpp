@@ -4,6 +4,9 @@ module;
 #include <WS2tcpip.h>
 module Net.IpAddress;
 
+[[nodiscard]]
+constexpr size_t GetSizeOfFamilyBuffer(const net::IpAddressFamily& family) noexcept;
+
 net::IpAddress::IpAddress(const IpAddressFamily& family, std::string_view address)
 	: addressFamily(family), addressBuffer()
 {
@@ -85,5 +88,24 @@ const noexcept
 	else
 	{
 		return true;
+	}
+}
+
+[[nodiscard]]
+constexpr size_t
+GetSizeOfFamilyBuffer(const net::IpAddressFamily& family)
+noexcept
+{
+	if (net::IpAddressFamily::IPv4 == family)
+	{
+		return 16;
+	}
+	else if (net::IpAddressFamily::IPv6 == family)
+	{
+		return 48;
+	}
+	else
+	{
+		return 0;
 	}
 }
