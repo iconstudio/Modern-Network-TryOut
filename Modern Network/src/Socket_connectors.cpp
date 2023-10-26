@@ -151,9 +151,18 @@ net::AcceptingResult
 net::Socket::Accept()
 const noexcept
 {
-	EndPoint temp{ EndPoint::EmptyEndPoint };
+	::SOCKADDR_STORAGE address{};
+	int address_blen = sizeof(SOCKADDR_STORAGE);
 
-	return Accept(temp);
+	SOCKADDR* rawaddr = reinterpret_cast<::SOCKADDR*>(std::addressof(address));
+
+	NativeSocket client = ::WSAAccept(myHandle, rawaddr, std::addressof(address_blen), nullptr, 0);
+	if (INVALID_SOCKET == client)
+	{
+		return std::unexpected(AcquireNetworkError());
+	}
+
+	return Socket{ client, myProtocol, address.ss_family };
 }
 
 net::AcceptingResult
