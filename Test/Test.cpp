@@ -23,7 +23,7 @@ net::Coroutine Worker()
 
 	while (true)
 	{
-		auto recv = co_await client.ReceiveAsync(&listen_context, std::span{ buffer });
+		auto recv = client.Receive(&listen_context, std::span{ buffer });
 		if (recv.has_value())
 		{
 			recv_size = recv.value();
@@ -32,7 +32,7 @@ net::Coroutine Worker()
 		{
 			break;
 		}
-		auto sent = co_await client.SendAsync(&listen_context, buffer, recv_size);
+		auto sent = client.Send(&listen_context, buffer, recv_size);
 	}
 
 	co_return;

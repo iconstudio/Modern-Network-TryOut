@@ -1,4 +1,6 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
+#include <cstdlib>
+#include <cstddef>
 #include <print>
 
 import Net;
@@ -27,9 +29,17 @@ net::Coroutine Worker()
 
 	//if (auto connectum = co_await client.ConnectAsync(server); connectum.has_value())
 
-	char buffer[512]{};
+	std::byte buffer[512]{};
 	while (true)
 	{
+		const int cnt = scanf_s("%s", buffer, sizeof(buffer));
+
+		if (0 < cnt)
+		{
+			auto sent = client.Send(buffer);
+			std::println("The client sent: {}", reinterpret_cast<const char*>(buffer));
+
+		}
 	}
 
 	co_return;
