@@ -186,9 +186,9 @@ const noexcept
 
 			try
 			{
-				char ip_buffer[20]{};
+				char ip_buffer[16]{};
 
-				const char* ip_address = ::inet_ntop(AF_INET, addr, ip_buffer, sizeof(ip_buffer));
+				const char* ip_address = ::inet_ntop(AF_INET, std::addressof(addr->sin_addr), ip_buffer, sizeof(ip_buffer));
 				ip = IpAddress{ IpAddressFamily::IPv4, std::move(ip_address) };
 			}
 			catch (...)
