@@ -7,18 +7,24 @@ module Net.IpAddress;
 net::IpAddress::IpAddress(const IpAddressFamily& family, std::string_view address)
 	: addressFamily(family), addressBuffer()
 {
-	addressBuffer = std::make_unique<char[]>(GetSizeOfFamilyBuffer(family));
+	if (family != IpAddressFamily::Unknown)
+	{
+		addressBuffer = std::make_unique<char[]>(GetSizeOfFamilyBuffer(family));
 
-	std::copy(address.cbegin(), address.cend(), addressBuffer.get());
+		std::copy(address.cbegin(), address.cend(), addressBuffer.get());
+	}
 }
 
 net::IpAddress::IpAddress(const IpAddress& other)
 	: addressFamily(other.addressFamily), addressBuffer()
 {
-	const size_t sz = GetSizeOfFamilyBuffer(other.addressFamily);
-	addressBuffer = std::make_unique<char[]>(sz);
+	if (other.addressFamily != IpAddressFamily::Unknown)
+	{
+		const size_t sz = GetSizeOfFamilyBuffer(other.addressFamily);
+		addressBuffer = std::make_unique<char[]>(sz);
 
-	std::copy_n(other.addressBuffer.get(), sz, addressBuffer.get());
+		std::copy_n(other.addressBuffer.get(), sz, addressBuffer.get());
+	}
 }
 
 net::IpAddress&
