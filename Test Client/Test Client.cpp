@@ -16,7 +16,7 @@ net::Coroutine Worker()
 
 	net::EndPoint server{ net::IPv4Address::Loopback, 52000 };
 
-	if (auto connectum = co_await client.ConnectAsync(server); connectum.has_value())
+	if (client.Connect(server).has_value())
 	{
 		std::println("The client is connected!");
 	}
@@ -25,10 +25,14 @@ net::Coroutine Worker()
 		std::println("The client cannot be connected!");
 	}
 
+	//if (auto connectum = co_await client.ConnectAsync(server); connectum.has_value())
+
 	char buffer[512]{};
 	while (true)
 	{
 	}
+
+	co_return;
 }
 
 int main()
