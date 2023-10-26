@@ -10,7 +10,7 @@ export namespace net
 		constexpr SerializedIpAddress() noexcept = default;
 		constexpr ~SerializedIpAddress() noexcept = default;
 
-		char data[16];
+		char data[64];
 	};
 
 	class [[nodiscard]] IpAddress final
