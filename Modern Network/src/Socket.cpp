@@ -61,7 +61,10 @@ noexcept
 {
 	if (IsAvailable())
 	{
-		return 0 == ::closesocket(myHandle);
+		bool result = (0 == ::closesocket(myHandle));
+		myHandle = INVALID_SOCKET;
+
+		return result;
 	}
 	else
 	{
@@ -77,6 +80,7 @@ noexcept
 	{
 		if (0 == ::closesocket(myHandle))
 		{
+			myHandle = INVALID_SOCKET;
 			return true;
 		}
 		else
