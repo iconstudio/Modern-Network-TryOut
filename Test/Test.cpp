@@ -24,7 +24,7 @@ net::Coroutine Worker()
 
 	while (true)
 	{
-		auto recv = client.Receive(std::span{ buffer });
+		net::SocketReceivingResult recv = client.Receive(std::span{ buffer });
 		if (recv.has_value())
 		{
 			recv_size = recv.value();
