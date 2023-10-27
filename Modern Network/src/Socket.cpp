@@ -113,18 +113,20 @@ Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
 noexcept
 {
+	constexpr ::DWORD flags = WSA_FLAG_OVERLAPPED | WSA_FLAG_REGISTERED_IO;
+
 	NativeSocket result;
 	switch (protocol)
 	{
 		case InternetProtocols::TCP:
 		{
-			result = WSASocket(static_cast<int>(family), SOCK_STREAM, IPPROTO::IPPROTO_TCP, nullptr, 0, WSA_FLAG_REGISTERED_IO);
+			result = ::WSASocket(static_cast<int>(family), SOCK_STREAM, ::IPPROTO::IPPROTO_TCP, nullptr, 0, flags);
 		}
 		break;
 
 		case InternetProtocols::UDP:
 		{
-			result = WSASocket(static_cast<int>(family), SOCK_DGRAM, IPPROTO::IPPROTO_UDP, nullptr, 0, WSA_FLAG_REGISTERED_IO);
+			result = ::WSASocket(static_cast<int>(family), SOCK_DGRAM, ::IPPROTO::IPPROTO_UDP, nullptr, 0, flags);
 		}
 		break;
 
