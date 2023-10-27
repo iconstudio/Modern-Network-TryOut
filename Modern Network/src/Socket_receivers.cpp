@@ -31,7 +31,7 @@ const noexcept
 }
 
 net::SocketReceivingResult
-net::Socket::Receive(const std::byte* const& memory, size_t size)
+net::Socket::Receive(std::byte* const& memory, size_t size)
 const noexcept
 {
 	::WSABUF buffer
@@ -72,7 +72,7 @@ net::Socket::Receive(std::span<std::byte> memory
 }
 
 bool
-net::Socket::Receive(const std::byte* const& memory, size_t size
+net::Socket::Receive(std::byte* const& memory, size_t size
 	, net::ReceivingErrorCodes& error_code)
 	const noexcept
 {
@@ -123,7 +123,7 @@ net::Socket::Receive(IoContext* context
 
 net::SocketReceivingResult
 net::Socket::Receive(IoContext* context
-	, const std::byte* const& memory, size_t size)
+	, std::byte* const& memory, size_t size)
 	const noexcept
 {
 	::WSABUF buffer
@@ -174,7 +174,7 @@ net::Socket::Receive(IoContext* context
 
 bool
 net::Socket::Receive(IoContext* context
-	, const std::byte* const& memory, size_t size
+	, std::byte* const& memory, size_t size
 	, ReceivingErrorCodes& error_code)
 	const noexcept
 {
@@ -219,7 +219,7 @@ net::Socket::ReceiveAsync(net::IoContext* context
 
 net::Task<net::SocketReceivingResult>
 net::Socket::ReceiveAsync(net::IoContext* context
-	, const std::byte* const& memory, size_t size)
+	, std::byte* const& memory, size_t size)
 	const noexcept
 {
 	if (SocketReceivingResult sent = Receive(context, memory, size); not sent)
