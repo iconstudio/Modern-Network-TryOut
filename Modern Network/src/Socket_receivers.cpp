@@ -8,19 +8,9 @@ net::SocketReceivingResult
 net::Socket::Receive(std::span<std::byte> memory)
 const noexcept
 {
-	::WSABUF buffer
-	{
-		.len = static_cast<::ULONG>(memory.size_bytes()),
-		.buf = reinterpret_cast<char*>(const_cast<std::byte*>(memory.data())),
-	};
-
-	::DWORD bytes = 0;
-	::DWORD flags = 0;
-	if (0 == ::WSARecv(myHandle
-		, std::addressof(buffer), 1
-		, std::addressof(bytes)
-		, std::addressof(flags)
-		, nullptr, nullptr))
+	if (int bytes = ::recv(myHandle
+		, reinterpret_cast<char*>(memory.data()), static_cast<int>(memory.size_bytes())
+		, 0); SOCKET_ERROR != bytes)
 	{
 		return bytes;
 	}
@@ -34,21 +24,11 @@ net::SocketReceivingResult
 net::Socket::Receive(std::byte* const& memory, size_t size)
 const noexcept
 {
-	::WSABUF buffer
+	if (int bytes = ::recv(myHandle
+		, reinterpret_cast<char*>(memory), static_cast<int>(size)
+		, 0); SOCKET_ERROR != bytes)
 	{
-		.len = static_cast<::ULONG>(size),
-		.buf = reinterpret_cast<char*>(const_cast<std::byte*>(memory)),
-	};
-
-	::DWORD bytes = 0;
-	::DWORD flags = 0;
-	if (0 == ::WSARecv(myHandle
-		, std::addressof(buffer), 1
-		, std::addressof(bytes)
-		, std::addressof(flags)
-		, nullptr, nullptr))
-	{
-		return bytes;
+		return static_cast<unsigned int>(bytes);
 	}
 	else
 	{
