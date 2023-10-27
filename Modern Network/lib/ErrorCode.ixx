@@ -454,3 +454,68 @@ export template<> struct std::formatter<net::ErrorCodes>
 		return std::format_to(context.out(), "{}", to_string(err));
 	}
 };
+
+export template<> struct std::formatter<net::ReceivingErrorCodes>
+{
+	static std::format_parse_context::iterator parse(std::format_parse_context& context) noexcept
+	{
+		return context.begin();
+	}
+
+	static auto format(const net::ReceivingErrorCodes& err, std::format_context& context) noexcept
+	{
+		return std::format_to(context.out(), "{}", to_string(static_cast<net::ErrorCodes>(err)));
+	}
+};
+
+export template<> struct std::formatter<net::SendingErrorCodes>
+{
+	static std::format_parse_context::iterator parse(std::format_parse_context& context) noexcept
+	{
+		return context.begin();
+	}
+
+	static auto format(const net::SendingErrorCodes& err, std::format_context& context) noexcept
+	{
+		return std::format_to(context.out(), "{}", to_string(static_cast<net::ErrorCodes>(err)));
+	}
+};
+
+export template<> struct std::formatter<net::SocketOpenErrorCodes>
+{
+	static std::format_parse_context::iterator parse(std::format_parse_context& context) noexcept
+	{
+		return context.begin();
+	}
+
+	static auto format(const net::SocketOpenErrorCodes& err, std::format_context& context) noexcept
+	{
+		return std::format_to(context.out(), "{}", to_string(static_cast<net::ErrorCodes>(err)));
+	}
+};
+
+export template<> struct std::formatter<net::SocketOptionErrorCodes>
+{
+	static std::format_parse_context::iterator parse(std::format_parse_context& context) noexcept
+	{
+		return context.begin();
+	}
+
+	static auto format(const net::SocketOptionErrorCodes& err, std::format_context& context) noexcept
+	{
+		return std::format_to(context.out(), "{}", to_string(static_cast<net::ErrorCodes>(err)));
+	}
+};
+
+export template<> struct std::formatter<net::SocketClosingErrorCodes>
+{
+	static std::format_parse_context::iterator parse(std::format_parse_context& context) noexcept
+	{
+		return context.begin();
+	}
+
+	static auto format(const net::SocketClosingErrorCodes& err, std::format_context& context) noexcept
+	{
+		return std::format_to(context.out(), "{}", to_string(static_cast<net::ErrorCodes>(err)));
+	}
+};
