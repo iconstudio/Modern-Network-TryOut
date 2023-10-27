@@ -33,7 +33,10 @@ Socket&
 Socket::operator=(EmptySocketType)
 noexcept
 {
-	Close();
+	if (IsAvailable())
+	{
+		Close();
+	}
 
 	return *this = Socket{ EmptySocket };
 }
