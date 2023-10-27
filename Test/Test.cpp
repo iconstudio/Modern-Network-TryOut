@@ -5,6 +5,7 @@
 import Net;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
+import Net.IoContext;
 import Net.Socket;
 import Net.Coroutine;
 import Net.Coroutine.Awaiter.Timed;
@@ -27,9 +28,11 @@ net::Coroutine Worker()
 		if (recv.has_value())
 		{
 			recv_size = recv.value();
+			std::println("Server received {} bytes", recv_size);
 		}
 		else
 		{
+			std::println("Server receives are failed due to {}", recv.error());
 			//break;
 		}
 		//auto sent = client.Send(buffer, recv_size);
