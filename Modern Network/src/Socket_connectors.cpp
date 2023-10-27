@@ -162,7 +162,26 @@ const noexcept
 		return std::unexpected(AcquireNetworkError());
 	}
 
-	return Socket{ client, myProtocol, address.ss_family };
+	IpAddressFamily family;
+	switch (address.ss_family)
+	{
+		case AF_INET:
+		{
+			family = IpAddressFamily::IPv4;
+		}
+		break;
+		case AF_INET6:
+		{
+			family = IpAddressFamily::IPv6;
+		}
+		break;
+		default:
+		{
+			family = IpAddressFamily::Unknown;
+		}
+		break;
+	}
+	return Socket{ client, myProtocol, family };
 }
 
 net::AcceptingResult
