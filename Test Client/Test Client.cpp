@@ -32,7 +32,7 @@ net::Coroutine Worker()
 	std::byte buffer[512]{};
 	while (true)
 	{
-		const int cnt = scanf_s("%s", buffer, sizeof(buffer));
+		const int cnt = scanf_s("%s", buffer, static_cast<unsigned>(sizeof(buffer)));
 
 		if (0 < cnt)
 		{
