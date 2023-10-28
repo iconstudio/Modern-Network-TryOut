@@ -156,7 +156,7 @@ const noexcept
 
 	SOCKADDR* rawaddr = reinterpret_cast<::SOCKADDR*>(std::addressof(address));
 
-	NativeSocket client = ::WSAAccept(myHandle, rawaddr, std::addressof(address_blen), nullptr, 0);
+	NativeSocket client = ::accept(myHandle, rawaddr, std::addressof(address_blen));
 	if (INVALID_SOCKET == client)
 	{
 		return std::unexpected(AcquireNetworkError());
