@@ -36,7 +36,7 @@ export namespace net
 			return myAddress;
 		}
 		[[nodiscard]]
-		constexpr std::string_view GetAddress() const& noexcept
+		std::string_view GetAddress() const& noexcept
 		{
 			return myAddress.GetAddress();
 		}

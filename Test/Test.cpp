@@ -36,7 +36,8 @@ net::Coroutine Worker()
 	while (true)
 	{
 		net::SocketReceivingResult recv = client.Receive(listen_context, recv_buf);
-		std::memset(&listen_context, 0, sizeof(listen_context));
+		//std::memset(&listen_context, 0, sizeof(listen_context));
+		listen_context.Clear();
 
 		if (recv.has_value())
 		{
@@ -52,7 +53,8 @@ net::Coroutine Worker()
 		}
 
 		auto sent = client.Send(listen_context, send_buf, recv_size);
-		std::memset(&listen_context, 0, sizeof(listen_context));
+		//std::memset(&listen_context, 0, sizeof(listen_context));
+		listen_context.Clear();
 	}
 
 	co_return;
