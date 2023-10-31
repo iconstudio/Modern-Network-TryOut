@@ -86,20 +86,25 @@ export namespace net
 		// Synchronous Send
 
 		SocketSendingResult Send(std::span<const std::byte> memory) const noexcept;
+		SocketSendingResult Send(std::span<const std::byte> memory, size_t size) const noexcept;
 		SocketSendingResult Send(_In_reads_bytes_(size)const std::byte* const& memory, size_t size) const noexcept;
 		bool Send(std::span<const std::byte> memory, SendingErrorCodes& error_code) const noexcept;
+		bool Send(std::span<const std::byte> memory, size_t size, SendingErrorCodes& error_code) const noexcept;
 		bool Send(_In_reads_bytes_(size)const std::byte* const& memory, size_t size, SendingErrorCodes& error_code) const noexcept;
 
 		// Maybe asynchronous Send
 
 		SocketSendingResult Send(_Maybenull_ IoContext& context, std::span<const std::byte> memory) const noexcept;
+		SocketSendingResult Send(_Maybenull_ IoContext& context, std::span<const std::byte> memory, size_t size) const noexcept;
 		SocketSendingResult Send(_Maybenull_ IoContext& context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size) const noexcept;
 		bool Send(_Maybenull_ IoContext& context, std::span<const std::byte> memory, SendingErrorCodes& error_code) const noexcept;
+		bool Send(_Maybenull_ IoContext& context, std::span<const std::byte> memory, size_t size, SendingErrorCodes& error_code) const noexcept;
 		bool Send(_Maybenull_ IoContext& context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size, SendingErrorCodes& error_code) const noexcept;
 
 		// Synchronous Receive
 
 		SocketReceivingResult Receive(std::span<std::byte> memory) const noexcept;
+		SocketReceivingResult Receive(std::span<std::byte> memory, size_t size) const noexcept;
 		SocketReceivingResult Receive(_In_reads_bytes_(size)std::byte* const& memory, size_t size) const noexcept;
 		bool Receive(std::span<std::byte> memory, ReceivingErrorCodes& error_code) const noexcept;
 		bool Receive(_In_reads_bytes_(size)std::byte* const& memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
@@ -107,6 +112,7 @@ export namespace net
 		// Maybe asynchronous Receive
 
 		SocketReceivingResult Receive(_Maybenull_ IoContext& context, std::span<std::byte> memory) const noexcept;
+		SocketReceivingResult Receive(_Maybenull_ IoContext& context, std::span<std::byte> memory, size_t size) const noexcept;
 		SocketReceivingResult Receive(_Maybenull_ IoContext& context, _In_reads_bytes_(size)std::byte* const& memory, size_t size) const noexcept;
 		bool Receive(_Maybenull_ IoContext& context, std::span<std::byte> memory, ReceivingErrorCodes& error_code) const noexcept;
 		bool Receive(_Maybenull_ IoContext& context, _In_reads_bytes_(size)std::byte* const& memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
@@ -115,10 +121,12 @@ export namespace net
 
 		[[nodiscard]]
 		Task<SocketSendingResult> SendAsync(_Maybenull_ IoContext& context, std::span<const std::byte> memory) const noexcept;
+		Task<SocketSendingResult> SendAsync(_Maybenull_ IoContext& context, std::span<const std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketSendingResult> SendAsync(_Maybenull_ IoContext& context, const _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketReceivingResult> ReceiveAsync(_Maybenull_ IoContext& context, std::span<std::byte> memory) const noexcept;
+		Task<SocketReceivingResult> ReceiveAsync(_Maybenull_ IoContext& context, std::span<std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketReceivingResult> ReceiveAsync(_Maybenull_ IoContext& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 
