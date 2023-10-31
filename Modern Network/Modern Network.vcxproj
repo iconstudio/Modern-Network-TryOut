@@ -142,6 +142,7 @@
     <ClCompile Include="lib\SocketResult.ixx" />
     <ClCompile Include="lib\ErrorCode.ixx" />
     <ClCompile Include="lib\SocketSendingErrorCodes.ixx" />
+    <ClCompile Include="lib\SocketType.ixx" />
     <ClCompile Include="lib\Suspender.ixx" />
     <ClCompile Include="lib\Task.ixx" />
     <ClCompile Include="lib\TimedAwaiter.ixx" />
