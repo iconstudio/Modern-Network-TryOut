@@ -59,7 +59,7 @@ int main()
 
 	std::println("=========== Awake ===========");
 
-	listener = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
+	listener = net::Socket::Create(net::SocketType::Synchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
 	//if (listener.Bind(net::IPv4Address::Loopback, 52000).has_value())
 	if (listener.BindHost(10000))

@@ -55,7 +55,7 @@ int main()
 	net::core::Initialize();
 
 	std::println("=========== Awake ===========");
-	client = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
+	client = net::Socket::Create(net::SocketType::Synchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
 	std::println("=========== Start ===========");
 
