@@ -64,8 +64,7 @@ net::Socket::Send(const std::byte* const& memory, size_t size
 }
 
 net::SocketSendingResult
-net::Socket::Send(net::IoContext* context
-	, std::span<const std::byte> memory)
+net::Socket::Send(net::IoContext& context, std::span<const std::byte> memory)
 	const noexcept
 {
 	::WSABUF buffer
@@ -74,12 +73,11 @@ net::Socket::Send(net::IoContext* context
 		.buf = reinterpret_cast<char*>(const_cast<std::byte*>(memory.data())),
 	};
 
-	return RawSendEx(myHandle, buffer, context, nullptr);
+	return RawSendEx(myHandle, buffer, std::addressof(context), nullptr);
 }
 
 net::SocketSendingResult
-net::Socket::Send(net::IoContext* context
-	, const std::byte* const& memory, size_t size)
+net::Socket::Send(net::IoContext& context, const std::byte* const& memory, size_t size)
 	const noexcept
 {
 	::WSABUF buffer
@@ -88,12 +86,11 @@ net::Socket::Send(net::IoContext* context
 		.buf = reinterpret_cast<char*>(const_cast<std::byte*>(memory)),
 	};
 
-	return RawSendEx(myHandle, buffer, context, nullptr);
+	return RawSendEx(myHandle, buffer, std::addressof(context), nullptr);
 }
 
 bool
-net::Socket::Send(net::IoContext* context
-	, std::span<const std::byte> memory
+net::Socket::Send(IoContext& context, std::span<const std::byte> memory
 	, net::SendingErrorCodes& error_code)
 	const noexcept
 {
@@ -108,8 +105,7 @@ net::Socket::Send(net::IoContext* context
 }
 
 bool
-net::Socket::Send(net::IoContext* context
-	, const std::byte* const& memory
+net::Socket::Send(IoContext& context, const std::byte* const& memory
 	, size_t size, net::SendingErrorCodes& error_code)
 	const noexcept
 {
@@ -124,8 +120,7 @@ net::Socket::Send(net::IoContext* context
 }
 
 net::Task<net::SocketSendingResult>
-net::Socket::SendAsync(net::IoContext* context
-	, std::span<const std::byte> memory)
+net::Socket::SendAsync(IoContext& context, std::span<const std::byte> memory)
 	const noexcept
 {
 	if (SocketSendingResult sent = Send(context, memory); not sent)
@@ -137,7 +132,7 @@ net::Socket::SendAsync(net::IoContext* context
 	::DWORD transferred_bytes = 0;
 
 	::BOOL result = ::WSAGetOverlappedResult(myHandle
-		, reinterpret_cast<::LPWSAOVERLAPPED>(context)
+		, reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context))
 		, std::addressof(transferred_bytes)
 		, TRUE
 		, std::addressof(flags));
@@ -153,8 +148,7 @@ net::Socket::SendAsync(net::IoContext* context
 }
 
 net::Task<net::SocketSendingResult>
-net::Socket::SendAsync(net::IoContext* context
-	, const std::byte* const& memory, size_t size)
+net::Socket::SendAsync(IoContext& context, const std::byte* const& memory, size_t size)
 	const noexcept
 {
 	if (SocketSendingResult sent = Send(context, memory, size); not sent)
@@ -166,7 +160,7 @@ net::Socket::SendAsync(net::IoContext* context
 	::DWORD transferred_bytes = 0;
 
 	::BOOL result = ::WSAGetOverlappedResult(myHandle
-		, reinterpret_cast<::LPWSAOVERLAPPED>(context)
+		, reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context))
 		, std::addressof(transferred_bytes)
 		, TRUE
 		, std::addressof(flags));
