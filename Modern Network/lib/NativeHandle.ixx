@@ -1,5 +1,8 @@
+module;
+#include <type_traits>
+
 export module Net.NativeHandle;
-import <type_traits>;
+import <format>;
 import Net.Property;
 
 export namespace net
@@ -17,9 +20,9 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		constexpr void* && GetPointer() && noexcept
+		constexpr void*&& GetPointer() && noexcept
 		{
-			return static_cast<void* &&>(nativePointer);
+			return static_cast<void*&&>(nativePointer);
 		}
 
 		[[nodiscard]]
@@ -48,4 +51,23 @@ export namespace net
 
 		Property<void*> nativePointer;
 	};
+}
+
+export template<> struct std::formatter<net::NativeHandle>
+{
+	constexpr std::format_parse_context::iterator parse(std::format_parse_context& context) const
+	{
+		return context.begin();
+	}
+
+	std::format_context::iterator format(const net::NativeHandle& handle, std::format_context& context) const noexcept;
+};
+
+export namespace std
+{
+	[[nodiscard]]
+	std::string to_string(const net::NativeHandle& handle) noexcept
+	{
+		return std::format("{}", handle);
+	}
 }
