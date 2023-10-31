@@ -218,5 +218,8 @@
     <ClCompile Include="lib\SocketType.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="src\NativeHandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
