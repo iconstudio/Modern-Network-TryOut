@@ -14,7 +14,7 @@ export namespace net
 		constexpr ~NativeHandle() noexcept = default;
 
 		[[nodiscard]]
-		constexpr const void* const& GetPointer() const& noexcept
+		constexpr const void* GetPointer() const& noexcept
 		{
 			return nativePointer;
 		}
