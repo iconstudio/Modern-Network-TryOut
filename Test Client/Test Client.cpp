@@ -41,7 +41,6 @@ net::Coroutine Worker()
 		{
 			auto sent = client.Send(buffer);
 			std::println("The client sent: {}", reinterpret_cast<const char*>(buffer));
-
 		}
 	}
 

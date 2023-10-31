@@ -30,22 +30,29 @@ net::Coroutine Worker()
 	//net::SocketClosingErrorCodes close_err;
 	//const bool closed = client.Close(close_err);
 
+	std::span recv_buf{ buffer };
+	std::span<std::byte> send_buf{ buffer };
+
 	while (true)
 	{
-		net::SocketReceivingResult recv = client.Receive(&(listen_context), std::span{ buffer });
+		net::SocketReceivingResult recv = client.Receive(listen_context, recv_buf);
 		std::memset(&listen_context, 0, sizeof(listen_context));
 
 		if (recv.has_value())
 		{
 			recv_size = recv.value();
-			std::println("Server received '{}' bytes", recv_size);
+			send_buf = recv_buf.subspan(0, recv_size);
+
+			std::println("Server received '{}' bytes: {}", recv_size, send_buf);
 		}
 		else
 		{
 			std::println("Server receives are failed due to '{}'", recv.error());
-			//break;
+			break;
 		}
-		//auto sent = client.Send(buffer, recv_size);
+
+		auto sent = client.Send(listen_context, send_buf, recv_size);
+		std::memset(&listen_context, 0, sizeof(listen_context));
 	}
 
 	co_return;
