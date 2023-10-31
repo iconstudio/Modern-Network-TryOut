@@ -39,7 +39,7 @@ export namespace net
 		WSAENETUNREACH = 10051,
 		WSAENETRESET = 10052,
 		ConnectionAborted = 10053,
-		ConnectionStateReset = 10054,
+		ConnectionStateReset = 10054, // Disconneting
 		NoBufferStorage = 10055,
 		WSAEISCONN = 10056,
 		NotConnected = 10057,
