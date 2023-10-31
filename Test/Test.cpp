@@ -1,4 +1,7 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
+#pragma comment(lib, "Ws2_32.lib")
+#include <WinSock2.h>
+#include <MSWSock.h>
 #include <print>
 #include <span>
 
@@ -19,20 +22,27 @@ net::Coroutine Worker()
 	co_await net::coroutine::WaitForSeconds(1);
 
 	net::IoContext listen_context{};
+	std::memset(&listen_context, 0, sizeof(listen_context));
+
 	std::byte buffer[512]{};
 	size_t recv_size = 0;
 
+	//net::SocketClosingErrorCodes close_err;
+	//const bool closed = client.Close(close_err);
+
 	while (true)
 	{
-		net::SocketReceivingResult recv = client.Receive(std::span{ buffer });
+		net::SocketReceivingResult recv = client.Receive(&(listen_context), std::span{ buffer });
+		std::memset(&listen_context, 0, sizeof(listen_context));
+
 		if (recv.has_value())
 		{
 			recv_size = recv.value();
-			std::println("Server received {} bytes", recv_size);
+			std::println("Server received '{}' bytes", recv_size);
 		}
 		else
 		{
-			std::println("Server receives are failed due to {}", recv.error());
+			std::println("Server receives are failed due to '{}'", recv.error());
 			//break;
 		}
 		//auto sent = client.Send(buffer, recv_size);
@@ -51,7 +61,8 @@ int main()
 
 	listener = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
-	if (listener.Bind(net::IPv4Address::Loopback, 52000).has_value())
+	//if (listener.Bind(net::IPv4Address::Loopback, 52000).has_value())
+	if (listener.BindHost(10000))
 	{
 		std::println("The listener is binded!");
 	}
@@ -67,8 +78,6 @@ int main()
 
 	auto acceptance = listener.Accept();
 	client = std::move(acceptance.value());
-
-	//client = net::Socket::Create(net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
 	std::println("=========== Update ===========");
 

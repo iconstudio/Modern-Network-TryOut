@@ -113,7 +113,7 @@ Socket
 Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
 noexcept
 {
-	constexpr ::DWORD flags = WSA_FLAG_OVERLAPPED | WSA_FLAG_REGISTERED_IO;
+	constexpr ::DWORD flags = 0;// WSA_FLAG_OVERLAPPED | WSA_FLAG_REGISTERED_IO;
 
 	NativeSocket result;
 	switch (protocol)

@@ -1,4 +1,7 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
+#pragma comment(lib, "Ws2_32.lib")
+#include <WinSock2.h>
+#include <MSWSock.h>
 #include <cstdlib>
 #include <cstddef>
 #include <print>
@@ -16,7 +19,7 @@ net::Coroutine Worker()
 {
 	co_await net::coroutine::WaitForSeconds(1);
 
-	net::EndPoint server{ net::IPv4Address::Loopback, 52000 };
+	net::EndPoint server{ net::IPv4Address::Loopback, 10000 };
 
 	if (client.Connect(server).has_value())
 	{
