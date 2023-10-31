@@ -107,6 +107,7 @@ export namespace net
 		SocketReceivingResult Receive(std::span<std::byte> memory, size_t size) const noexcept;
 		SocketReceivingResult Receive(_In_reads_bytes_(size)std::byte* const& memory, size_t size) const noexcept;
 		bool Receive(std::span<std::byte> memory, ReceivingErrorCodes& error_code) const noexcept;
+		bool Receive(std::span<std::byte> memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
 		bool Receive(_In_reads_bytes_(size)std::byte* const& memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
 
 		// Maybe asynchronous Receive
@@ -115,6 +116,7 @@ export namespace net
 		SocketReceivingResult Receive(_Maybenull_ IoContext& context, std::span<std::byte> memory, size_t size) const noexcept;
 		SocketReceivingResult Receive(_Maybenull_ IoContext& context, _In_reads_bytes_(size)std::byte* const& memory, size_t size) const noexcept;
 		bool Receive(_Maybenull_ IoContext& context, std::span<std::byte> memory, ReceivingErrorCodes& error_code) const noexcept;
+		bool Receive(_Maybenull_ IoContext& context, std::span<std::byte> memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
 		bool Receive(_Maybenull_ IoContext& context, _In_reads_bytes_(size)std::byte* const& memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
 
 		// Asynchronous Send & Receive
