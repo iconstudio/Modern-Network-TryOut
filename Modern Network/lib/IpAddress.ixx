@@ -1,5 +1,6 @@
 export module Net.IpAddress;
 import <string_view>;
+import <format>;
 import <memory>;
 export import :IpAddressFamily;
 
@@ -58,4 +59,20 @@ export namespace net
 		IpAddressFamily addressFamily;
 		std::unique_ptr<char[]> addressBuffer;
 	};
+}
+
+export template<> struct std::formatter<net::IpAddress>
+{
+	std::format_parse_context::iterator parse(std::format_parse_context& context) const;
+
+	std::format_context::iterator format(const net::IpAddress& ip, std::format_context& context) const noexcept;
+};
+
+export namespace std
+{
+	[[nodiscard]]
+	std::string to_string(const net::IpAddress& ip) noexcept
+	{
+		return std::format("{}", ip);
+	}
 }

@@ -2,7 +2,9 @@ module;
 #pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
 #include <WS2tcpip.h>
+
 module Net.IpAddress;
+import <string>;
 
 [[nodiscard]]
 constexpr size_t GetSizeOfFamilyBuffer(const net::IpAddressFamily& family) noexcept;
@@ -108,4 +110,11 @@ noexcept
 	{
 		return 0;
 	}
+}
+
+std::format_context::iterator
+std::formatter<net::IpAddress>::format(const net::IpAddress& ip, std::format_context& context)
+const noexcept
+{
+	return std::format_to(context.out(), "IP Address [{} / {}]", ip.GetFamily(), ip.GetAddress());
 }
