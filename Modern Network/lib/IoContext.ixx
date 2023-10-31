@@ -23,5 +23,16 @@ export namespace net
 			NativeHandle offset = {};
 		};
 		NativeHandle eventObject;
+
+		void Clear() noexcept
+		{
+			ioLower = 0;
+			ioUpper = 0;
+
+			int* repr = reinterpret_cast<int*>(std::addressof(offset));
+			*repr = 0;
+
+			eventObject = nullptr;
+		}
 	};
 }
