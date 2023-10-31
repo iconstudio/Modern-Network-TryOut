@@ -54,6 +54,51 @@ const noexcept
 }
 
 net::SocketResult
+net::Socket::BindHost(const std::uint16_t& port)
+const noexcept
+{
+	switch (myFamily)
+	{
+		case IpAddressFamily::IPv4:
+		{
+			::SOCKADDR_IN sockaddr
+			{
+				.sin_family = AF_INET,
+				.sin_port = ::htons(port),
+				.sin_zero{}
+			};
+			sockaddr.sin_addr = ::in4addr_any;
+
+			if (0 == ::bind(myHandle, reinterpret_cast<const SOCKADDR*>(std::addressof(sockaddr)), sizeof(sockaddr)))
+			{
+				return 1;
+			}
+		}
+		break;
+
+		case IpAddressFamily::IPv6:
+		{
+			::SOCKADDR_IN6 sockaddr
+			{
+				.sin6_family = AF_INET,
+				.sin6_port = ::htons(port),
+				.sin6_flowinfo = 0,
+				.sin6_addr{}
+			};
+			sockaddr.sin6_addr = ::in6addr_any;
+
+			if (0 == ::bind(myHandle, reinterpret_cast<const SOCKADDR*>(std::addressof(sockaddr)), sizeof(sockaddr)))
+			{
+				return 1;
+			}
+		}
+		break;
+	}
+
+	return unexpected(AcquireNetworkError());
+}
+
+net::SocketResult
 net::Socket::Connect(const net::IpAddress& address, const std::uint16_t& port)
 const noexcept
 {

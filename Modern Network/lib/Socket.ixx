@@ -52,6 +52,7 @@ export namespace net
 		SocketResult Bind(IpAddress&& address, const std::uint16_t& port) const noexcept;
 		SocketResult Bind(const EndPoint& endpoint) const noexcept;
 		SocketResult Bind(EndPoint&& endpoint) const noexcept;
+		SocketResult BindHost(const std::uint16_t& port) const noexcept;
 
 		bool ReusableAddress() const noexcept;
 		void ReusableAddress(bool flag) noexcept;
