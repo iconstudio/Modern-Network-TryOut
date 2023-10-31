@@ -50,7 +50,7 @@ const noexcept
 bool
 net::Socket::Send(std::span<const std::byte> memory
 	, net::SendingErrorCodes& error_code)
-	const noexcept
+const noexcept
 {
 	return Send(memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -79,7 +79,7 @@ const noexcept
 bool
 net::Socket::Send(const std::byte* const& memory, size_t size
 	, net::SendingErrorCodes& error_code)
-	const noexcept
+const noexcept
 {
 	return Send(memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -133,7 +133,7 @@ const noexcept
 bool
 net::Socket::Send(IoContext& context, std::span<const std::byte> memory
 	, net::SendingErrorCodes& error_code)
-	const noexcept
+const noexcept
 {
 	return Send(context, memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -162,7 +162,7 @@ const noexcept
 bool
 net::Socket::Send(IoContext& context, const std::byte* const& memory
 	, size_t size, net::SendingErrorCodes& error_code)
-	const noexcept
+const noexcept
 {
 	return Send(context, memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
