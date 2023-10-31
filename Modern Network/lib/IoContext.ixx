@@ -4,13 +4,25 @@ import <cstdint>;
 
 export namespace net
 {
-	class IoContext
+	class [[nodiscard]] IoContext
 	{
 	public:
 		constexpr IoContext() noexcept = default;
 		constexpr ~IoContext() noexcept
 		{}
 
+		void Clear() noexcept
+		{
+			ioLower = 0;
+			ioUpper = 0;
+
+			int* repr = reinterpret_cast<int*>(std::addressof(offset));
+			*repr = 0;
+
+			eventObject = nullptr;
+		}
+
+	protected:
 		std::uint64_t ioLower;
 		std::uint64_t ioUpper;
 		union
@@ -23,16 +35,5 @@ export namespace net
 			NativeHandle offset = {};
 		};
 		NativeHandle eventObject;
-
-		void Clear() noexcept
-		{
-			ioLower = 0;
-			ioUpper = 0;
-
-			int* repr = reinterpret_cast<int*>(std::addressof(offset));
-			*repr = 0;
-
-			eventObject = nullptr;
-		}
 	};
 }
