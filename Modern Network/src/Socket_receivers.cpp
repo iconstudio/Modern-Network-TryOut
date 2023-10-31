@@ -57,7 +57,7 @@ const noexcept
 bool
 net::Socket::Receive(std::span<std::byte> memory
 	, net::ReceivingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Receive(memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
@@ -70,7 +70,7 @@ const noexcept
 }
 
 bool
-net::Socket::Receive(std::span<std::byte> memory, size_t size, ReceivingErrorCodes& error_code)
+net::Socket::Receive(std::span<std::byte> memory, size_t size, net::ReceivingErrorCodes& error_code)
 const noexcept
 {
 	return Receive(memory, size).and_then(
@@ -86,7 +86,7 @@ const noexcept
 bool
 net::Socket::Receive(std::byte* const& memory, size_t size
 	, net::ReceivingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Receive(memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
@@ -99,7 +99,7 @@ const noexcept
 }
 
 net::SocketReceivingResult
-net::Socket::Receive(IoContext& context, std::span<std::byte> memory)
+net::Socket::Receive(net::IoContext& context, std::span<std::byte> memory)
 const noexcept
 {
 	::WSABUF buffer
@@ -166,7 +166,7 @@ net::Socket::Receive(net::IoContext& context, std::span<std::byte> memory, size_
 }
 
 net::SocketReceivingResult
-net::Socket::Receive(IoContext& context, std::byte* const& memory, size_t size)
+net::Socket::Receive(net::IoContext& context, std::byte* const& memory, size_t size)
 const noexcept
 {
 	::WSABUF buffer
@@ -200,9 +200,9 @@ const noexcept
 }
 
 bool
-net::Socket::Receive(IoContext& context, std::span<std::byte> memory
-	, ReceivingErrorCodes& error_code)
-	const noexcept
+net::Socket::Receive(net::IoContext& context, std::span<std::byte> memory
+	, net::ReceivingErrorCodes& error_code)
+const noexcept
 {
 	return Receive(context, memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
@@ -215,9 +215,9 @@ net::Socket::Receive(IoContext& context, std::span<std::byte> memory
 }
 
 bool
-net::Socket::Receive(IoContext& context, std::byte* const& memory, size_t size
-	, ReceivingErrorCodes& error_code)
-	const noexcept
+net::Socket::Receive(net::IoContext& context, std::byte* const& memory, size_t size
+	, net::ReceivingErrorCodes& error_code)
+const noexcept
 {
 	return Receive(context, memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
@@ -258,7 +258,8 @@ const noexcept
 }
 
 net::Task<net::SocketReceivingResult>
-net::Socket::ReceiveAsync(net::IoContext& context, std::span<std::byte> memory, size_t size) const noexcept
+net::Socket::ReceiveAsync(net::IoContext& context, std::span<std::byte> memory, size_t size)
+const noexcept
 {
 	if (SocketReceivingResult sent = Receive(context, memory, size); not sent)
 	{
