@@ -55,7 +55,7 @@ export namespace net
 
 export template<> struct std::formatter<net::NativeHandle>
 {
-	constexpr std::format_parse_context::iterator parse(std::format_parse_context& context) const
+	constexpr std::format_parse_context::iterator parse(std::format_parse_context& context) const noexcept
 	{
 		return context.begin();
 	}
