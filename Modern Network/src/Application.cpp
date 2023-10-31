@@ -43,7 +43,7 @@ net::Application::~Application() noexcept
 void
 net::Application::Awake()
 {
-	serverSocket = Socket::Create(InternetProtocols::TCP, IpAddressFamily::IPv4);
+	serverSocket = Socket::Create(SocketType::Asynchronous, InternetProtocols::TCP, IpAddressFamily::IPv4);
 
 	serverSocket.Bind(IPv4Address::Loopback, 52000).or_else(
 		[](ErrorCodes&& error_code) -> std::expected<unsigned int, ErrorCodes> {

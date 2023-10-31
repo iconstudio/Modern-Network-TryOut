@@ -110,10 +110,12 @@ void net::Socket::ReusableAddress(bool flag) noexcept
 }
 
 Socket
-Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family)
+Socket::Create(SocketType type
+	, const InternetProtocols& protocol
+	, const IpAddressFamily& family)
 noexcept
 {
-	constexpr ::DWORD flags = 0;// WSA_FLAG_OVERLAPPED | WSA_FLAG_REGISTERED_IO;
+	const auto flags = std::to_underlying(type);
 
 	NativeSocket result;
 	switch (protocol)
@@ -140,10 +142,13 @@ noexcept
 }
 
 Socket
-Socket::Create(const InternetProtocols& protocol, const IpAddressFamily& family, ErrorCodes& error_code)
+Socket::Create(SocketType type
+	, const InternetProtocols& protocol
+	, const IpAddressFamily& family
+	, ErrorCodes& error_code)
 noexcept
 {
-	if (Socket result = Create(protocol, family); result.IsAvailable())
+	if (Socket result = Create(type, protocol, family); result.IsAvailable())
 	{
 		return result;
 	}
@@ -155,10 +160,13 @@ noexcept
 }
 
 bool
-Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out)
+Socket::TryCreate(SocketType type
+	, const InternetProtocols& protocol
+	, const IpAddressFamily& family
+	, AttentSocket& out)
 noexcept
 {
-	if (Socket result = Create(protocol, family); result.IsAvailable())
+	if (Socket result = Create(type, protocol, family); result.IsAvailable())
 	{
 		out = AttentSocket
 		{
@@ -174,10 +182,14 @@ noexcept
 }
 
 bool
-Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, ErrorCodes& error_code)
+Socket::TryCreate(SocketType type
+	, const InternetProtocols& protocol
+	, const IpAddressFamily& family
+	, AttentSocket& out
+	, ErrorCodes& error_code)
 noexcept
 {
-	if (Socket result = Create(protocol, family); result.IsAvailable())
+	if (Socket result = Create(type, protocol, family); result.IsAvailable())
 	{
 		out = AttentSocket
 		{
@@ -194,10 +206,12 @@ noexcept
 }
 
 Socket::FactoryResult
-Socket::TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family)
+Socket::TryCreate(SocketType type
+	, const InternetProtocols& protocol
+	, const IpAddressFamily& family)
 noexcept
 {
-	if (Socket result = Create(protocol, family); result.IsAvailable())
+	if (Socket result = Create(type, protocol, family); result.IsAvailable())
 	{
 		return std::move(result);
 	}

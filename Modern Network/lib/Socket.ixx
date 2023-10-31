@@ -6,6 +6,7 @@ module;
 export module Net.Socket;
 export import :Result;
 export import :Options;
+export import :Type;
 export import Net.ErrorCode;
 import Net.Handler;
 import Net.Property;
@@ -129,15 +130,15 @@ export namespace net
 		// Static methods
 
 		[[nodiscard]]
-		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
+		static Socket Create(SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
 		[[nodiscard]]
-		static Socket Create(const InternetProtocols& protocol, const IpAddressFamily& family, ErrorCodes& error_code) noexcept;
+		static Socket Create(SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family, ErrorCodes& error_code) noexcept;
 		[[nodiscard]]
-		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out) noexcept;
+		static bool TryCreate(SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out) noexcept;
 		[[nodiscard]]
-		static bool TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, ErrorCodes& error_code) noexcept;
+		static bool TryCreate(SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family, AttentSocket& out, ErrorCodes& error_code) noexcept;
 		[[nodiscard]]
-		static FactoryResult TryCreate(const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
+		static FactoryResult TryCreate(SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family) noexcept;
 		static void SetAddressReusable(Socket& target, bool& flag) noexcept;
 
 		// Default methods
