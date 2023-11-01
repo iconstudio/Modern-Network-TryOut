@@ -7,12 +7,6 @@ net::coroutine::Schedule::Schedule(net::coroutine::Schedule::handle_type handle,
 noexcept
 {}
 
-net::coroutine::Schedule::~Schedule()
-noexcept
-{
-	coWorker.request_stop();
-}
-
 std::suspend_always
 net::coroutine::Schedule::Pause()
 const noexcept

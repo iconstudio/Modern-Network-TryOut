@@ -16,7 +16,7 @@ export namespace net::coroutine
 		using handle_type = coroutine::Coroutine::handle_type;
 
 		Schedule(handle_type handle, std::jthread&& worker) noexcept;
-		~Schedule() noexcept;
+		~Schedule() noexcept = default;
 
 		[[nodiscard]] std::suspend_always Pause() const noexcept;
 		void Resume() const noexcept;
