@@ -119,9 +119,6 @@
     <ClCompile Include="lib\Suspender.ixx">
       <Filter>lib\Coroutine</Filter>
     </ClCompile>
-    <ClCompile Include="lib\Task.ixx">
-      <Filter>lib\Coroutine</Filter>
-    </ClCompile>
     <ClCompile Include="lib\ValuePromise.ixx">
       <Filter>lib\Coroutine</Filter>
     </ClCompile>
@@ -224,11 +221,14 @@
     <ClCompile Include="src\IpAddressFamily.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scheduler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Scheduler.ixx">
       <Filter>lib\Coroutine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scheduler.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lib\Task.ixx">
+      <Filter>lib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
