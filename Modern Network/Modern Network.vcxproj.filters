@@ -227,5 +227,8 @@
     <ClCompile Include="src\Scheduler.ixx">
       <Filter>lib\Coroutine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scheduler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

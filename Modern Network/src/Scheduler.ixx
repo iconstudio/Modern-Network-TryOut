@@ -1,12 +1,12 @@
 module;
 #include <vector>
 #include <memory>
-#include <optional>
 #include <thread>
 
 export module Net.Scheduler;
 import Net.Handler;
 import Net.Coroutine;
+import <optional>;
 
 export namespace net::coroutine
 {
