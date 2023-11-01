@@ -45,10 +45,10 @@ export namespace net::inline coroutine
 			static constexpr bool await_ready() noexcept { return false; } // always suspends
 			void await_suspend(std::coroutine_handle<void> handle) noexcept;
 			/// <summary>
-			/// Retrieves how successfully this task is queued on the scheduler.
+			/// Retrieves the managed schedule as successfully this task is queued on the scheduler.
 			/// </summary>
-			/// <returns>Whether it has been scheduled or not</returns>
-			bool await_resume() const noexcept;
+			/// <returns>A managed schedule or empty if is failed</returns>
+			std::optional<coroutine::Schedule&> await_resume() const noexcept;
 
 		private:
 			bool __is_succeed = false;
