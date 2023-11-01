@@ -224,8 +224,8 @@
     <ClCompile Include="src\IpAddressFamily.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\IoScheduler.ixx">
-      <Filter>lib</Filter>
+    <ClCompile Include="src\Scheduler.ixx">
+      <Filter>lib\Coroutine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

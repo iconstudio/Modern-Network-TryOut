@@ -4,11 +4,11 @@ module;
 #include <optional>
 #include <thread>
 
-export module Net.Io.Scheduler;
+export module Net.Scheduler;
 import Net.Handler;
 import Net.Coroutine;
 
-export namespace net::io
+export namespace net::coroutine
 {
 	struct [[nodiscard]] Schedule final : public Handler<coroutine::Coroutine::handle_type>
 	{
@@ -24,13 +24,16 @@ export namespace net::io
 
 		std::jthread coWorker;
 	};
+}
 
-	class [[nodiscard]] IoScheduler
+export namespace net::inline coroutine
+{
+	class [[nodiscard]] Scheduler
 	{
 	protected:
 		struct [[nodiscard]] ScheduleInitiator final
 		{
-			ScheduleInitiator(IoScheduler&) noexcept;
+			ScheduleInitiator(Scheduler&) noexcept;
 			~ScheduleInitiator() noexcept = default;
 
 			static constexpr bool await_ready() noexcept { return false; } // always suspends
@@ -46,12 +49,12 @@ export namespace net::io
 		};
 
 	public:
-		IoScheduler();
-		IoScheduler(size_t pipeline);
+		Scheduler();
+		Scheduler(size_t pipeline);
 
 		ScheduleInitiator Start();
 
 	protected:
-		std::vector<std::unique_ptr<Schedule>> myWorkers;
+		std::vector<std::unique_ptr<coroutine::Schedule>> myWorkers;
 	};
 }
