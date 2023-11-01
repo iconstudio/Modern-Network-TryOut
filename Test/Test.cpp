@@ -11,9 +11,12 @@ import Net.Socket;
 import Net.Coroutine;
 import Net.Coroutine.Awaiter.Timed;
 import Net.Coroutine.Awaiter.Concurrent;
+import Net.Scheduler;
 
 net::Socket listener = net::Socket::EmptySocket;
 net::Socket client = net::Socket::EmptySocket;
+
+net::coroutine::Scheduler globalScheduler{};
 
 [[nodiscard]]
 inline std::string_view as_string(const std::span<const std::byte> buffer) noexcept
@@ -31,8 +34,10 @@ net::Coroutine Worker()
 {
 	co_await net::coroutine::WaitForSeconds(1);
 
+	auto taken = co_await globalScheduler.Start();
+
 	net::io::Context listen_context{};
-	std::memset(&listen_context, 0, sizeof(listen_context));
+	listen_context.Clear();
 
 	std::byte recv_buffer[512]{};
 	size_t recv_size = 0;
