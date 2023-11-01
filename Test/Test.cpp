@@ -1,7 +1,5 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
-#pragma comment(lib, "Ws2_32.lib")
-#include <WinSock2.h>
-#include <MSWSock.h>
+#include <string_view>
 #include <print>
 #include <span>
 
@@ -17,6 +15,18 @@ import Net.Coroutine.Awaiter.Concurrent;
 net::Socket listener = net::Socket::EmptySocket;
 net::Socket client = net::Socket::EmptySocket;
 
+[[nodiscard]]
+inline std::string_view as_string(const std::span<const std::byte> buffer) noexcept
+{
+	return std::string_view{ reinterpret_cast<const char*>(buffer.data()) };
+}
+
+[[nodiscard]]
+inline std::string_view as_string(const std::span<const std::byte> buffer, const size_t size) noexcept
+{
+	return std::string_view{ reinterpret_cast<const char*>(buffer.data()), size };
+}
+
 net::Coroutine Worker()
 {
 	co_await net::coroutine::WaitForSeconds(1);
@@ -24,27 +34,27 @@ net::Coroutine Worker()
 	net::IoContext listen_context{};
 	std::memset(&listen_context, 0, sizeof(listen_context));
 
-	std::byte buffer[512]{};
+	std::byte recv_buffer[512]{};
 	size_t recv_size = 0;
+	std::memset(recv_buffer, 0, sizeof(recv_buffer));
 
 	//net::SocketClosingErrorCodes close_err;
 	//const bool closed = client.Close(close_err);
 
-	std::span recv_buf{ buffer };
-	std::span<std::byte> send_buf{ buffer };
+	std::span buffer{ recv_buffer };
+	std::span<std::byte> send_buf;
 
 	while (true)
 	{
-		net::SocketReceivingResult recv = client.Receive(listen_context, recv_buf);
-		//std::memset(&listen_context, 0, sizeof(listen_context));
+		net::SocketReceivingResult recv = client.Receive(listen_context, buffer);
 		listen_context.Clear();
 
 		if (recv.has_value())
 		{
 			recv_size = recv.value();
-			send_buf = recv_buf.subspan(0, recv_size);
+			send_buf = buffer.subspan(0, recv_size);
 
-			std::println("Server received '{}' bytes: {}", recv_size, send_buf);
+			std::println("Server received '{}' bytes: {}", recv_size, as_string(send_buf, recv_size));
 		}
 		else
 		{
@@ -53,7 +63,6 @@ net::Coroutine Worker()
 		}
 
 		auto sent = client.Send(listen_context, send_buf, recv_size);
-		//std::memset(&listen_context, 0, sizeof(listen_context));
 		listen_context.Clear();
 	}
 

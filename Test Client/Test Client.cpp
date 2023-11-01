@@ -4,7 +4,9 @@
 #include <MSWSock.h>
 #include <cstdlib>
 #include <cstddef>
+#include <string_view>
 #include <print>
+#include <span>
 
 import Net;
 import Net.IpAddress;
@@ -14,6 +16,18 @@ import Net.Coroutine;
 import Net.Coroutine.Awaiter.Timed;
 
 net::Socket client = net::Socket::EmptySocket;
+
+[[nodiscard]]
+inline std::string_view as_string(const std::span<const std::byte> buffer) noexcept
+{
+	return std::string_view{ reinterpret_cast<const char*>(buffer.data()) };
+}
+
+[[nodiscard]]
+inline std::string_view as_string(const std::span<const std::byte> buffer, const size_t size) noexcept
+{
+	return std::string_view{ reinterpret_cast<const char*>(buffer.data()), size };
+}
 
 net::Coroutine Worker()
 {
@@ -35,11 +49,11 @@ net::Coroutine Worker()
 	std::byte buffer[512]{};
 	while (true)
 	{
-		const int cnt = scanf_s("%s", buffer, static_cast<unsigned>(sizeof(buffer)));
+		const int scan = scanf_s("%s", buffer, static_cast<unsigned>(sizeof(buffer)));
 
-		if (0 < cnt)
+		if (EOF != scan)
 		{
-			auto sent = client.Send(buffer);
+			auto sent = client.Send(buffer, as_string(buffer).size());
 			std::println("The client sent: {}", reinterpret_cast<const char*>(buffer));
 		}
 	}
