@@ -92,7 +92,7 @@ const noexcept
 }
 
 net::SocketSendingResult
-net::Socket::Send(net::IoContext& context, std::span<const std::byte> memory)
+net::Socket::Send(net::io::Context& context, std::span<const std::byte> memory)
 const noexcept
 {
 	::WSABUF buffer
@@ -105,7 +105,7 @@ const noexcept
 }
 
 net::SocketSendingResult
-net::Socket::Send(net::IoContext& context, std::span<const std::byte> memory, size_t size)
+net::Socket::Send(net::io::Context& context, std::span<const std::byte> memory, size_t size)
 const noexcept
 {
 	::WSABUF buffer
@@ -118,7 +118,7 @@ const noexcept
 }
 
 net::SocketSendingResult
-net::Socket::Send(net::IoContext& context, const std::byte* const& memory, size_t size)
+net::Socket::Send(net::io::Context& context, const std::byte* const& memory, size_t size)
 const noexcept
 {
 	::WSABUF buffer
@@ -131,7 +131,7 @@ const noexcept
 }
 
 bool
-net::Socket::Send(IoContext& context, std::span<const std::byte> memory
+net::Socket::Send(io::Context& context, std::span<const std::byte> memory
 	, net::SendingErrorCodes& error_code)
 const noexcept
 {
@@ -146,7 +146,7 @@ const noexcept
 }
 
 bool
-net::Socket::Send(net::IoContext& context, std::span<const std::byte> memory, size_t size, net::SendingErrorCodes& error_code)
+net::Socket::Send(net::io::Context& context, std::span<const std::byte> memory, size_t size, net::SendingErrorCodes& error_code)
 const noexcept
 {
 	return Send(context, memory, size).and_then(
@@ -160,7 +160,7 @@ const noexcept
 }
 
 bool
-net::Socket::Send(IoContext& context, const std::byte* const& memory
+net::Socket::Send(io::Context& context, const std::byte* const& memory
 	, size_t size, net::SendingErrorCodes& error_code)
 const noexcept
 {
@@ -175,7 +175,7 @@ const noexcept
 }
 
 net::Task<net::SocketSendingResult>
-net::Socket::SendAsync(IoContext& context, std::span<const std::byte> memory)
+net::Socket::SendAsync(io::Context& context, std::span<const std::byte> memory)
 const noexcept
 {
 	if (SocketSendingResult sent = Send(context, memory); not sent)
@@ -203,7 +203,7 @@ const noexcept
 }
 
 net::Task<net::SocketSendingResult>
-net::Socket::SendAsync(net::IoContext& context, std::span<const std::byte> memory, size_t size)
+net::Socket::SendAsync(net::io::Context& context, std::span<const std::byte> memory, size_t size)
 const noexcept
 {
 	if (SocketSendingResult sent = Send(context, memory, size); not sent)
@@ -231,7 +231,7 @@ const noexcept
 }
 
 net::Task<net::SocketSendingResult>
-net::Socket::SendAsync(IoContext& context, const std::byte* const& memory, size_t size)
+net::Socket::SendAsync(io::Context& context, const std::byte* const& memory, size_t size)
 const noexcept
 {
 	if (SocketSendingResult sent = Send(context, memory, size); not sent)

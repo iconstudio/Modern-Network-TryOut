@@ -1,14 +1,14 @@
-export module Net.IoContext;
+export module Net.Io.Context;
 import Net.NativeHandle;
 import <cstdint>;
 
-export namespace net
+export namespace net::io
 {
-	class [[nodiscard]] IoContext
+	class [[nodiscard]] Context
 	{
 	public:
-		constexpr IoContext() noexcept = default;
-		constexpr ~IoContext() noexcept
+		constexpr Context() noexcept = default;
+		constexpr ~Context() noexcept
 		{}
 
 		void Clear() noexcept

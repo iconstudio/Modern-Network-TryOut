@@ -6,7 +6,7 @@
 import Net;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
-import Net.IoContext;
+import Net.Io.Context;
 import Net.Socket;
 import Net.Coroutine;
 import Net.Coroutine.Awaiter.Timed;
@@ -31,7 +31,7 @@ net::Coroutine Worker()
 {
 	co_await net::coroutine::WaitForSeconds(1);
 
-	net::IoContext listen_context{};
+	net::io::Context listen_context{};
 	std::memset(&listen_context, 0, sizeof(listen_context));
 
 	std::byte recv_buffer[512]{};

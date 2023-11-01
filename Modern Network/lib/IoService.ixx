@@ -1,14 +1,14 @@
 export module Net.IoService;
 import Net.IResourcePool;
-import Net.IoContext;
+import Net.Io.Context;
 import <thread>;
 
-export namespace net
+export namespace net::io
 {
 	class [[nodiscard]] IoService
 	{
 	public:
-		IResourcePool<IoContext>* ioContexts;
+		IResourcePool<Context>* ioContexts;
 		IResourcePool<std::jthread>* myThreads;
 	};
 }

@@ -1,30 +1,33 @@
-export module Net.IoScheduler;
-import <vector>;
-import <memory>;
-import <thread>;
+module;
+#include <vector>
+#include <memory>
+#include <optional>
+#include <thread>
+
+export module Net.Io.Scheduler;
 import Net.Handler;
 import Net.Coroutine;
 
-export namespace net
+export namespace net::io
 {
+	struct [[nodiscard]] Schedule final : public Handler<coroutine::Coroutine::handle_type>
+	{
+		using super = Handler<coroutine::Coroutine::handle_type>;
+		using handle_type = coroutine::Coroutine::handle_type;
+
+		using super::super;
+		~Schedule() noexcept = default;
+
+	private:
+		Schedule(const Schedule&) = delete;
+		void operator=(const Schedule&) = delete;
+
+		std::jthread coWorker;
+	};
+
 	class [[nodiscard]] IoScheduler
 	{
 	protected:
-		struct [[nodiscard]] Schedule final : public Handler<coroutine::Coroutine::handle_type>
-		{
-			using super = Handler<coroutine::Coroutine::handle_type>;
-			using handle_type = coroutine::Coroutine::handle_type;
-
-			using super::super;
-			~Schedule() noexcept = default;
-
-		private:
-			Schedule(const Schedule&) = delete;
-			void operator=(const Schedule&) = delete;
-
-			std::jthread coWorker;
-		};
-
 		struct [[nodiscard]] ScheduleInitiator final
 		{
 			ScheduleInitiator(IoScheduler&) noexcept;
