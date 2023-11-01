@@ -92,10 +92,10 @@ noexcept
 		workers.push_back(std::make_unique<coroutine::Schedule>(handle));
 #endif // !_DEBUG
 
+		isSucceed = true;
+
 		// resume now
 		handle.resume();
-
-		isSucceed = true;
 	}
 	catch (...)
 	{
