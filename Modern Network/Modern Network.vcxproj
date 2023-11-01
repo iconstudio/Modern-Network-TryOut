@@ -156,6 +156,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\ConcurrentAwaiter.cpp" />
     <ClCompile Include="src\EndPoint.cpp" />
+    <ClCompile Include="src\IoScheduler.ixx" />
     <ClCompile Include="src\IpAddress.cpp" />
     <ClCompile Include="src\IpAddressFamily.cpp" />
     <ClCompile Include="src\NativeHandle.cpp" />
