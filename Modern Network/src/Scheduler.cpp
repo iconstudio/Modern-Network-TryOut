@@ -3,6 +3,20 @@ module;
 #include <memory>
 module Net.Scheduler;
 
+net::coroutine::Scheduler::Scheduler()
+	: Scheduler(std::thread::hardware_concurrency())
+{}
+
+net::coroutine::Scheduler::Scheduler(size_t pipelines)
+	: myWorkers(pipelines)
+{}
+
+net::coroutine::Scheduler::Initiator
+net::coroutine::Scheduler::Start()
+{
+	return Initiator{ *this };
+}
+
 std::suspend_always
 net::coroutine::Schedule::Pause()
 const noexcept

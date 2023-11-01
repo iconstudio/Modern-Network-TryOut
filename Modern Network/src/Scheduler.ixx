@@ -53,9 +53,9 @@ export namespace net::coroutine
 
 	public:
 		Scheduler();
-		Scheduler(size_t pipeline);
+		Scheduler(size_t pipelines);
 
-		Initiator Start();
+		[[nodiscard]] Initiator Start();
 
 	protected:
 		std::vector<std::unique_ptr<Schedule>> myWorkers;
