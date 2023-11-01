@@ -17,20 +17,43 @@ net::coroutine::Scheduler::Start()
 	return Initiator{ *this };
 }
 
-std::suspend_always
+net::coroutine::Schedule::Schedule(handle_type handle, Scheduler& scheduler) noexcept
+	: Handler(handle), myParent(std::addressof(scheduler))
+	, isPaused(false)
+{}
+
+std::suspend_never
 net::coroutine::Schedule::Pause()
-const noexcept
+noexcept
 {
-	std::this_thread::yield();
+	bool paused = not isPaused.load(std::memory_order_acquire);
+	if (not paused) [[likely]] {
+		paused = true;
+		std::this_thread::yield();
+
+		isPaused.wait(false, std::memory_order_release);
+	}
+	else
+	{
+		isPaused.store(paused, std::memory_order_release);
+		std::this_thread::yield();
+	}
 
 	return {};
 }
 
 void
 net::coroutine::Schedule::Resume()
-const noexcept
+noexcept
 {
-	myHandle.resume();
+	bool expected = true;
+
+	if (myHandle and isPaused.compare_exchange_strong(expected, false, std::memory_order_acq_rel))
+	{
+		isPaused.notify_one();
+
+		myHandle.resume();
+	}
 }
 
 net::coroutine::Scheduler::Initiator::Initiator(net::coroutine::Scheduler& scheduler)
@@ -61,7 +84,7 @@ noexcept
 	{
 		auto& workers = myScheduler.myWorkers;
 #if _DEBUG
-		auto schedule = std::make_unique<coroutine::Schedule>(handle);
+		auto schedule = std::make_unique<coroutine::Schedule>(handle, std::ref(myScheduler));
 		mySchedule = schedule.get();
 
 		workers.push_back(std::move(schedule));

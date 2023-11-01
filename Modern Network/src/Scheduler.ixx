@@ -2,6 +2,7 @@ module;
 #include <vector>
 #include <memory>
 #include <thread>
+#include <atomic>
 
 export module Net.Scheduler;
 import Net.Handler;
@@ -10,16 +11,18 @@ import <optional>;
 
 export namespace net::coroutine
 {
+	class Scheduler;
+
 	struct [[nodiscard]] Schedule final : public Handler<std::coroutine_handle<void>>
 	{
 		using super = Handler<std::coroutine_handle<void>>;
 		using handle_type = std::coroutine_handle<void>;
 
-		using super::super;
+		Schedule(handle_type handle, Scheduler& scheduler) noexcept;
 		~Schedule() noexcept = default;
 
-		[[nodiscard]] std::suspend_always Pause() const noexcept;
-		void Resume() const noexcept;
+		[[nodiscard]] std::suspend_never Pause() noexcept;
+		void Resume() noexcept;
 
 		Schedule(Schedule&&) noexcept = default;
 		Schedule& operator=(Schedule&&) noexcept = default;
@@ -27,6 +30,9 @@ export namespace net::coroutine
 	private:
 		Schedule(const Schedule&) = delete;
 		void operator=(const Schedule&) = delete;
+
+		Scheduler* myParent;
+		volatile std::atomic_bool isPaused;
 	};
 
 	class [[nodiscard]] Scheduler
@@ -56,6 +62,8 @@ export namespace net::coroutine
 		Scheduler(size_t pipelines);
 
 		[[nodiscard]] Initiator Start();
+
+		friend struct coroutine::Schedule;
 
 	protected:
 		std::vector<std::unique_ptr<Schedule>> myWorkers;
