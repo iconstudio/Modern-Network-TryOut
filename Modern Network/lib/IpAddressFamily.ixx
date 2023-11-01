@@ -37,7 +37,12 @@ export namespace std
 
 export template<> struct std::formatter<net::IpAddressFamily>
 {
-	std::format_parse_context::iterator parse(std::format_parse_context& context) const noexcept;
+	std::format_parse_context::iterator parse(std::format_parse_context& context) noexcept;
 
 	std::format_context::iterator format(const net::IpAddressFamily& fm, std::format_context& context) const noexcept;
+
+private:
+	bool isSimplified = false;   // e, E
+	bool isStrengthened = false; // g, G
+	bool isUpperCase = false;    // U
 };
