@@ -81,13 +81,13 @@ noexcept
 	}
 }
 
-std::optional<net::coroutine::Schedule&>
+std::optional<net::coroutine::Schedule*>
 net::coroutine::Scheduler::Initiator::await_resume()
 const noexcept
 {
 	if (isSucceed)
 	{
-		return *mySchedule;
+		return mySchedule;
 	}
 	else
 	{
