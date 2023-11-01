@@ -10,10 +10,10 @@ import <optional>;
 
 export namespace net::coroutine
 {
-	struct [[nodiscard]] Schedule final : public Handler<coroutine::Coroutine::handle_type>
+	struct [[nodiscard]] Schedule final : public Handler<std::coroutine_handle<void>>
 	{
-		using super = Handler<coroutine::Coroutine::handle_type>;
-		using handle_type = coroutine::Coroutine::handle_type;
+		using super = Handler<std::coroutine_handle<void>>;
+		using handle_type = std::coroutine_handle<void>;
 
 		using super::super;
 		~Schedule() noexcept = default;
