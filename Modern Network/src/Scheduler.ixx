@@ -30,10 +30,7 @@ export namespace net::coroutine
 
 		std::jthread coWorker;
 	};
-}
 
-export namespace net::inline coroutine
-{
 	class [[nodiscard]] Scheduler
 	{
 	protected:
@@ -48,7 +45,7 @@ export namespace net::inline coroutine
 			/// Retrieves the managed schedule as successfully this task is queued on the scheduler.
 			/// </summary>
 			/// <returns>A managed schedule or empty if is failed</returns>
-			std::optional<coroutine::Schedule&> await_resume() const noexcept;
+			std::optional<Schedule&> await_resume() const noexcept;
 
 		private:
 			bool __is_succeed = false;
@@ -61,6 +58,12 @@ export namespace net::inline coroutine
 		ScheduleInitiator Start();
 
 	protected:
-		std::vector<std::unique_ptr<coroutine::Schedule>> myWorkers;
+		std::vector<std::unique_ptr<Schedule>> myWorkers;
 	};
 }
+
+export namespace net
+{
+	using coroutine::Scheduler;
+}
+
