@@ -44,10 +44,13 @@ std::format_context::iterator
 std::formatter<net::IpAddressFamily>::format(const net::IpAddressFamily& fm, std::format_context& context)
 const noexcept
 {
-	static auto myprint = [&](std::string_view caption) noexcept {
+	static auto myprint = [&]
+	(std::string_view caption) noexcept {
 		if (isUpperCase)
 		{
-			static constexpr auto myupper = [](const char& c) noexcept -> char { return c + 32; };
+			static constexpr auto myupper = []
+			(const char& c) noexcept -> char { return c + 32; };
+
 			using formatted_result = std::ranges::in_out_result<std::ranges::dangling, decltype(context.out())>;
 
 			formatted_result it = std::ranges::copy(std::views::transform(caption, myupper), context.out());
