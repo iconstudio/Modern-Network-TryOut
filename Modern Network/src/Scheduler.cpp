@@ -48,6 +48,7 @@ noexcept
 		auto& workers = myScheduler.myWorkers;
 #if _DEBUG
 		auto schedule = std::make_unique<coroutine::Schedule>(handle);
+		mySchedule = schedule.get();
 
 		workers.push_back(std::move(schedule));
 #else // _DEBUG
@@ -61,6 +62,21 @@ noexcept
 	}
 	catch (...)
 	{
+		mySchedule = nullptr;
 		isSucceed = false;
+	}
+}
+
+std::optional<net::coroutine::Schedule&>
+net::coroutine::Scheduler::Initiator::await_resume()
+const noexcept
+{
+	if (isSucceed)
+	{
+		return *mySchedule;
+	}
+	else
+	{
+		return std::nullopt;
 	}
 }

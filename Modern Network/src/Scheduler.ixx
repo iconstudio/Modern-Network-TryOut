@@ -47,7 +47,7 @@ export namespace net::coroutine
 
 		private:
 			Scheduler& myScheduler;
-			void* mySchedule;
+			Schedule* mySchedule;
 			bool isSucceed;
 		};
 
