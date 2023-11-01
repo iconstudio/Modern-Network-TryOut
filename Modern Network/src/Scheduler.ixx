@@ -32,12 +32,12 @@ export namespace net::coroutine
 	class [[nodiscard]] Scheduler
 	{
 	protected:
-		struct [[nodiscard]] ScheduleInitiator final
+		struct [[nodiscard]] Initiator final
 		{
-			ScheduleInitiator(Scheduler&) noexcept;
-			~ScheduleInitiator() noexcept = default;
+			Initiator(Scheduler& scheduler) noexcept;
+			~Initiator() noexcept = default;
 
-			static constexpr bool await_ready() noexcept { return false; } // always suspends
+			bool await_ready() const noexcept;
 			void await_suspend(std::coroutine_handle<void> handle) noexcept;
 			/// <summary>
 			/// Retrieves the managed schedule as successfully this task is queued on the scheduler.
@@ -46,14 +46,16 @@ export namespace net::coroutine
 			std::optional<Schedule&> await_resume() const noexcept;
 
 		private:
-			bool __is_succeed = false;
+			Scheduler& myScheduler;
+			void* mySchedule;
+			bool isSucceed;
 		};
 
 	public:
 		Scheduler();
 		Scheduler(size_t pipeline);
 
-		ScheduleInitiator Start();
+		Initiator Start();
 
 	protected:
 		std::vector<std::unique_ptr<Schedule>> myWorkers;
