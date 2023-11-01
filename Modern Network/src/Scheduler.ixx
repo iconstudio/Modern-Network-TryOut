@@ -15,8 +15,14 @@ export namespace net::coroutine
 		using super = Handler<coroutine::Coroutine::handle_type>;
 		using handle_type = coroutine::Coroutine::handle_type;
 
-		using super::super;
-		~Schedule() noexcept = default;
+		Schedule(handle_type handle, std::jthread&& worker) noexcept;
+		~Schedule() noexcept;
+
+		[[nodiscard]] std::suspend_always Pause() const noexcept;
+		void Resume() const noexcept;
+
+		Schedule(Schedule&&) noexcept = default;
+		Schedule& operator=(Schedule&&) noexcept = default;
 
 	private:
 		Schedule(const Schedule&) = delete;
