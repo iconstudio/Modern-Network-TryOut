@@ -45,17 +45,13 @@ noexcept
 {
 	try
 	{
-		auto worker = std::jthread{ [](coroutine::Scheduler& s) {
-
-		} };
-
 		auto& workers = myScheduler.myWorkers;
 #if _DEBUG
-		auto schedule = std::make_unique<coroutine::Schedule>(handle, std::move(worker));
+		auto schedule = std::make_unique<coroutine::Schedule>(handle);
 
 		workers.push_back(std::move(schedule));
 #else // _DEBUG
-		workers.push_back(std::make_unique<coroutine::Schedule>(handle, std::move(worker)));
+		workers.push_back(std::make_unique<coroutine::Schedule>(handle));
 #endif // !_DEBUG
 
 		// resume now
