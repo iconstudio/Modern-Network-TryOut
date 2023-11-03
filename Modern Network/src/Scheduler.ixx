@@ -19,6 +19,7 @@ export namespace net::coroutine
 		Schedule(Scheduler& scheduler);
 		~Schedule() noexcept = default;
 
+		void AddTask(std::coroutine_handle<void> handle);
 		[[nodiscard]] std::suspend_never Pause() noexcept;
 		void Resume() noexcept;
 		bool Stop() noexcept;

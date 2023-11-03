@@ -1,6 +1,7 @@
 module;
 #include <thread>
 #include <memory>
+#include <algorithm>
 module Net.Scheduler;
 
 net::coroutine::Schedule::Schedule(Scheduler& scheduler)
@@ -26,6 +27,12 @@ net::coroutine::Schedule::Schedule(Scheduler& scheduler)
 			}
 		}
 	} };
+}
+
+void
+net::coroutine::Schedule::AddTask(std::coroutine_handle<void> handle)
+{
+	myTasks.push_back(handle);
 }
 
 std::suspend_never
@@ -105,7 +112,7 @@ net::coroutine::Scheduler::Scheduler(size_t pipelines)
 
 	for (size_t i = 0; i < pipelines; ++i)
 	{
-		mySchedules[i] = std::make_unique<Schedule>(*this);
+		mySchedules.push_back(std::make_unique<Schedule>(*this));
 	}
 
 	mySchedules.shrink_to_fit();
@@ -144,9 +151,28 @@ noexcept
 {
 	try
 	{
-		for (auto& schedule : myScheduler.mySchedules)
-		{
+		auto& schedules = myScheduler.mySchedules;
+		std::ranges::sort(schedules, {}, [](std::unique_ptr<Schedule>& ptr) noexcept -> size_t {
+			return ptr->NumberOfTasks();
+		});
 
+		for (auto& schedule : schedules)
+		{
+			schedule->Lock();
+			try
+			{
+				if (not schedule->IsBusy())
+				{
+					schedule->AddTask(handle);
+				}
+				schedule->Unlock();
+			}
+			catch (...)
+			{
+				isSucceed = false;
+				schedule->Unlock();
+				break;
+			}
 		}
 
 		isSucceed = true;
