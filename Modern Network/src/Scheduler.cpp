@@ -16,14 +16,13 @@ net::coroutine::Schedule::Schedule(Scheduler& scheduler)
 
 			if (0 < myTasks.size())
 			{
+				Lock();
+
 				auto& first = myTasks.front();
-
-				isBusy.store(true, std::memory_order_acquire);
-
 				first();
 
 				myTasks.pop_front();
-				isBusy.store(false, std::memory_order_release);
+				Unlock();
 			}
 		}
 	} };
@@ -65,6 +64,20 @@ net::coroutine::Schedule::Stop()
 noexcept
 {
 	return myWorker.request_stop();
+}
+
+void
+net::coroutine::Schedule::Lock()
+noexcept
+{
+	isBusy.store(true, std::memory_order_acquire);
+}
+
+void
+net::coroutine::Schedule::Unlock()
+noexcept
+{
+	isBusy.store(false, std::memory_order_release);
 }
 
 net::coroutine::Scheduler::Scheduler()

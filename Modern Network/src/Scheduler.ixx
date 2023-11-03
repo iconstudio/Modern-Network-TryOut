@@ -22,6 +22,8 @@ export namespace net::coroutine
 		[[nodiscard]] std::suspend_never Pause() noexcept;
 		void Resume() noexcept;
 		bool Stop() noexcept;
+		void Lock() noexcept;
+		void Unlock() noexcept;
 
 		Schedule(Schedule&&) noexcept = default;
 		Schedule& operator=(Schedule&&) noexcept = default;
