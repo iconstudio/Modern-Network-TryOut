@@ -46,10 +46,10 @@ export namespace net::coroutine
 			bool await_ready() const noexcept;
 			void await_suspend(std::coroutine_handle<void> handle) noexcept;
 			/// <summary>
-			/// Retrieves the managed schedule as successfully this task is queued on the scheduler.
+			/// Retrieves how successfully this task is queued on the scheduler.
 			/// </summary>
-			/// <returns>A managed schedule or empty if is failed</returns>
-			std::optional<Schedule*> await_resume() const noexcept;
+			/// <returns>Whether it has been scheduled or not</returns>
+			bool await_resume() const noexcept;
 
 		private:
 			Scheduler& myScheduler;
