@@ -80,6 +80,20 @@ noexcept
 	isBusy.store(false, std::memory_order_release);
 }
 
+size_t
+net::coroutine::Schedule::NumberOfTasks()
+const noexcept
+{
+	return myTasks.size();
+}
+
+bool
+net::coroutine::Schedule::IsBusy()
+const noexcept
+{
+	return isBusy.load(std::memory_order_relaxed);
+}
+
 net::coroutine::Scheduler::Scheduler()
 	: Scheduler(std::thread::hardware_concurrency())
 {}
@@ -115,7 +129,7 @@ const noexcept
 	bool out = false;
 	for (auto& schedule : myScheduler.mySchedules)
 	{
-		if (not schedule->isBusy)
+		if (not schedule->IsBusy())
 		{
 			out = true;
 		}

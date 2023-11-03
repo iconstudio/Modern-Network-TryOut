@@ -25,6 +25,9 @@ export namespace net::coroutine
 		void Lock() noexcept;
 		void Unlock() noexcept;
 
+		[[nodiscard]] size_t NumberOfTasks() const noexcept;
+		[[nodiscard]] bool IsBusy() const noexcept;
+
 		Schedule(Schedule&&) noexcept = default;
 		Schedule& operator=(Schedule&&) noexcept = default;
 
