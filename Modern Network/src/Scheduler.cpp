@@ -3,24 +3,31 @@ module;
 #include <memory>
 module Net.Scheduler;
 
-net::coroutine::Scheduler::Scheduler()
-	: Scheduler(std::thread::hardware_concurrency())
-{}
-
-net::coroutine::Scheduler::Scheduler(size_t pipelines)
-	: myWorkers(pipelines)
-{}
-
-net::coroutine::Scheduler::Initiator
-net::coroutine::Scheduler::Start()
+net::coroutine::Schedule::Schedule(Scheduler& scheduler)
+	: myWorker(), myTasks(), myParent(std::addressof(scheduler))
+	, isPaused(false), isBusy(false)
 {
-	return Initiator{ *this };
-}
+	myWorker = std::jthread{ [&](std::stop_token&& token) {
+		while (true)
+		{
+			if (token.stop_requested()) [[unlikely]] {
+				break;
+			};
 
-net::coroutine::Schedule::Schedule(handle_type handle, Scheduler& scheduler) noexcept
-	: Handler(handle), myParent(std::addressof(scheduler))
-	, isPaused(false)
-{}
+			if (0 < myTasks.size())
+			{
+				auto& first = myTasks.front();
+
+				isBusy.store(true, std::memory_order_acquire);
+
+				first();
+
+				myTasks.pop_front();
+				isBusy.store(false, std::memory_order_release);
+			}
+		}
+	} };
+}
 
 std::suspend_never
 net::coroutine::Schedule::Pause()
@@ -29,7 +36,6 @@ noexcept
 	bool paused = not isPaused.load(std::memory_order_acquire);
 	if (not paused) [[likely]] {
 		paused = true;
-		std::this_thread::yield();
 
 		isPaused.wait(false, std::memory_order_release);
 	}
@@ -48,31 +54,52 @@ noexcept
 {
 	bool expected = true;
 
-	if (myHandle and isPaused.compare_exchange_strong(expected, false, std::memory_order_acq_rel))
+	if (isPaused.compare_exchange_strong(expected, false, std::memory_order_acq_rel))
 	{
 		isPaused.notify_one();
-
-		myHandle.resume();
 	}
+}
+
+bool
+net::coroutine::Schedule::Stop()
+noexcept
+{
+	return myWorker.request_stop();
+}
+
+net::coroutine::Scheduler::Scheduler()
+	: Scheduler(std::thread::hardware_concurrency())
+{}
+
+net::coroutine::Scheduler::Scheduler(size_t pipelines)
+	: mySchedules()
+{
+	mySchedules.reserve(pipelines);
+
+	for (size_t i = 0; i < pipelines; ++i)
+	{
+		mySchedules[i] = std::make_unique<Schedule>(*this);
+	}
+
+	mySchedules.shrink_to_fit();
+}
+
+net::coroutine::Scheduler::Initiator
+net::coroutine::Scheduler::Start()
+{
+	return Initiator{ *this };
 }
 
 net::coroutine::Scheduler::Initiator::Initiator(net::coroutine::Scheduler& scheduler)
 noexcept
-	: myScheduler(scheduler), mySchedule(nullptr), isSucceed(false)
+	: myScheduler(scheduler), isSucceed(false)
 {}
 
 bool
 net::coroutine::Scheduler::Initiator::await_ready()
 const noexcept
 {
-	auto& workers = myScheduler.myWorkers;
-	if (workers.size() < workers.capacity())
-	{
-		// let mySchedule be empty
-		return true;
-	}
-
-	// suspend
+	// always suspend
 	return false;
 }
 
@@ -82,24 +109,15 @@ noexcept
 {
 	try
 	{
-		auto& workers = myScheduler.myWorkers;
-#if _DEBUG
-		auto schedule = std::make_unique<coroutine::Schedule>(handle, std::ref(myScheduler));
-		mySchedule = schedule.get();
+		for (auto& schedule : myScheduler.mySchedules)
+		{
 
-		workers.push_back(std::move(schedule));
-#else // _DEBUG
-		workers.push_back(std::make_unique<coroutine::Schedule>(handle));
-#endif // !_DEBUG
+		}
 
 		isSucceed = true;
-
-		// resume now
-		handle.resume();
 	}
 	catch (...)
 	{
-		mySchedule = nullptr;
 		isSucceed = false;
 	}
 }

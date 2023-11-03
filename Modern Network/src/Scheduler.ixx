@@ -1,5 +1,6 @@
 module;
 #include <vector>
+#include <deque>
 #include <memory>
 #include <thread>
 #include <atomic>
@@ -13,16 +14,14 @@ export namespace net::coroutine
 {
 	class Scheduler;
 
-	struct [[nodiscard]] Schedule final : public Handler<std::coroutine_handle<void>>
+	struct [[nodiscard]] Schedule final
 	{
-		using super = Handler<std::coroutine_handle<void>>;
-		using handle_type = std::coroutine_handle<void>;
-
-		Schedule(handle_type handle, Scheduler& scheduler) noexcept;
+		Schedule(Scheduler& scheduler);
 		~Schedule() noexcept = default;
 
 		[[nodiscard]] std::suspend_never Pause() noexcept;
 		void Resume() noexcept;
+		bool Stop() noexcept;
 
 		Schedule(Schedule&&) noexcept = default;
 		Schedule& operator=(Schedule&&) noexcept = default;
@@ -31,8 +30,12 @@ export namespace net::coroutine
 		Schedule(const Schedule&) = delete;
 		void operator=(const Schedule&) = delete;
 
+		std::jthread myWorker;
+		std::deque<std::coroutine_handle<void>> myTasks;
+
 		Scheduler* myParent;
 		volatile std::atomic_bool isPaused;
+		volatile std::atomic_bool isBusy;
 	};
 
 	class [[nodiscard]] Scheduler
@@ -53,9 +56,10 @@ export namespace net::coroutine
 
 		private:
 			Scheduler& myScheduler;
-			Schedule* mySchedule;
 			bool isSucceed;
 		};
+
+		std::vector<std::unique_ptr<Schedule>> mySchedules;
 
 	public:
 		Scheduler();
@@ -64,9 +68,6 @@ export namespace net::coroutine
 		[[nodiscard]] Initiator Start();
 
 		friend struct coroutine::Schedule;
-
-	protected:
-		std::vector<std::unique_ptr<Schedule>> myWorkers;
 	};
 }
 
