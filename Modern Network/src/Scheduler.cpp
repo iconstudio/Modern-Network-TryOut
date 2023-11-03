@@ -99,8 +99,16 @@ bool
 net::coroutine::Scheduler::Initiator::await_ready()
 const noexcept
 {
-	// always suspend
-	return false;
+	bool out = false;
+	for (auto& schedule : myScheduler.mySchedules)
+	{
+		if (not schedule->isBusy)
+		{
+			out = true;
+		}
+	}
+
+	return out;
 }
 
 void

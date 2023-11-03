@@ -54,6 +54,8 @@ export namespace net::coroutine
 			/// <returns>Whether it has been scheduled or not</returns>
 			bool await_resume() const noexcept;
 
+			friend struct coroutine::Schedule;
+
 		private:
 			Scheduler& myScheduler;
 			bool isSucceed;
