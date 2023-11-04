@@ -1,50 +1,15 @@
 module;
 #include <vector>
-#include <deque>
 #include <memory>
-#include <thread>
-#include <atomic>
 
 export module Net.Scheduler;
+import :Schedule;
 import Net.Handler;
 import Net.Coroutine;
 import <optional>;
 
 export namespace net::coroutine
 {
-	class Scheduler;
-
-	struct [[nodiscard]] Schedule final
-	{
-		Schedule(Scheduler& scheduler);
-		~Schedule() noexcept = default;
-
-		void AddTask(std::coroutine_handle<void> handle);
-		[[nodiscard]] std::suspend_never Pause() noexcept;
-		void Resume() noexcept;
-		bool Stop() noexcept;
-		void Lock() noexcept;
-		bool TryLock() noexcept;
-		void Unlock() noexcept;
-
-		[[nodiscard]] size_t NumberOfTasks() const noexcept;
-		[[nodiscard]] bool IsBusy() const noexcept;
-
-		Schedule(Schedule&&) noexcept = default;
-		Schedule& operator=(Schedule&&) noexcept = default;
-
-	private:
-		Schedule(const Schedule&) = delete;
-		void operator=(const Schedule&) = delete;
-
-		std::jthread myWorker;
-		std::deque<std::coroutine_handle<void>> myTasks;
-
-		Scheduler* myParent;
-		volatile std::atomic_bool isPaused;
-		volatile std::atomic_bool isBusy;
-	};
-
 	class [[nodiscard]] Scheduler
 	{
 	protected:
@@ -61,7 +26,7 @@ export namespace net::coroutine
 			/// <returns>Whether it has been scheduled or not</returns>
 			bool await_resume() const noexcept;
 
-			friend struct coroutine::Schedule;
+			friend class coroutine::Schedule;
 
 		private:
 			Scheduler& myScheduler;

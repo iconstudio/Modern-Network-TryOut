@@ -131,6 +131,7 @@
     <ClCompile Include="lib\NetworkInitializationError.ixx" />
     <ClCompile Include="lib\Promissory.ixx" />
     <ClCompile Include="lib\Property.ixx" />
+    <ClCompile Include="lib\Schedule.ixx" />
     <ClCompile Include="lib\ServerSetupError.ixx" />
     <ClCompile Include="lib\Socket.ixx" />
     <ClCompile Include="lib\SocketClosingErrorCodes.ixx" />
@@ -156,6 +157,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\ConcurrentAwaiter.cpp" />
     <ClCompile Include="src\EndPoint.cpp" />
+    <ClCompile Include="src\Schedule.cpp" />
     <ClCompile Include="src\Scheduler.cpp" />
     <ClCompile Include="src\Scheduler.ixx" />
     <ClCompile Include="src\IpAddress.cpp" />
