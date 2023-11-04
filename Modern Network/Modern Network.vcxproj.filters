@@ -224,9 +224,6 @@
     <ClCompile Include="src\Scheduler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scheduler.ixx">
-      <Filter>lib\Coroutine</Filter>
-    </ClCompile>
     <ClCompile Include="lib\Task.ixx">
       <Filter>lib</Filter>
     </ClCompile>
@@ -235,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="src\Schedule.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Scheduler.ixx">
+      <Filter>lib\Coroutine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
