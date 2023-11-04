@@ -18,11 +18,13 @@ net::coroutine::Schedule::Schedule(Scheduler& scheduler)
 			if (0 < myTasks.size())
 			{
 				Lock();
-
-				auto& first = myTasks.front();
-				first();
-
+				std::coroutine_handle<void> first = myTasks.front();
 				myTasks.pop_front();
+
+				if (first)
+				{
+					first();
+				}
 				Unlock();
 			}
 		}
