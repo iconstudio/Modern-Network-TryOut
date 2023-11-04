@@ -82,6 +82,14 @@ noexcept
 	isBusy.store(true, std::memory_order_acquire);
 }
 
+bool
+net::coroutine::Schedule::TryLock()
+noexcept
+{
+	bool expected = false;
+	return isBusy.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
+}
+
 void
 net::coroutine::Schedule::Unlock()
 noexcept

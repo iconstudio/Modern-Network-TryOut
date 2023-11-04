@@ -24,6 +24,7 @@ export namespace net::coroutine
 		void Resume() noexcept;
 		bool Stop() noexcept;
 		void Lock() noexcept;
+		bool TryLock() noexcept;
 		void Unlock() noexcept;
 
 		[[nodiscard]] size_t NumberOfTasks() const noexcept;
