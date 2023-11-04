@@ -1,12 +1,11 @@
 module;
 #include <vector>
 #include <memory>
+#include <optional>
 
 export module Net.Scheduler;
 import :Schedule;
-import Net.Handler;
-import Net.Coroutine;
-import <optional>;
+export import Net.Coroutine;
 
 export namespace net::coroutine
 {
@@ -41,7 +40,7 @@ export namespace net::coroutine
 
 		[[nodiscard]] Initiator Start();
 
-		friend struct coroutine::Schedule;
+		friend class coroutine::Schedule;
 	};
 }
 
