@@ -63,7 +63,7 @@ noexcept
 		{
 			try
 			{
-				if (not schedule->IsBusy())
+				//if (not schedule->IsBusy())
 				{
 					schedule->AddTask(handle);
 				}
