@@ -29,7 +29,7 @@ export namespace net::coroutine
 
 		private:
 			Scheduler& myScheduler;
-			Schedule* const myStarter;
+			Schedule* myStarter;
 			bool isSucceed;
 		};
 

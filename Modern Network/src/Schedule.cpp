@@ -22,10 +22,10 @@ net::coroutine::Schedule::Schedule(Scheduler& scheduler)
 				myTasks.pop_front();
 				Unlock();
 
-				if (first)
+				if (first and not first.done())
 				{
 					isBusy = true;
-					first();
+					first.resume();
 					isBusy = false;
 				}
 			}
