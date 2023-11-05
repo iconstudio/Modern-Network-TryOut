@@ -45,7 +45,7 @@ const noexcept
 		}
 	}
 
-	return out;
+	return not out;
 }
 
 void
