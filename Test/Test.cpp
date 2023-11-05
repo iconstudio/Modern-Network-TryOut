@@ -1,6 +1,8 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
+#include <memory>
 #include <string_view>
 #include <print>
+#include <array>
 #include <span>
 
 import Net;
@@ -13,10 +15,14 @@ import Net.Coroutine.Awaiter.Timed;
 import Net.Coroutine.Awaiter.Concurrent;
 import Net.Scheduler;
 
-net::Socket listener = net::Socket::EmptySocket;
-net::Socket client = net::Socket::EmptySocket;
-
+net::Socket serverListener = net::Socket::EmptySocket;
 net::coroutine::Scheduler globalScheduler{};
+
+constexpr size_t maxClients = 1000;
+std::array<net::Socket*, maxClients> everyClients{};
+
+size_t lastClientIndex = 0;
+net::Socket lastClient = net::Socket::EmptySocket;
 
 [[nodiscard]]
 inline std::string_view as_string(const std::span<const std::byte> buffer) noexcept
@@ -30,11 +36,33 @@ inline std::string_view as_string(const std::span<const std::byte> buffer, const
 	return std::string_view{ reinterpret_cast<const char*>(buffer.data()), size };
 }
 
+net::Coroutine Accepter()
+{
+	auto taken = co_await globalScheduler.Start();
+	if (not taken)
+	{
+		co_return;
+	}
+
+	while (true)
+	{
+		auto acceptance = serverListener.Accept();
+
+		if (acceptance.has_value())
+		{
+			lastClient = std::move(acceptance.value());
+		}
+		else
+		{
+			std::println("The acceptance is failed due to '{}'", acceptance.error());
+			break;
+		}
+	}
+}
+
 net::Coroutine Worker()
 {
 	co_await net::coroutine::WaitForSeconds(1);
-
-	auto taken = co_await globalScheduler.Start();
 
 	net::io::Context listen_context{};
 	listen_context.Clear();
@@ -44,14 +72,14 @@ net::Coroutine Worker()
 	std::memset(recv_buffer, 0, sizeof(recv_buffer));
 
 	//net::SocketClosingErrorCodes close_err;
-	//const bool closed = client.Close(close_err);
+	//const bool closed = lastClient.Close(close_err);
 
 	std::span buffer{ recv_buffer };
 	std::span<std::byte> send_buf;
 
 	while (true)
 	{
-		net::SocketReceivingResult recv = client.Receive(listen_context, buffer);
+		net::SocketReceivingResult recv = lastClient.Receive(listen_context, buffer);
 		listen_context.Clear();
 
 		if (recv.has_value())
@@ -67,7 +95,7 @@ net::Coroutine Worker()
 			break;
 		}
 
-		auto sent = client.Send(listen_context, send_buf, recv_size);
+		auto sent = lastClient.Send(listen_context, send_buf, recv_size);
 		listen_context.Clear();
 	}
 
@@ -82,28 +110,25 @@ int main()
 
 	std::println("=========== Awake ===========");
 
-	listener = net::Socket::Create(net::SocketType::Synchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
+	serverListener = net::Socket::Create(net::SocketType::Synchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
-	//if (listener.Bind(net::IPv4Address::Loopback, 52000).has_value())
-	if (listener.BindHost(10000))
+	if (serverListener.BindHost(10000))
 	{
 		std::println("The listener is binded!");
 	}
 
-	listener.IsAddressReusable = true;
+	serverListener.IsAddressReusable = true;
 
 	std::println("=========== Start ===========");
 
-	if (listener.Open().has_value())
+	if (serverListener.Open().has_value())
 	{
 		std::println("The listener is opened!");
 	}
 
-	auto acceptance = listener.Accept();
-	client = std::move(acceptance.value());
-
 	std::println("=========== Update ===========");
 
+	Accepter();
 	Worker();
 
 	net::core::Annihilate();
