@@ -61,19 +61,16 @@ noexcept
 
 		for (auto& schedule : schedules)
 		{
-			schedule->Lock();
 			try
 			{
 				if (not schedule->IsBusy())
 				{
 					schedule->AddTask(handle);
 				}
-				schedule->Unlock();
 			}
 			catch (...)
 			{
 				isSucceed = false;
-				schedule->Unlock();
 				break;
 			}
 		}

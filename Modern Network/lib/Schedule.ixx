@@ -25,6 +25,7 @@ export namespace net::coroutine
 
 		[[nodiscard]] size_t NumberOfTasks() const noexcept;
 		[[nodiscard]] bool IsBusy() const noexcept;
+		[[nodiscard]] bool IsLocked() const noexcept;
 
 		Schedule(Schedule&&) noexcept = default;
 		Schedule& operator=(Schedule&&) noexcept = default;
@@ -39,5 +40,6 @@ export namespace net::coroutine
 		Scheduler* myParent;
 		volatile std::atomic_bool isPaused;
 		volatile std::atomic_bool isBusy;
+		volatile std::atomic_bool isLocked;
 	};
 }

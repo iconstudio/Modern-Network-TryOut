@@ -6,7 +6,7 @@ import :Schedule;
 
 net::coroutine::Schedule::Schedule(Scheduler& scheduler)
 	: myWorker(), myTasks(), myParent(std::addressof(scheduler))
-	, isPaused(false), isBusy(false)
+	, isPaused(false), isBusy(false), isLocked(false)
 {
 	myWorker = std::jthread{ [&](std::stop_token&& token) {
 		while (true)
@@ -20,12 +20,14 @@ net::coroutine::Schedule::Schedule(Scheduler& scheduler)
 				Lock();
 				std::coroutine_handle<void> first = myTasks.front();
 				myTasks.pop_front();
+				Unlock();
 
 				if (first)
 				{
+					isBusy = true;
 					first();
+					isBusy = false;
 				}
-				Unlock();
 			}
 		}
 	} };
@@ -34,7 +36,9 @@ net::coroutine::Schedule::Schedule(Scheduler& scheduler)
 void
 net::coroutine::Schedule::AddTask(std::coroutine_handle<void> handle)
 {
+	Lock();
 	myTasks.push_back(handle);
+	Unlock();
 }
 
 std::suspend_never
@@ -79,7 +83,7 @@ void
 net::coroutine::Schedule::Lock()
 noexcept
 {
-	isBusy.store(true);
+	isLocked.store(true);
 }
 
 bool
@@ -94,7 +98,7 @@ void
 net::coroutine::Schedule::Unlock()
 noexcept
 {
-	isBusy.store(false);
+	isLocked.store(false);
 }
 
 size_t
@@ -109,4 +113,11 @@ net::coroutine::Schedule::IsBusy()
 const noexcept
 {
 	return isBusy.load(std::memory_order_relaxed);
+}
+
+bool
+net::coroutine::Schedule::IsLocked()
+const noexcept
+{
+	return isLocked.load(std::memory_order_relaxed);
 }
