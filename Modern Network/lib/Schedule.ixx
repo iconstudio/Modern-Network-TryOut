@@ -19,18 +19,19 @@ export namespace net::coroutine
 		[[nodiscard]] std::suspend_never Pause() noexcept;
 		void Resume() noexcept;
 		bool Stop() noexcept;
-		void Lock() noexcept;
-		bool TryLock() noexcept;
-		void Unlock() noexcept;
 
 		[[nodiscard]] size_t NumberOfTasks() const noexcept;
 		[[nodiscard]] bool IsBusy() const noexcept;
-		[[nodiscard]] bool IsLocked() const noexcept;
 
 		Schedule(Schedule&&) noexcept = default;
 		Schedule& operator=(Schedule&&) noexcept = default;
 
 	private:
+		void Lock() noexcept;
+		bool TryLock() noexcept;
+		void Unlock() noexcept;
+		[[nodiscard]] bool IsLocked() const noexcept;
+
 		Schedule(const Schedule&) = delete;
 		void operator=(const Schedule&) = delete;
 
