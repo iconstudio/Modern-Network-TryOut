@@ -4,7 +4,7 @@ module;
 #include <optional>
 
 export module Net.Scheduler;
-import :Schedule;
+export import :Schedule;
 export import Net.Coroutine;
 
 export namespace net::coroutine
@@ -23,12 +23,13 @@ export namespace net::coroutine
 			/// Retrieves how successfully this task is queued on the scheduler.
 			/// </summary>
 			/// <returns>Whether it has been scheduled or not</returns>
-			bool await_resume() const noexcept;
+			std::optional<Schedule* const> await_resume() const noexcept;
 
 			friend class coroutine::Schedule;
 
 		private:
 			Scheduler& myScheduler;
+			Schedule* const myStarter;
 			bool isSucceed;
 		};
 

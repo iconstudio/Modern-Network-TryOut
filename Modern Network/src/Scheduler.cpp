@@ -1,6 +1,7 @@
 module;
 #include <thread>
 #include <memory>
+#include <optional>
 #include <algorithm>
 module Net.Scheduler;
 
@@ -29,7 +30,8 @@ net::coroutine::Scheduler::Start()
 
 net::coroutine::Scheduler::Initiator::Initiator(net::coroutine::Scheduler& scheduler)
 noexcept
-	: myScheduler(scheduler), isSucceed(false)
+	: myScheduler(scheduler), myStarter(nullptr)
+	, isSucceed(false)
 {}
 
 bool
@@ -66,11 +68,13 @@ noexcept
 				//if (not schedule->IsBusy())
 				{
 					schedule->AddTask(handle);
+					myStarter = schedule.get();
 				}
 			}
 			catch (...)
 			{
 				isSucceed = false;
+				myStarter = nullptr;
 				break;
 			}
 		}
@@ -83,16 +87,16 @@ noexcept
 	}
 }
 
-bool
+std::optional<net::coroutine::Schedule* const>
 net::coroutine::Scheduler::Initiator::await_resume()
 const noexcept
 {
 	if (isSucceed)
 	{
-		return true;
+		return myStarter;
 	}
 	else
 	{
-		return false;
+		return std::nullopt;
 	}
 }
