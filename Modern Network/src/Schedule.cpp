@@ -79,7 +79,7 @@ void
 net::coroutine::Schedule::Lock()
 noexcept
 {
-	isBusy.store(true, std::memory_order_acquire);
+	isBusy.store(true);
 }
 
 bool
@@ -94,7 +94,7 @@ void
 net::coroutine::Schedule::Unlock()
 noexcept
 {
-	isBusy.store(false, std::memory_order_release);
+	isBusy.store(false);
 }
 
 size_t
