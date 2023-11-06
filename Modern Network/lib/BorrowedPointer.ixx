@@ -83,6 +83,11 @@ export namespace net
 			return std::exchange(myData, nullptr);
 		}
 
+		BorrowedPointer(const BorrowedPointer&) noexcept = default;
+		BorrowedPointer& operator=(const BorrowedPointer&) noexcept = default;
+		BorrowedPointer(BorrowedPointer&&) noexcept = default;
+		BorrowedPointer& operator=(BorrowedPointer&&) noexcept = default;
+
 	private:
 		T* myData;
 	};
@@ -93,6 +98,67 @@ export namespace net
 	public:
 		constexpr BorrowedPointer() noexcept = default;
 		constexpr BorrowedPointer(nullptr_t) noexcept {}
+
+		BorrowedPointer(const std::shared_ptr<T>& ptr)
+			: myData(ptr)
+		{}
+
+		BorrowedPointer(std::shared_ptr<T>&& ptr) noexcept
+			: myData(std::move(ptr))
+		{}
+
+		template <convertible_to<T> U = T>
+			requires (not std::is_array_v<U>)
+		[[nodiscard]]
+		U& operator*() const& noexcept
+		{
+			std::shared_ptr<T> ptr = myData.lock();
+			return *ptr;
+		}
+
+		template <convertible_to<T> U = T>
+			requires (not std::is_array_v<U>)
+		[[nodiscard]]
+		U& operator*() && noexcept
+		{
+			std::shared_ptr<T> ptr = std::exchange(myData, nullptr).lock();
+			return *ptr;
+		}
+
+		[[nodiscard]]
+		volatile T& operator*() const volatile& noexcept
+		{
+			return *static_cast<std::weak_ptr<T>>(myData);
+		}
+
+		[[nodiscard]]
+		volatile T& operator*() volatile&& noexcept
+		{
+			return std::exchange(myData, nullptr);
+		}
+
+		[[nodiscard]]
+		T* const operator->() const noexcept
+		{
+			std::shared_ptr<T> ptr = myData.lock();
+			return ptr.get();
+		}
+
+		[[nodiscard]]
+		volatile T* const operator->() const volatile noexcept
+		{
+			return static_cast<std::weak_ptr<T>>(myData).get();
+		}
+
+		operator T* const () const noexcept
+		{
+			return myData.get();
+		}
+
+		BorrowedPointer(const BorrowedPointer&) noexcept = default;
+		BorrowedPointer& operator=(const BorrowedPointer&) noexcept = default;
+		BorrowedPointer(BorrowedPointer&&) noexcept = default;
+		BorrowedPointer& operator=(BorrowedPointer&&) noexcept = default;
 
 	private:
 		std::weak_ptr<T> myData;
