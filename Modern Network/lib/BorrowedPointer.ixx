@@ -38,7 +38,7 @@ export namespace net
 		template <convertible_to<T> U = T>
 			requires (not std::is_array_v<U>)
 		[[nodiscard]]
-		constexpr U&& operator*() && noexcept
+		constexpr U& operator*() && noexcept
 		{
 			return *std::exchange(myData, nullptr);
 		}
@@ -52,7 +52,7 @@ export namespace net
 
 		template <convertible_to<T> U = T>
 		[[nodiscard]]
-		constexpr volatile U&& operator*() volatile&& noexcept
+		constexpr volatile U& operator*() volatile&& noexcept
 		{
 			return std::exchange(myData, nullptr);
 		}
@@ -78,7 +78,7 @@ export namespace net
 			return myData;
 		}
 
-		constexpr operator T*&& () && noexcept
+		constexpr operator T* () && noexcept
 		{
 			return std::exchange(myData, nullptr);
 		}
