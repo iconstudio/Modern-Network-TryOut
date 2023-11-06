@@ -38,16 +38,17 @@ bool
 net::coroutine::Scheduler::Initiator::await_ready()
 const noexcept
 {
-	bool out = false;
+	bool out = true;
 	for (auto& schedule : myScheduler.mySchedules)
 	{
 		if (not schedule->IsBusy())
 		{
-			out = true;
+			out = false;
+			break;
 		}
 	}
 
-	return not out;
+	return out;
 }
 
 void
@@ -69,6 +70,7 @@ noexcept
 				{
 					schedule->AddTask(handle);
 					myStarter = schedule.get();
+					isSucceed = true;
 				}
 			}
 			catch (...)
@@ -78,8 +80,6 @@ noexcept
 				break;
 			}
 		}
-
-		isSucceed = true;
 	}
 	catch (...)
 	{
