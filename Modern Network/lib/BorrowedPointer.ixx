@@ -1,5 +1,7 @@
 module;
+#include <utility>
 #include <memory>
+
 export module Net.BorrowedPointer;
 import Net.Constraints;
 
@@ -20,44 +22,69 @@ export namespace net
 		{}
 
 		template <convertible_to<T> U>
-			requires not std::is_array_v<U>
-		constexpr BorrowedPointer(U* const& ptr) noexcept
+			requires (not std::is_array_v<U>)
+		explicit constexpr BorrowedPointer(U* const& ptr) noexcept
 			: myData(ptr)
 		{}
 
 		template <convertible_to<T> U = T>
-			requires not std::is_array_v<U>
+			requires (not std::is_array_v<U>)
 		[[nodiscard]]
-		constexpr U& operator*() const noexcept
+		constexpr U& operator*() const& noexcept
+		{
+			return *myData;
+		}
+
+		template <convertible_to<T> U = T>
+			requires (not std::is_array_v<U>)
+		[[nodiscard]]
+		constexpr U&& operator*() && noexcept
+		{
+			return *std::exchange(myData, nullptr);
+		}
+
+		template <convertible_to<T> U = T>
+		[[nodiscard]]
+		constexpr volatile U& operator*() const volatile& noexcept
 		{
 			return *myData;
 		}
 
 		template <convertible_to<T> U = T>
 		[[nodiscard]]
-		constexpr volatile U& operator*() const volatile noexcept
+		constexpr volatile U&& operator*() volatile&& noexcept
 		{
-			return *myData;
+			return std::exchange(myData, nullptr);
 		}
 
 		template <convertible_to<T> U = T>
-			requires not std::is_array_v<U>
+			requires (not std::is_array_v<U>)
 		[[nodiscard]]
 		constexpr U* const operator->() const noexcept
 		{
 			return myData;
 		}
+
 		template <convertible_to<T> U = T>
-			requires not std::is_array_v<U>
+			requires (not std::is_array_v<U>)
 		[[nodiscard]]
 		constexpr volatile U* const operator->() const volatile noexcept
 		{
 			return myData;
 		}
 
+		constexpr operator T* const& () const& noexcept
+		{
+			return myData;
+		}
+
+		constexpr operator T*&& () && noexcept
+		{
+			return std::exchange(myData, nullptr);
+		}
 
 	private:
-		T* const myData;
+		T* myData;
 	};
 
 	template<notvoids T>
@@ -80,10 +107,4 @@ export namespace net
 
 	private:
 	};
-}
-
-export
-{
-	template<typename T>
-	void operator delete(net::BorrowedPointer<T>) = delete;
 }
