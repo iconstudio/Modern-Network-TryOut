@@ -34,10 +34,10 @@ net::coroutine::Schedule::Schedule(Scheduler& scheduler)
 }
 
 void
-net::coroutine::Schedule::AddTask(std::coroutine_handle<void> handle)
+net::coroutine::Schedule::AddTask(std::coroutine_handle<void> handle, bool would_block)
 {
 	Lock();
-	myTasks.push_back(handle);
+	myTasks.emplace_back(handle, would_block);
 	Unlock();
 }
 

@@ -23,15 +23,16 @@ net::coroutine::Scheduler::Scheduler(size_t pipelines)
 }
 
 net::coroutine::Scheduler::Initiator
-net::coroutine::Scheduler::Start()
+net::coroutine::Scheduler::Start(bool would_block)
 {
-	return Initiator{ *this };
+	return Initiator{ *this, would_block };
 }
 
-net::coroutine::Scheduler::Initiator::Initiator(net::coroutine::Scheduler& scheduler)
+net::coroutine::Scheduler::Initiator::Initiator(net::coroutine::Scheduler& scheduler, bool would_block)
 noexcept
 	: myScheduler(scheduler), myStarter(nullptr)
 	, isSucceed(false)
+	, wouldBlock(would_block)
 {}
 
 bool
@@ -54,10 +55,10 @@ const noexcept
 void
 net::coroutine::Scheduler::Initiator::await_suspend(std::coroutine_handle<void> handle)
 {
-		auto& schedules = myScheduler.mySchedules;
-		std::ranges::sort(schedules, {}, [](std::unique_ptr<Schedule>& ptr) noexcept -> size_t {
-			return ptr->NumberOfTasks();
-		});
+	auto& schedules = myScheduler.mySchedules;
+	std::ranges::sort(schedules, {}, [](std::unique_ptr<Schedule>& ptr) noexcept -> size_t {
+		return ptr->NumberOfTasks();
+	});
 
 	try
 	{
@@ -66,8 +67,8 @@ net::coroutine::Scheduler::Initiator::await_suspend(std::coroutine_handle<void> 
 			if (not schedule->IsBusy())
 			{
 				schedule->AddTask(handle, wouldBlock);
-					myStarter = schedule.get();
-					isSucceed = true;
+				myStarter = schedule.get();
+				isSucceed = true;
 				break;
 			}
 		}

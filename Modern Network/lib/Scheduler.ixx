@@ -15,7 +15,7 @@ export namespace net::coroutine
 	protected:
 		struct [[nodiscard]] Initiator final
 		{
-			Initiator(Scheduler& scheduler) noexcept;
+			Initiator(Scheduler& scheduler, bool would_block) noexcept;
 			~Initiator() noexcept = default;
 
 			bool await_ready() const noexcept;
@@ -32,6 +32,7 @@ export namespace net::coroutine
 			Scheduler& myScheduler;
 			Schedule* myStarter;
 			bool isSucceed;
+			bool wouldBlock;
 		};
 
 		std::vector<std::unique_ptr<Schedule>> mySchedules;
@@ -40,7 +41,7 @@ export namespace net::coroutine
 		Scheduler();
 		Scheduler(size_t pipelines);
 
-		[[nodiscard]] Initiator Start();
+		[[nodiscard]] Initiator Start(bool would_block);
 
 		friend class coroutine::Schedule;
 	};
