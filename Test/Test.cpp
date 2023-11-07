@@ -38,7 +38,7 @@ inline std::string_view as_string(const std::span<const std::byte> buffer, const
 
 net::Coroutine Accepter()
 {
-	auto taken = co_await globalScheduler.Start();
+	auto taken = co_await globalScheduler.Start(true);
 	if (not taken)
 	{
 		co_return;
@@ -64,7 +64,7 @@ net::Coroutine Accepter()
 
 net::Coroutine Worker()
 {
-	auto taken = co_await globalScheduler.Start();
+	auto taken = co_await globalScheduler.Start(true);
 	if (not taken)
 	{
 		co_return;
