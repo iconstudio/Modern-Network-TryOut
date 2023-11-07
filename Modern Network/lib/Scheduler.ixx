@@ -4,6 +4,7 @@ module;
 #include <optional>
 
 export module Net.Scheduler;
+import Net.BorrowedPointer;
 export import :Schedule;
 export import Net.Coroutine;
 
@@ -23,7 +24,7 @@ export namespace net::coroutine
 			/// Retrieves how successfully this task is queued on the scheduler.
 			/// </summary>
 			/// <returns>Whether it has been scheduled or not</returns>
-			std::optional<Schedule* const> await_resume() const noexcept;
+			std::optional<BorrowedPointer<Schedule>> await_resume() const noexcept;
 
 			friend class coroutine::Schedule;
 

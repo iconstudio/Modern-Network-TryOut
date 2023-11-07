@@ -87,7 +87,7 @@ noexcept
 	}
 }
 
-std::optional<net::coroutine::Schedule* const>
+std::optional<net::BorrowedPointer<net::coroutine::Schedule>>
 net::coroutine::Scheduler::Initiator::await_resume()
 const noexcept
 {
