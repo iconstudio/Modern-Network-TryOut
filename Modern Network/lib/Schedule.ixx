@@ -11,6 +11,13 @@ export namespace net::coroutine
 
 	class [[nodiscard]] Schedule final
 	{
+	private:
+		struct Task
+		{
+			std::coroutine_handle<void> coHandle;
+			bool isBlocked;
+		};
+
 	public:
 		Schedule(Scheduler& scheduler);
 		~Schedule() noexcept = default;
@@ -36,7 +43,7 @@ export namespace net::coroutine
 		void operator=(const Schedule&) = delete;
 
 		std::jthread myWorker;
-		std::deque<std::coroutine_handle<void>> myTasks;
+		std::deque<Task> myTasks;
 
 		Scheduler* myParent;
 		volatile std::atomic_bool isPaused;

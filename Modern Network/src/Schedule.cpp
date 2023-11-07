@@ -18,15 +18,16 @@ net::coroutine::Schedule::Schedule(Scheduler& scheduler)
 			if (0 < myTasks.size())
 			{
 				Lock();
-				std::coroutine_handle<void> first = myTasks.front();
+				Task first = myTasks.front();
 				myTasks.pop_front();
 				Unlock();
 
-				if (first and not first.done())
+				auto coroutine = first.coHandle;
+				if (coroutine and not coroutine.done())
 				{
-					isBusy = true;
-					first.resume();
-					isBusy = false;
+					isBusy.store(first.isBlocked);
+					coroutine.resume();
+					isBusy.store(false);
 				}
 			}
 		}
