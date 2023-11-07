@@ -32,3 +32,27 @@ const
 	::Sleep(static_cast<DWORD>(myTime * 60000));
 	handle();
 }
+
+void
+net::coroutine::SynchronousWaitForSeconds::await_suspend(std::coroutine_handle<void> handle)
+const
+{
+	::Sleep(static_cast<DWORD>(myTime * 1000));
+	handle();
+}
+
+void
+net::coroutine::SynchronousWaitForMilliseconds::await_suspend(std::coroutine_handle<void> handle)
+const
+{
+	::Sleep(static_cast<DWORD>(myTime));
+	handle();
+}
+
+void
+net::coroutine::SynchronousWaitForMinutes::await_suspend(std::coroutine_handle<void> handle)
+const
+{
+	::Sleep(static_cast<DWORD>(myTime * 60000));
+	handle();
+}
