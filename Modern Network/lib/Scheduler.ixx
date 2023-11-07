@@ -19,7 +19,7 @@ export namespace net::coroutine
 			~Initiator() noexcept = default;
 
 			bool await_ready() const noexcept;
-			void await_suspend(std::coroutine_handle<void> handle) noexcept;
+			void await_suspend(std::coroutine_handle<void> handle);
 			/// <summary>
 			/// Retrieves how successfully this task is queued on the scheduler.
 			/// </summary>

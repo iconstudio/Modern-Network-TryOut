@@ -53,36 +53,28 @@ const noexcept
 
 void
 net::coroutine::Scheduler::Initiator::await_suspend(std::coroutine_handle<void> handle)
-noexcept
 {
-	try
-	{
 		auto& schedules = myScheduler.mySchedules;
 		std::ranges::sort(schedules, {}, [](std::unique_ptr<Schedule>& ptr) noexcept -> size_t {
 			return ptr->NumberOfTasks();
 		});
 
+	try
+	{
 		for (auto& schedule : schedules)
 		{
-			try
+			if (not schedule->IsBusy())
 			{
-				//if (not schedule->IsBusy())
-				{
-					schedule->AddTask(handle);
+				schedule->AddTask(handle, wouldBlock);
 					myStarter = schedule.get();
 					isSucceed = true;
-				}
-			}
-			catch (...)
-			{
-				isSucceed = false;
-				myStarter = nullptr;
 				break;
 			}
 		}
 	}
 	catch (...)
 	{
+		myStarter = nullptr;
 		isSucceed = false;
 	}
 }
