@@ -44,6 +44,8 @@ net::Coroutine Accepter()
 		co_return;
 	}
 
+	//taken.
+
 	while (true)
 	{
 		auto acceptance = serverListener.Accept();
@@ -62,6 +64,12 @@ net::Coroutine Accepter()
 
 net::Coroutine Worker()
 {
+	auto taken = co_await globalScheduler.Start();
+	if (not taken)
+	{
+		co_return;
+	}
+
 	co_await net::coroutine::WaitForSeconds(1);
 
 	net::io::Context listen_context{};
