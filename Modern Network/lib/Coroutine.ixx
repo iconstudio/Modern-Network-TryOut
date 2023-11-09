@@ -9,7 +9,7 @@ export namespace net::coroutine
 	class Coroutine;
 	class AsyncCoroutine;
 
-	template<typename C, Awaitable Finalizer, typename... Args>
+	template<typename C, Awaitable Intializer, Awaitable Finalizer, typename... Args>
 	class Promise
 	{
 	public:
@@ -19,7 +19,7 @@ export namespace net::coroutine
 			return C(C::handle_type::from_promise(*this));
 		}
 
-		static constexpr std::suspend_never initial_suspend() noexcept
+		constexpr Intializer initial_suspend() const noexcept
 		{
 			return {};
 		}
@@ -42,7 +42,7 @@ export namespace net::coroutine
 	class Coroutine final
 	{
 	public:
-		using promise_type = Promise<Coroutine, std::suspend_always>;
+		using promise_type = Promise<Coroutine, std::suspend_never, std::suspend_always>;
 		using handle_type = std::coroutine_handle<promise_type>;
 
 		constexpr Coroutine(const handle_type& handle) noexcept
@@ -93,7 +93,7 @@ export namespace net::coroutine
 	class AsyncCoroutine final
 	{
 	public:
-		using promise_type = Promise<Coroutine, std::suspend_always>;
+		using promise_type = Promise<Coroutine, std::suspend_never, std::suspend_always>;
 		using handle_type = std::coroutine_handle<promise_type>;
 
 		constexpr AsyncCoroutine(const handle_type& handle) noexcept
