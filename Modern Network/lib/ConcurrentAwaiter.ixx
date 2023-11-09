@@ -10,7 +10,7 @@ export namespace net::coroutine
 			return false;
 		}
 
-		void await_suspend(std::coroutine_handle<void> handle);
+		void await_suspend(std::coroutine_handle<void> prev_handle);
 
 		static constexpr void await_resume() noexcept
 		{}

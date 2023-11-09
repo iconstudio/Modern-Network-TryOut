@@ -12,6 +12,28 @@ export namespace net::coroutine
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
 
+		struct final_awaiter
+		{
+			static constexpr bool await_ready() noexcept { return false; }
+			static constexpr void await_resume() noexcept {}
+
+			std::coroutine_handle<void> await_suspend(handle_type h) noexcept
+			{
+				// final_awaiter::await_suspend is called when the execution of the
+				// current coroutine (referred to by 'h') is about to finish.
+				// If the current coroutine was resumed by another coroutine via
+				// co_await get_task(), a handle to that coroutine has been stored
+				// as h.promise().previous. In that case, return the handle to resume
+				// the previous coroutine.
+				// Otherwise, return noop_coroutine(), whose resumption does nothing.
+
+				if (auto previous = h.promise().prevFrame; previous)
+					return previous;
+				else
+					return std::noop_coroutine();
+			}
+		};
+
 		struct promise_type
 		{
 			[[nodiscard]]
@@ -28,30 +50,8 @@ export namespace net::coroutine
 				return {};
 			}
 
-			auto final_suspend() const noexcept
+			final_awaiter final_suspend() const noexcept
 			{
-				struct final_awaiter
-				{
-					static constexpr bool await_ready() noexcept { return false; }
-					static constexpr void await_resume() noexcept {}
-
-					std::coroutine_handle<void> await_suspend(handle_type h) noexcept
-					{
-						// final_awaiter::await_suspend is called when the execution of the
-						// current coroutine (referred to by 'h') is about to finish.
-						// If the current coroutine was resumed by another coroutine via
-						// co_await get_task(), a handle to that coroutine has been stored
-						// as h.promise().previous. In that case, return the handle to resume
-						// the previous coroutine.
-						// Otherwise, return noop_coroutine(), whose resumption does nothing.
-
-						if (auto previous = h.promise().previous; previous)
-							return previous;
-						else
-							return std::noop_coroutine();
-					}
-				};
-
 				return final_awaiter{};
 			}
 
@@ -61,7 +61,7 @@ export namespace net::coroutine
 				throw;
 			}
 
-			std::coroutine_handle<void> previous;
+			std::coroutine_handle<void> prevFrame;
 		};
 
 		constexpr Coroutine(const handle_type& handle) noexcept
@@ -82,9 +82,9 @@ export namespace net::coroutine
 
 		static constexpr bool await_ready() noexcept { return false; }
 		static constexpr void await_resume() noexcept { }
-		handle_type await_suspend(std::coroutine_handle<void> h) noexcept
+		handle_type await_suspend(std::coroutine_handle<void> prev_handle) noexcept
 		{
-			myHandle.promise().previous = h;
+			myHandle.promise().prevFrame = prev_handle;
 			return myHandle;
 		}
 
