@@ -150,6 +150,7 @@
     <ClCompile Include="lib\Task.ixx" />
     <ClCompile Include="lib\TimedAwaiter.ixx" />
     <ClCompile Include="lib\Traits.ixx" />
+    <ClCompile Include="lib\TypeList.ixx" />
     <ClCompile Include="lib\ValuePromise.ixx" />
     <ClCompile Include="Modern Network.cpp" />
     <ClCompile Include="pch.cpp">
