@@ -63,7 +63,6 @@ net::Coroutine Runner()
 	co_await Accepter();
 
 	std::println("Worker started");
-	//co_await Worker();
 
 	co_await net::coroutine::SynchronousWaitForSeconds(1);
 
@@ -82,7 +81,7 @@ net::Coroutine Runner()
 
 	while (true)
 	{
-		net::SocketReceivingResult recv = co_await lastClient.ReceiveAsync(listen_context, buffer);
+		net::SocketReceivingResult recv = lastClient.Receive(listen_context, buffer);
 		listen_context.Clear();
 
 		if (recv.has_value())
@@ -98,7 +97,7 @@ net::Coroutine Runner()
 		else
 		{
 			std::println("Server receives are failed due to '{}'", recv.error());
-			//break;
+			break;
 		}
 	}
 
