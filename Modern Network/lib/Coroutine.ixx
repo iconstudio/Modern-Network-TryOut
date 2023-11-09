@@ -25,9 +25,28 @@ export namespace net::coroutine
 				return {};
 			}
 
-			static constexpr std::suspend_always final_suspend() noexcept
+			auto final_suspend() const noexcept
 			{
-				return {};
+				struct Finalizer
+				{
+					constexpr bool await_ready() const noexcept
+					{
+						return false;
+					}
+
+					std::coroutine_handle<void> await_suspend(handle_type current) noexcept
+					{
+						if (auto previous = current.promise().previousFrame; previous)
+							return previous;
+						else
+							return std::noop_coroutine();
+					}
+
+					constexpr void await_resume() const noexcept
+					{}
+				};
+
+				return Finalizer{};
 			}
 
 			static constexpr void return_void() noexcept
@@ -38,6 +57,8 @@ export namespace net::coroutine
 			{
 				throw;
 			}
+
+			std::coroutine_handle<void> previousFrame;
 		};
 
 		constexpr Coroutine(const handle_type& handle) noexcept
@@ -70,6 +91,25 @@ export namespace net::coroutine
 			{
 				myHandle();
 			}
+		}
+
+		auto operator co_await() const noexcept
+		{
+			struct Awaiter
+			{
+				static constexpr bool await_ready() noexcept { return false; }
+				static constexpr void await_resume() noexcept { }
+
+				handle_type await_suspend(std::coroutine_handle<void> previous_frame)
+				{
+					coHandle.promise().previousFrame = previous_frame;
+					return coHandle;
+				}
+
+				std::coroutine_handle<promise_type> coHandle;
+			};
+
+			return Awaiter{ myHandle };
 		}
 
 		[[nodiscard]]
