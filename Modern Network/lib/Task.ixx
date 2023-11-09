@@ -84,7 +84,7 @@ export namespace net
 
 		static constexpr bool await_ready() noexcept
 		{
-			return true;
+			return false;
 		}
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
@@ -192,7 +192,7 @@ export namespace net
 
 		static constexpr bool await_ready() noexcept
 		{
-			return true;
+			return false;
 		}
 
 		void await_suspend(std::coroutine_handle<void> handle) const noexcept
