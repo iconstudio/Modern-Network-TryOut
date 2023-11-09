@@ -56,7 +56,7 @@ export namespace net::coroutine
 			}
 		}
 
-		void resume() const
+		void Resume() const
 		{
 			if (myHandle)
 			{
@@ -73,7 +73,7 @@ export namespace net::coroutine
 		}
 
 		[[nodiscard]]
-		bool done() const noexcept
+		bool IsDone() const noexcept
 		{
 			return myHandle.done();
 		}
