@@ -5,7 +5,7 @@ module;
 
 export module Net.Task;
 import Net.Constraints;
-import Net.Coroutine;
+import <coroutine>;
 
 export namespace net
 {
@@ -27,7 +27,9 @@ export namespace net
 			[[nodiscard]]
 			Task<T> get_return_object() noexcept
 			{
-				return Task(handle_type::from_promise(*this), myHandle.get_future());
+				myValueHandle = myHandle.get_future();
+
+				return Task(handle_type::from_promise(*this), myValueHandle.share());
 			}
 
 			template<typename U>
@@ -53,13 +55,22 @@ export namespace net
 			}
 
 			promise_handle_type myHandle;
+			future_type myValueHandle;
 		};
 
-		Task(const handle_type& handle, future_type&& future) noexcept
+		Task(const handle_type& handle, const public_future_type& future) noexcept
+			: myHandle(handle), valueHandle(future)
+		{}
+
+		Task(const handle_type& handle, public_future_type&& future) noexcept
 			: myHandle(handle), valueHandle(std::move(future))
 		{}
 
-		Task(handle_type&& handle, future_type&& future) noexcept
+		Task(handle_type&& handle, const public_future_type& future) noexcept
+			: myHandle(std::move(handle)), valueHandle(future)
+		{}
+
+		Task(handle_type&& handle, public_future_type&& future) noexcept
 			: myHandle(std::move(handle)), valueHandle(std::move(future))
 		{}
 
@@ -76,18 +87,17 @@ export namespace net
 			return false;
 		}
 
-		void await_suspend(std::coroutine_handle<void>)
+		void await_suspend(std::coroutine_handle<void> previous_frame)
 		{
 			std::thread([this] {
 				valueHandle.wait();
-				myValue = valueHandle.get();
 				myHandle();
 			}).detach();
 		}
 
-		T await_resume() const
+		const T& await_resume() const
 		{
-			return myValue;
+			return valueHandle.get();
 		}
 
 		[[nodiscard]]
@@ -107,7 +117,7 @@ export namespace net
 		[[nodiscard]]
 		const T& Result() const
 		{
-			return myValue;
+			return valueHandle.get();
 		}
 
 		[[nodiscard]]
@@ -120,8 +130,7 @@ export namespace net
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
-		future_type valueHandle;
-		T myValue;
+		public_future_type valueHandle;
 	};
 
 	template<>
@@ -183,12 +192,12 @@ export namespace net
 
 		static constexpr bool await_ready() noexcept
 		{
-			return false;
+			return true;
 		}
 
-		void await_suspend(std::coroutine_handle<void>) const noexcept
+		void await_suspend(std::coroutine_handle<void> handle) const noexcept
 		{
-			std::thread([this] {
+			std::thread([this, &handle] {
 				valueHandle.wait();
 				myHandle();
 			}).detach();
