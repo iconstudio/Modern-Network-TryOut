@@ -111,7 +111,7 @@ export namespace net
 
 		void operator()() const
 		{
-			if (myHandle && !myHandle.done())
+			if (myHandle)
 			{
 				myHandle();
 			}
@@ -220,7 +220,7 @@ export namespace net
 
 		void operator()() const
 		{
-			if (myHandle && !myHandle.done())
+			if (myHandle)
 			{
 				myHandle();
 			}
