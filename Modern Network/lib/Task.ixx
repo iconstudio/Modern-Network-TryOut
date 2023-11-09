@@ -5,7 +5,7 @@ module;
 
 export module Net.Task;
 import Net.Constraints;
-import <coroutine>;
+import Net.Coroutine;
 
 export namespace net
 {
@@ -56,6 +56,7 @@ export namespace net
 
 			promise_handle_type myHandle;
 			future_type myValueHandle;
+			std::coroutine_handle<void> previousFrame;
 		};
 
 		Task(const handle_type& handle, const public_future_type& future) noexcept
@@ -87,12 +88,16 @@ export namespace net
 			return false;
 		}
 
-		void await_suspend(std::coroutine_handle<void> previous_frame)
+		handle_type await_suspend(std::coroutine_handle<void> previous_frame)
 		{
+			myHandle.promise().previousFrame = previous_frame;
+
 			std::thread([this] {
 				valueHandle.wait();
 				myHandle();
 			}).detach();
+
+			return myHandle;
 		}
 
 		const T& await_resume() const
