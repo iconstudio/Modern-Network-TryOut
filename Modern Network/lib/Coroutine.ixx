@@ -98,7 +98,7 @@ export namespace net::coroutine
 			struct Awaiter
 			{
 				static constexpr bool await_ready() noexcept { return false; }
-				static constexpr void await_resume() noexcept { }
+				static constexpr void await_resume() noexcept {}
 
 				handle_type await_suspend(std::coroutine_handle<void> previous_frame)
 				{
