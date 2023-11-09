@@ -201,7 +201,7 @@ export namespace net
 
 		void await_suspend(std::coroutine_handle<void> prev_handle) const noexcept
 		{
-			std::thread([this, &handle] {
+			std::thread([this, &prev_handle] {
 				myHandle.promise().prevFrame = prev_handle;
 
 				valueHandle.wait();
