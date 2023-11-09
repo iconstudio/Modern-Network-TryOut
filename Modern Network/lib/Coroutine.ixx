@@ -43,8 +43,37 @@ export namespace net::coroutine
 	class Coroutine final
 	{
 	public:
-		using promise_type = Promise<Coroutine, std::suspend_never, std::suspend_always>;
+		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
+
+		struct promise_type
+		{
+		public:
+			[[nodiscard]]
+			Coroutine get_return_object() noexcept
+			{
+				return Coroutine(handle_type::from_promise(*this));
+			}
+
+			constexpr Initializer initial_suspend() const noexcept(nothrow_default_constructibles<Initializer>)
+			{
+				return {};
+			}
+
+			constexpr Finalizer final_suspend() const noexcept(nothrow_default_constructibles<Finalizer>)
+			{
+				return {};
+			}
+
+			static constexpr void return_void() noexcept
+			{}
+
+			[[noreturn]]
+			static void unhandled_exception()
+			{
+				throw;
+			}
+		};
 
 		constexpr Coroutine(const handle_type& handle) noexcept
 			: myHandle(handle)
