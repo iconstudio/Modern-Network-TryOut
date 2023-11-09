@@ -5,40 +5,6 @@ export import <coroutine>;
 
 export namespace net::coroutine
 {
-	class Coroutine;
-
-	template<typename Co, Awaitable Initializer, Awaitable Finalizer>
-	class Promise
-	{
-	public:
-		[[nodiscard]]
-		Co get_return_object() noexcept
-		{
-			return Co(Co::handle_type::from_promise(*this));
-		}
-
-		constexpr Initializer initial_suspend()
-			const noexcept(nothrow_default_constructibles<Initializer>)
-		{
-			return {};
-		}
-
-		constexpr Finalizer final_suspend() const noexcept(nothrow_constructible<Finalizer>)
-		{
-			return Finalizer();
-		}
-
-		static constexpr void return_void() noexcept
-		{}
-
-		[[noreturn]]
-		static void unhandled_exception()
-		{
-			throw;
-		}
-	};
-
-	template<Awaitable Initializer = std::suspend_never, Awaitable Finalizer = std::suspend_always>
 	class Coroutine final
 	{
 	public:
@@ -54,12 +20,12 @@ export namespace net::coroutine
 				return Coroutine(handle_type::from_promise(*this));
 			}
 
-			constexpr Initializer initial_suspend() const noexcept(nothrow_default_constructibles<Initializer>)
+			static constexpr std::suspend_never initial_suspend() noexcept
 			{
 				return {};
 			}
 
-			constexpr Finalizer final_suspend() const noexcept(nothrow_default_constructibles<Finalizer>)
+			static constexpr std::suspend_always final_suspend() noexcept
 			{
 				return {};
 			}
