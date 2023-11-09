@@ -1,4 +1,5 @@
 export module Net.Coroutine;
+import Net.Meta.TypeList;
 import Net.Coroutine.Awaitable;
 export import <coroutine>;
 
@@ -7,17 +8,20 @@ export namespace net::coroutine
 	class Coroutine;
 	class AsyncCoroutine;
 
-	template<typename C, Awaitable Intializer, Awaitable Finalizer, typename... Args>
-	class Promise
+	template<typename Co, typename... Ts>
+	class Promise;
+
+	template<typename Co, Awaitable Initializer, Awaitable Finalizer, typename... Args>
+	class Promise<Co, Initializer, Finalizer, Args...>
 	{
 	public:
 		[[nodiscard]]
-		C get_return_object() noexcept
+		Co get_return_object() noexcept
 		{
-			return C(C::handle_type::from_promise(*this));
+			return Co(Co::handle_type::from_promise(*this));
 		}
 
-		constexpr Intializer initial_suspend() const noexcept
+		constexpr Initializer initial_suspend() const noexcept
 		{
 			return {};
 		}
