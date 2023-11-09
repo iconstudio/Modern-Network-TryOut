@@ -5,6 +5,7 @@ module;
 #include <utility>
 
 module Net.Socket;
+import <coroutine>;
 
 net::SocketReceivingResult
 net::Socket::Receive(std::span<std::byte> memory)

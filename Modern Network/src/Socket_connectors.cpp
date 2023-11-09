@@ -5,6 +5,7 @@ module;
 #include <ws2ipdef.h>
 
 module Net.Socket;
+import <coroutine>;
 
 ::SOCKADDR_STORAGE SerializeEndpoint(const net::EndPoint& endpoint) noexcept;
 ::SOCKADDR_STORAGE SerializeEndpoint(net::EndPoint&& endpoint) noexcept;

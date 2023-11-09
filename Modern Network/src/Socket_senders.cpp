@@ -5,6 +5,7 @@ module;
 #include <utility>
 
 module Net.Socket;
+import <coroutine>;
 
 net::SocketSendingResult RawSend(const net::NativeSocket& sock, ::WSABUF& buffer) noexcept;
 net::SocketSendingResult RawSendEx(const net::NativeSocket& sock, ::WSABUF& buffer, void* context, ::LPWSAOVERLAPPED_COMPLETION_ROUTINE routine) noexcept;
