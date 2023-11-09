@@ -5,7 +5,7 @@ module;
 
 export module Net.Task;
 import Net.Constraints;
-import <coroutine>;
+import Net.Coroutine;
 
 export namespace net
 {
