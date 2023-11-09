@@ -20,7 +20,7 @@ export namespace net::coroutine
 				return Coroutine(handle_type::from_promise(*this));
 			}
 
-			static constexpr std::suspend_never initial_suspend() noexcept
+			static constexpr std::suspend_always initial_suspend() noexcept
 			{
 				return {};
 			}
