@@ -1,5 +1,3 @@
-module;
-
 export module Net.Coroutine;
 import Net.Coroutine.Awaitable;
 export import <coroutine>;
