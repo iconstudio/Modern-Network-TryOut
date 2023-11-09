@@ -13,24 +13,39 @@ const
 	//std::chrono::milliseconds time = std::chrono::milliseconds((long long)(myTime * 1000));
 	//std::this_thread::sleep_for(time);
 
-	::Sleep(static_cast<DWORD>(myTime * 1000));
-	handle();
+	std::thread{ [this, &handle] {
+		::Sleep(static_cast<DWORD>(myTime * 1000));
+		if (handle and not handle.done())
+		{
+			handle();
+		}
+	} }.detach();
 }
 
 void
 net::coroutine::WaitForMilliseconds::await_suspend(std::coroutine_handle<void> handle)
 const
 {
-	::Sleep(static_cast<DWORD>(myTime));
-	handle();
+	std::thread{ [this, &handle] {
+		::Sleep(static_cast<DWORD>(myTime));
+		if (handle and not handle.done())
+		{
+			handle();
+		}
+	} }.detach();
 }
 
 void
 net::coroutine::WaitForMinutes::await_suspend(std::coroutine_handle<void> handle)
 const
 {
-	::Sleep(static_cast<DWORD>(myTime * 60000));
-	handle();
+	std::thread{ [this, &handle] {
+		::Sleep(static_cast<DWORD>(myTime * 60000));
+		if (handle and not handle.done())
+		{
+			handle();
+		}
+	} }.detach();
 }
 
 void

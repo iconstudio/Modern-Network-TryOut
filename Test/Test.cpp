@@ -64,7 +64,7 @@ net::Coroutine Runner()
 
 	std::println("Worker started");
 
-	co_await net::coroutine::SynchronousWaitForSeconds(1);
+	co_await net::coroutine::WaitForSeconds(1);
 
 	net::io::Context listen_context{};
 	listen_context.Clear();
