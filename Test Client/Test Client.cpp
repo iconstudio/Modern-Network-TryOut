@@ -78,7 +78,7 @@ int main()
 	}
 
 	std::println("=========== Update ===========");
-	Worker();
+	Worker()();
 
 	net::core::Annihilate();
 }
