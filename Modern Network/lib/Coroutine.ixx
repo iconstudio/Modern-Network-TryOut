@@ -7,6 +7,9 @@ export namespace net::coroutine
 {
 	class Coroutine final
 	{
+	private:
+		struct Awaiter;
+
 	public:
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
@@ -93,23 +96,9 @@ export namespace net::coroutine
 			}
 		}
 
-		auto operator co_await() const noexcept
+		Awaiter operator co_await() const noexcept
 		{
-			struct Awaiter
-			{
-				static constexpr bool await_ready() noexcept { return false; }
-				static constexpr void await_resume() noexcept {}
-
-				handle_type await_suspend(std::coroutine_handle<void> previous_frame)
-				{
-					coHandle.promise().previousFrame = previous_frame;
-					return coHandle;
-				}
-
-				std::coroutine_handle<promise_type> coHandle;
-			};
-
-			return Awaiter{ myHandle };
+			return { myHandle };
 		}
 
 		[[nodiscard]]
@@ -122,6 +111,20 @@ export namespace net::coroutine
 		constexpr bool operator==(const Coroutine&) const noexcept = default;
 
 	private:
+		struct Awaiter
+		{
+			static constexpr bool await_ready() noexcept { return false; }
+			static constexpr void await_resume() noexcept {}
+
+			handle_type await_suspend(std::coroutine_handle<void> previous_frame)
+			{
+				coHandle.promise().previousFrame = previous_frame;
+				return coHandle;
+			}
+
+			std::coroutine_handle<promise_type> coHandle;
+		};
+
 		handle_type myHandle;
 	};
 }
