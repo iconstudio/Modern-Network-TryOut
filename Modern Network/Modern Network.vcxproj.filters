@@ -242,5 +242,8 @@
     <ClCompile Include="lib\TypeList.ixx">
       <Filter>lib\Meta</Filter>
     </ClCompile>
+    <ClCompile Include="lib\Meta.ixx">
+      <Filter>lib\Meta</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

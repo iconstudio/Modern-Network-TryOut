@@ -126,6 +126,7 @@
     <ClCompile Include="lib\IProperty.ixx" />
     <ClCompile Include="lib\IPv4Address.ixx" />
     <ClCompile Include="lib\IPv6Address.ixx" />
+    <ClCompile Include="lib\Meta.ixx" />
     <ClCompile Include="lib\NativeHandle.ixx" />
     <ClCompile Include="lib\IResourcePool.ixx" />
     <ClCompile Include="lib\Net.ixx" />
