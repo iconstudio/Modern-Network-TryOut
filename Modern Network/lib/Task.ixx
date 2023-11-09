@@ -56,6 +56,7 @@ export namespace net
 
 			promise_handle_type myHandle;
 			future_type myValueHandle;
+			std::coroutine_handle<void> prevFrame;
 		};
 
 		Task(const handle_type& handle, const public_future_type& future) noexcept
@@ -87,9 +88,11 @@ export namespace net
 			return false;
 		}
 
-		void await_suspend(std::coroutine_handle<void> handle) const noexcept
+		void await_suspend(std::coroutine_handle<void> prev_handle) const noexcept
 		{
-			std::thread([this, &handle] {
+			std::thread([this, &prev_handle] {
+				myHandle.promise().prevFrame = prev_handle;
+
 				valueHandle.wait();
 				myHandle();
 			}).detach();
@@ -164,6 +167,7 @@ export namespace net
 
 			promise_handle_type myHandle;
 			future_type myValueHandle;
+			std::coroutine_handle<void> prevFrame;
 		};
 
 		Task(const handle_type& handle, const public_future_type& future) noexcept
@@ -195,9 +199,11 @@ export namespace net
 			return false;
 		}
 
-		void await_suspend(std::coroutine_handle<void> handle) const noexcept
+		void await_suspend(std::coroutine_handle<void> prev_handle) const noexcept
 		{
 			std::thread([this, &handle] {
+				myHandle.promise().prevFrame = prev_handle;
+
 				valueHandle.wait();
 				myHandle();
 			}).detach();
