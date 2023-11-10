@@ -49,25 +49,22 @@ const
 }
 
 void
-net::coroutine::SynchronousWaitForSeconds::await_suspend(std::coroutine_handle<void> handle)
-const
+net::coroutine::SynchronousWaitForSeconds::await_resume()
+const noexcept
 {
 	::Sleep(static_cast<DWORD>(myTime * 1000));
-	handle();
 }
 
 void
-net::coroutine::SynchronousWaitForMilliseconds::await_suspend(std::coroutine_handle<void> handle)
-const
+net::coroutine::SynchronousWaitForMilliseconds::await_resume()
+const noexcept
 {
 	::Sleep(static_cast<DWORD>(myTime));
-	handle();
 }
 
 void
-net::coroutine::SynchronousWaitForMinutes::await_suspend(std::coroutine_handle<void> handle)
-const
+net::coroutine::SynchronousWaitForMinutes::await_resume()
+const noexcept
 {
 	::Sleep(static_cast<DWORD>(myTime * 60000));
-	handle();
 }
