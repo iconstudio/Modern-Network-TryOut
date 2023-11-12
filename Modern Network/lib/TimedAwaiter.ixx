@@ -1,85 +1,54 @@
 export module Net.Coroutine.Awaiter.Timed;
 import Net.Coroutine.IAwaitable;
+import <atomic>;
 import <coroutine>;
 
 export namespace net::coroutine
 {
-	class [[nodiscard]] WaitForSeconds final : public IAwaitable<float>
+	class [[nodiscard]] WaitForSeconds final
 	{
 	public:
-		constexpr WaitForSeconds(const float& time) noexcept
-			: IAwaitable(), myTime(time)
-		{}
-
-		constexpr WaitForSeconds(float&& time) noexcept
-			: IAwaitable(), myTime(static_cast<float&&>(time))
-		{}
-
-		constexpr bool await_ready() noexcept override
+		static constexpr bool await_ready() noexcept
 		{
 			return false;
 		}
+		void await_suspend(std::coroutine_handle<void>);
+		void await_resume() const noexcept;
 
-		void await_suspend(std::coroutine_handle<void> handle) const override;
-
-		constexpr float await_resume() const noexcept override
-		{
-			return myTime;
-		}
-
-		float myTime;
+		float myTime{};
+		std::atomic_flag myEvent{};
 	};
 
-	class [[nodiscard]] WaitForMilliseconds final : public IAwaitable<float>
+	class [[nodiscard]] WaitForMilliseconds final
 	{
 	public:
-		constexpr WaitForMilliseconds(const float& time) noexcept
-			: IAwaitable(), myTime(time)
-		{}
-
-		constexpr WaitForMilliseconds(float&& time) noexcept
-			: IAwaitable(), myTime(static_cast<float&&>(time))
-		{}
-
-		constexpr bool await_ready() noexcept override
+		static constexpr bool await_ready() noexcept
 		{
 			return false;
 		}
-
-		void await_suspend(std::coroutine_handle<void> handle) const override;
-
-		constexpr float await_resume() const noexcept override
+		void await_suspend(std::coroutine_handle<void> handle) const;
+		constexpr float await_resume() const noexcept
 		{
 			return myTime;
 		}
 
-		float myTime;
+		float myTime{};
 	};
 
-	class [[nodiscard]] WaitForMinutes final : public IAwaitable<float>
+	class [[nodiscard]] WaitForMinutes final
 	{
 	public:
-		constexpr WaitForMinutes(const float& time) noexcept
-			: IAwaitable(), myTime(time)
-		{}
-
-		constexpr WaitForMinutes(float&& time) noexcept
-			: IAwaitable(), myTime(static_cast<float&&>(time))
-		{}
-
-		constexpr bool await_ready() noexcept override
+		static constexpr bool await_ready() noexcept
 		{
 			return false;
 		}
-
-		void await_suspend(std::coroutine_handle<void> handle) const override;
-
-		constexpr float await_resume() const noexcept override
+		void await_suspend(std::coroutine_handle<void> handle) const;
+		constexpr float await_resume() const noexcept
 		{
 			return myTime;
 		}
 
-		float myTime;
+		float myTime{};
 	};
 
 	class [[nodiscard]] SynchronousWaitForSeconds final
