@@ -1,14 +1,18 @@
 export module Net.IoService;
-import Net.IResourcePool;
+import Net.Io.Entity;
 import Net.Io.Context;
+import <vector>;
 import <thread>;
 
 export namespace net::io
 {
-	class [[nodiscard]] IoService
+	class [[nodiscard]] Service
 	{
 	public:
-		IResourcePool<Context>* ioContexts;
-		IResourcePool<std::jthread>* myThreads;
+		Service() noexcept = default;
+		~Service() noexcept = default;
+
+		std::vector<Entity> ioContexts;
+		std::vector<std::jthread> myThreads;
 	};
 }
