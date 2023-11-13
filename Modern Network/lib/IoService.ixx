@@ -8,6 +8,17 @@ export namespace net::io
 {
 	class [[nodiscard]] Service
 	{
+	private:
+		class Scheduler
+		{
+		public:
+		};
+
+		class Schedule
+		{
+		public:
+		};
+
 	public:
 		Service() noexcept = default;
 		~Service() noexcept = default;
