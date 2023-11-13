@@ -245,5 +245,8 @@
     <ClCompile Include="lib\Meta.ixx">
       <Filter>lib\Meta</Filter>
     </ClCompile>
+    <ClCompile Include="lib\IoEntity.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
