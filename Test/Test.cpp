@@ -1,4 +1,6 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
+#include <WinSock2.h>
+#include <MSWSock.h>
 #include <memory>
 #include <string_view>
 #include <print>
