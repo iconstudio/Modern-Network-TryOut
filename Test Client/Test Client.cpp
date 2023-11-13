@@ -80,5 +80,8 @@ int main()
 	std::println("=========== Update ===========");
 	Worker()();
 
+	while (true)
+	{}
+
 	net::core::Annihilate();
 }

@@ -62,6 +62,13 @@ net::Coroutine Accepter()
 net::Coroutine Runner()
 {
 	std::println("Accepter started");
+
+	co_await net::coroutine::WaitForSeconds(1);
+
+	co_await net::coroutine::WaitForSeconds(1);
+
+	co_await net::coroutine::WaitForSeconds(1);
+
 	co_await Accepter();
 
 	std::println("Worker started");
