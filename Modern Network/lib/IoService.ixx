@@ -1,4 +1,5 @@
 export module Net.IoService;
+import Net.Handler;
 import Net.Io.Entity;
 import Net.Io.Context;
 import <vector>;
@@ -9,7 +10,7 @@ export namespace net::io
 	class [[nodiscard]] Service
 	{
 	private:
-		class Scheduler
+		class Scheduler : public Handler<std::jthread>
 		{
 		public:
 		};
@@ -24,6 +25,6 @@ export namespace net::io
 		~Service() noexcept = default;
 
 		std::vector<Entity> ioContexts;
-		std::vector<std::jthread> myThreads;
+		std::vector<Scheduler> myThreads;
 	};
 }
