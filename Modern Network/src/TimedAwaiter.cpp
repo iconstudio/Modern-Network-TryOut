@@ -2,7 +2,9 @@ module;
 #include <Windows.h>
 #include <chrono>
 #include <thread>
-module Net.Coroutine.Awaiter.Timed;
+
+module Net.Coroutine;
+import :TimedAwaiter;
 
 void
 net::coroutine::WaitForMilliseconds::await_suspend(std::coroutine_handle<void> handle)

@@ -1,6 +1,6 @@
 export module Net.Coroutine;
 import Net.Constraints;
-import Net.Coroutine.Awaitable;
+export import :TimedAwaiter;
 export import <coroutine>;
 
 export namespace net::coroutine

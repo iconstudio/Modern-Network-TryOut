@@ -13,7 +13,6 @@ import Net.IpAddress;
 import Net.IpAddress.IPv4;
 import Net.Socket;
 import Net.Coroutine;
-import Net.Coroutine.Awaiter.Timed;
 
 net::Socket client = net::Socket::EmptySocket;
 
