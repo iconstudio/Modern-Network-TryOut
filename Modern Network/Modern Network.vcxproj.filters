@@ -248,5 +248,8 @@
     <ClCompile Include="lib\IoEntity.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="lib\BasicCoroutine.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
