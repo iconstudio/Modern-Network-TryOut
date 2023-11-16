@@ -31,32 +31,35 @@ export namespace net
 			return myAddress.GetFamily();
 		}
 		[[nodiscard]]
-		constexpr const IpAddress& GetIpAddress() const& noexcept
-		{
-			return myAddress;
-		}
-		[[nodiscard]]
-		std::string_view GetAddress() const& noexcept
-		{
-			return myAddress.GetAddress();
-		}
-		[[nodiscard]]
-		constexpr const std::uint16_t& GetPort() const& noexcept
-		{
-			return myPort;
-		}
-		[[nodiscard]]
 		constexpr IpAddressFamily&& GetAddressFamily() && noexcept
 		{
 			return std::move(myAddress).GetFamily();
+		}
+
+		[[nodiscard]]
+		constexpr const IpAddress& GetIpAddress() const& noexcept
+		{
+			return myAddress;
 		}
 		[[nodiscard]]
 		constexpr IpAddress&& GetIpAddress() && noexcept
 		{
 			return std::move(myAddress);
 		}
+
 		[[nodiscard]]
-		constexpr decltype(auto) GetAddress() && noexcept
+		std::string_view GetAddress() const noexcept
+		{
+			return myAddress.GetAddress();
+		}
+
+		[[nodiscard]]
+		constexpr const std::uint16_t& GetPort() const& noexcept
+		{
+			return myPort;
+		}
+		[[nodiscard]]
+		constexpr decltype(auto) GetAddressBuffer() && noexcept
 		{
 			return std::move(myAddress).GetAddress();
 		}

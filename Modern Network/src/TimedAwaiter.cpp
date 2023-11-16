@@ -7,48 +7,24 @@ module Net.Coroutine;
 import :TimedAwaiter;
 
 void
-net::coroutine::WaitForMilliseconds::await_suspend(std::coroutine_handle<void> handle)
-const
-{
-	std::thread{ [this, &handle] {
-		::Sleep(static_cast<DWORD>(myTime));
-		if (handle and not handle.done())
-		{
-			handle();
-		}
-	} }.detach();
-}
-
-void
-net::coroutine::WaitForMinutes::await_suspend(std::coroutine_handle<void> handle)
-const
-{
-	std::thread{ [this, &handle] {
-		::Sleep(static_cast<DWORD>(myTime * 60000));
-		if (handle and not handle.done())
-		{
-			handle();
-		}
-	} }.detach();
-}
-
-void
-net::coroutine::SynchronousWaitForSeconds::await_resume()
-const noexcept
+net::coroutine::WaitForSeconds::await_suspend(std::coroutine_handle<void> previous_frame)
 {
 	::Sleep(static_cast<DWORD>(myTime * 1000));
+	previous_frame();
 }
 
 void
-net::coroutine::SynchronousWaitForMilliseconds::await_resume()
-const noexcept
+net::coroutine::WaitForMilliseconds::await_suspend(std::coroutine_handle<void> previous_frame)
+const
 {
-	::Sleep(static_cast<DWORD>(myTime));
+	::Sleep(static_cast<DWORD>(myTime * 1000));
+	previous_frame();
 }
 
 void
-net::coroutine::SynchronousWaitForMinutes::await_resume()
-const noexcept
+net::coroutine::WaitForMinutes::await_suspend(std::coroutine_handle<void> previous_frame)
+const
 {
-	::Sleep(static_cast<DWORD>(myTime * 60000));
+	::Sleep(static_cast<DWORD>(myTime * 1000));
+	previous_frame();
 }

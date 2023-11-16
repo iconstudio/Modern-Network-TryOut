@@ -1,75 +1,54 @@
 export module Net.Coroutine;
-import Net.Constraints;
 export import :TimedAwaiter;
+import <atomic>;
 export import <coroutine>;
 
 export namespace net::coroutine
 {
+	using std::suspend_never;
+	using std::suspend_always;
+	using std::coroutine_handle;
+
 	class Coroutine final
 	{
-	private:
-		struct Awaiter;
-
 	public:
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
 
 		struct promise_type
 		{
-		public:
 			[[nodiscard]]
 			Coroutine get_return_object() noexcept
 			{
 				return Coroutine(handle_type::from_promise(*this));
 			}
 
+			static constexpr void return_void() noexcept
+			{}
+
 			static constexpr std::suspend_never initial_suspend() noexcept
 			{
 				return {};
 			}
 
-			auto final_suspend() const noexcept
+			static constexpr std::suspend_always final_suspend() noexcept
 			{
-				struct Finalizer
-				{
-					constexpr bool await_ready() const noexcept
-					{
-						return false;
-					}
-
-					std::coroutine_handle<void> await_suspend(handle_type current) noexcept
-					{
-						if (auto previous = current.promise().previousFrame; previous)
-							return previous;
-						else
-							return std::noop_coroutine();
-					}
-
-					constexpr void await_resume() const noexcept
-					{}
-				};
-
-				return Finalizer{};
+				return {};
 			}
-
-			static constexpr void return_void() noexcept
-			{}
 
 			[[noreturn]]
 			static void unhandled_exception()
 			{
 				throw;
 			}
-
-			std::coroutine_handle<void> previousFrame;
 		};
 
 		constexpr Coroutine(const handle_type& handle) noexcept
-			: myHandle(handle)
+			: myHandle(handle), isTriggered()
 		{}
 
 		constexpr Coroutine(handle_type&& handle) noexcept
-			: myHandle(static_cast<handle_type&&>(handle))
+			: myHandle(static_cast<handle_type&&>(handle)), isTriggered()
 		{}
 
 		~Coroutine() noexcept(noexcept(myHandle.destroy()))
@@ -84,6 +63,8 @@ export namespace net::coroutine
 		{
 			if (myHandle)
 			{
+				isTriggered = true;
+
 				myHandle.resume();
 			}
 		}
@@ -92,40 +73,37 @@ export namespace net::coroutine
 		{
 			if (myHandle)
 			{
+				isTriggered = true;
+
 				myHandle();
 			}
-		}
-
-		Awaiter operator co_await() const noexcept
-		{
-			return { myHandle };
 		}
 
 		[[nodiscard]]
 		bool IsDone() const noexcept
 		{
-			return myHandle.done();
+			if (IsTriggered())
+			{
+				return myHandle.done();
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		[[nodiscard]]
+		bool IsTriggered() const noexcept
+		{
+			return isTriggered.load(std::memory_order_relaxed);
 		}
 
 		[[nodiscard]]
 		constexpr bool operator==(const Coroutine&) const noexcept = default;
 
 	private:
-		struct Awaiter
-		{
-			static constexpr bool await_ready() noexcept { return false; }
-			static constexpr void await_resume() noexcept {}
-
-			handle_type await_suspend(std::coroutine_handle<void> previous_frame)
-			{
-				coHandle.promise().previousFrame = previous_frame;
-				return coHandle;
-			}
-
-			std::coroutine_handle<promise_type> coHandle;
-		};
-
 		handle_type myHandle;
+		volatile std::atomic_bool isTriggered;
 	};
 }
 
