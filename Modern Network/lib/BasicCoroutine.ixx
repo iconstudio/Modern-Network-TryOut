@@ -1,5 +1,5 @@
 export module  Net.Coroutine:BasicCoroutine;
-import Net.Coroutine.Promissory;
+import Net.Handler;
 export import <coroutine>;
 
 export namespace net::coroutine
@@ -8,55 +8,48 @@ export namespace net::coroutine
 	using std::suspend_always;
 	using std::coroutine_handle;
 
-	template<Promissory Promise>
-	class BasicCoroutine
+	template<typename Co, typename Promise>
+	class BasicCoroutine : public Handler<coroutine_handle<Promise>>
 	{
 	public:
 		using promise_type = Promise;
-		using handle_type = std::coroutine_handle<promise_type>;
+		using handle_type = coroutine_handle<promise_type>;
+		using super = Handler<handle_type>;
 
-		constexpr BasicCoroutine(const handle_type& handle) noexcept
-			: myHandle(handle)
-		{}
+		using super::super;
+		using super::GetHandle;
 
-		constexpr BasicCoroutine(handle_type&& handle) noexcept
-			: myHandle(static_cast<handle_type&&>(handle))
-		{}
-
-		~BasicCoroutine() noexcept(noexcept(myHandle.destroy()))
+		virtual ~BasicCoroutine() noexcept(noexcept(GetHandle().destroy()))
 		{
-			if (myHandle)
+			if (GetHandle())
 			{
-				myHandle.destroy();
+				GetHandle().destroy();
 			}
 		}
 
 		void Resume() const
 		{
-			if (myHandle)
-			{
-				myHandle.resume();
-			}
+			Co::Resume();
 		}
 
 		void operator()() const
 		{
-			if (myHandle)
-			{
-				myHandle();
-			}
+			Co::operator()();
+		}
+
+		[[nodiscard]]
+		bool IsAvailable() const noexcept
+		{
+			return GetHandle();
 		}
 
 		[[nodiscard]]
 		bool IsDone() const noexcept
 		{
-			return myHandle.done();
+			return GetHandle().done();
 		}
 
 		[[nodiscard]]
 		constexpr bool operator==(const BasicCoroutine&) const noexcept = default;
-
-	private:
-		handle_type myHandle;
 	};
 }
