@@ -60,15 +60,17 @@ net::Coroutine Accepter()
 
 net::Coroutine Runner()
 {
+	std::println("1");
+	co_await net::coroutine::WaitForSeconds(1);
+
+	std::println("2");
+	co_await net::coroutine::WaitForSeconds(1);
+
+	std::println("3");
+	co_await net::coroutine::WaitForSeconds(1);
+
 	std::println("Accepter started");
-
-	co_await net::coroutine::WaitForSeconds(1);
-
-	co_await net::coroutine::WaitForSeconds(1);
-
-	co_await net::coroutine::WaitForSeconds(1);
-
-	co_await Accepter();
+	Accepter();
 
 	std::println("Worker started");
 
@@ -89,7 +91,7 @@ net::Coroutine Runner()
 
 	while (true)
 	{
-		net::SocketReceivingResult recv = lastClient.Receive(listen_context, buffer);
+		auto recv = co_await lastClient.ReceiveAsync(listen_context, buffer);
 		listen_context.Clear();
 
 		if (recv.has_value())
@@ -138,7 +140,7 @@ int main()
 
 	std::println("=========== Update ===========");
 
-	Runner()();
+	Runner();
 
 	while (true)
 	{
