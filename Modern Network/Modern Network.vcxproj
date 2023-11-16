@@ -108,6 +108,7 @@
     <ClCompile Include="lib\Application.ixx" />
     <ClCompile Include="lib\Awaitable.ixx" />
     <ClCompile Include="lib\BasicCoroutine.ixx" />
+    <ClCompile Include="lib\BasicPromise.ixx" />
     <ClCompile Include="lib\BorrowedPointer.ixx" />
     <ClCompile Include="lib\ConcurrentAwaiter.ixx" />
     <ClCompile Include="lib\ConcurrentStack.ixx" />

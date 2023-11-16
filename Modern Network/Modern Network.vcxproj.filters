@@ -251,5 +251,8 @@
     <ClCompile Include="lib\BasicCoroutine.ixx">
       <Filter>lib\Coroutine</Filter>
     </ClCompile>
+    <ClCompile Include="lib\BasicPromise.ixx">
+      <Filter>lib\Coroutine</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
