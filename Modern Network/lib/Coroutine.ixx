@@ -1,5 +1,7 @@
 export module Net.Coroutine;
 export import :TimedAwaiter;
+import :BasicCoroutine;
+import :BasicPromise;
 import <atomic>;
 export import <coroutine>;
 
@@ -10,62 +12,46 @@ export namespace net::coroutine
 	using std::coroutine_handle;
 
 	class Coroutine final
+		: public BasicCoroutine<Coroutine, BasicPromise<Coroutine, suspend_never, suspend_always, void>>
 	{
 	public:
-		struct promise_type;
-		using handle_type = std::coroutine_handle<promise_type>;
-
-		struct promise_type
-		{
-			[[nodiscard]]
-			Coroutine get_return_object() noexcept
-			{
-				return Coroutine(handle_type::from_promise(*this));
-			}
-
-			static constexpr void return_void() noexcept
-			{}
-
-			static constexpr std::suspend_never initial_suspend() noexcept
-			{
-				return {};
-			}
-
-			static constexpr std::suspend_always final_suspend() noexcept
-			{
-				return {};
-			}
-
-			[[noreturn]]
-			static void unhandled_exception()
-			{
-				throw;
-			}
-		};
+		using handle_type = BasicCoroutine::handle_type;
 
 		constexpr Coroutine(const handle_type& handle) noexcept
-			: myHandle(handle), isTriggered()
+			: BasicCoroutine(handle), isTriggered()
 		{}
 
 		constexpr Coroutine(handle_type&& handle) noexcept
-			: myHandle(static_cast<handle_type&&>(handle)), isTriggered()
+			: BasicCoroutine(static_cast<handle_type&&>(handle)), isTriggered()
 		{}
 
-		~Coroutine() noexcept(noexcept(myHandle.destroy()))
-		{
-			if (myHandle)
-			{
-				myHandle.destroy();
-			}
-		}
+		~Coroutine() noexcept(noexcept(BasicCoroutine::~BasicCoroutine())) = default;
 
-		void Resume() const
+		void Start() const
 		{
 			if (myHandle)
 			{
 				isTriggered = true;
 
-				myHandle.resume();
+				myHandle();
+			}
+		}
+
+		void StartAsync() const
+		{
+			if (myHandle)
+			{
+				isTriggered = true;
+
+				myHandle();
+			}
+		}
+
+		void Resume() const
+		{
+			if (myHandle and isTriggered)
+			{
+				myHandle();
 			}
 		}
 
@@ -80,19 +66,6 @@ export namespace net::coroutine
 		}
 
 		[[nodiscard]]
-		bool IsDone() const noexcept
-		{
-			if (IsTriggered())
-			{
-				return myHandle.done();
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		[[nodiscard]]
 		bool IsTriggered() const noexcept
 		{
 			return isTriggered.load(std::memory_order_relaxed);
@@ -102,8 +75,7 @@ export namespace net::coroutine
 		constexpr bool operator==(const Coroutine&) const noexcept = default;
 
 	private:
-		handle_type myHandle;
-		volatile std::atomic_bool isTriggered;
+		mutable volatile std::atomic_bool isTriggered;
 	};
 }
 
