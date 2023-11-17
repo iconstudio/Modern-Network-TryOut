@@ -9,7 +9,7 @@ export namespace net
 	public:
 		constexpr Handler()
 			noexcept(nothrow_default_constructibles<H>) requires default_initializables<H> = default;
-		virtual constexpr ~Handler()
+		constexpr ~Handler()
 			noexcept(nothrow_destructibles<H>) = default;
 
 		constexpr Handler(const H& handle) noexcept(nothrow_copy_constructibles<H>) requires copy_constructible<H>
