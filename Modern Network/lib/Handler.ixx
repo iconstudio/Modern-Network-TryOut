@@ -17,7 +17,7 @@ export namespace net
 		{}
 
 		constexpr Handler(H&& handle) noexcept(nothrow_move_constructibles<H>) requires move_constructible<H>
-			: myHandle(handle)
+			: myHandle(static_cast<H&&>(handle))
 		{}
 
 		[[nodiscard]]
