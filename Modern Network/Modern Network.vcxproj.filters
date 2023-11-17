@@ -257,5 +257,8 @@
     <ClCompile Include="lib\IoStation.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="src\IoStation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
