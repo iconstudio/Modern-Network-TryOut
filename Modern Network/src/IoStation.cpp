@@ -24,7 +24,7 @@ noexcept
 		return std::unexpected(AcquireNetworkError());
 	}
 
-	return io_port;
+	return Station{ std::move(io_port) };
 }
 
 constexpr
