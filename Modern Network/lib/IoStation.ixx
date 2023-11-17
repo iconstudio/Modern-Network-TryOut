@@ -26,6 +26,7 @@ export namespace net::io
 
 	private:
 		constexpr Station() noexcept = default;
+		constexpr Station(NativeHandle&& handle) noexcept;
 
 		Station(const Station&) = delete;
 		Station& operator=(const Station&) = delete;

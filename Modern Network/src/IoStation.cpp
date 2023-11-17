@@ -17,8 +17,6 @@ net::io::Station::Stationary
 net::io::Station::Create(std::uint32_t concurrency_hint)
 noexcept
 {
-	Station result{};
-
 	NativeHandle io_port = NativeHandle::Create(::CreateIoCompletionPort(nullptr, nullptr, std::numeric_limits<ULONG_PTR>::max(), concurrency_hint));
 
 	if (not io_port)
@@ -26,5 +24,11 @@ noexcept
 		return std::unexpected(AcquireNetworkError());
 	}
 
-	return result;
+	return io_port;
 }
+
+constexpr
+net::io::Station::Station(NativeHandle&& handle)
+noexcept
+	: Handler(std::move(handle))
+{}
