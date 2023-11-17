@@ -123,6 +123,7 @@
     <ClCompile Include="lib\IoContext.ixx" />
     <ClCompile Include="lib\IoEntity.ixx" />
     <ClCompile Include="lib\IoService.ixx" />
+    <ClCompile Include="lib\IoStation.ixx" />
     <ClCompile Include="lib\IpAddress.ixx" />
     <ClCompile Include="lib\IpAddressFamily.ixx" />
     <ClCompile Include="lib\IPromise.ixx" />
