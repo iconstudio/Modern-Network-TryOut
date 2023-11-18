@@ -27,43 +27,10 @@ export namespace net::coroutine
 
 		~Coroutine() noexcept(noexcept(BasicCoroutine::~BasicCoroutine())) = default;
 
-		void Start() const
-		{
-			if (myHandle)
-			{
-				isTriggered = true;
-
-				myHandle();
-			}
-		}
-
-		void StartAsync() const
-		{
-			if (myHandle)
-			{
-				isTriggered = true;
-
-				myHandle();
-			}
-		}
-
-		void Resume() const
-		{
-			if (myHandle and isTriggered)
-			{
-				myHandle();
-			}
-		}
-
-		void operator()() const
-		{
-			if (myHandle)
-			{
-				isTriggered = true;
-
-				myHandle();
-			}
-		}
+		void Start() const;
+		void StartAsync() const;
+		void Resume() const;
+		void operator()() const;
 
 		[[nodiscard]]
 		bool IsTriggered() const noexcept
