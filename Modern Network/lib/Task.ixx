@@ -6,7 +6,6 @@ export module Net.Task;
 import <stdexcept>;
 import <thread>;
 import Net.Constraints;
-export import Net.Coroutine;
 
 namespace net
 {
