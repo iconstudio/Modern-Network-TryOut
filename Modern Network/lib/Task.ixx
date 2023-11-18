@@ -3,6 +3,7 @@ module;
 #include <coroutine>
 
 export module Net.Task;
+import <type_traits>;
 import <stdexcept>;
 import <thread>;
 import Net.Constraints;
@@ -64,6 +65,7 @@ export namespace net
 			{
 				myValueHandle = std::forward_like<T>(value);
 
+				myEventHandle.test_and_set();
 				myEventHandle.notify_one();
 			}
 
