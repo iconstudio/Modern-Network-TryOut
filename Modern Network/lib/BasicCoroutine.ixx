@@ -27,12 +27,12 @@ export namespace net::coroutine
 			}
 		}
 
-		void Resume() const
+		void Resume() const noexcept(noexcept(Co::Resume()))
 		{
 			Co::Resume();
 		}
 
-		void operator()() const
+		void operator()() const noexcept(noexcept(Co::operator()()))
 		{
 			Co::operator()();
 		}
