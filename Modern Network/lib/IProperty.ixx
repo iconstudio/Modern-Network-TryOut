@@ -1,6 +1,15 @@
 export module Net.Property:IProperty;
 import Net.Constraints;
 
+#if 1939 <= _MSC_VER
+import <functional>;
+template<typename R, typename... Ts>
+using prp_functor_t = std::copyable_function<R(Ts...)>;
+#else
+template<typename R, typename... Ts>
+using prp_functor_t = R(*)(Ts...);
+#endif
+
 export namespace net
 {
 	template<typename T, typename Context, bool Custom, bool Copyable, bool Readonly>
@@ -87,7 +96,7 @@ export namespace net
 	class IProperty<T, void, true, Copyable, Readonly> final
 	{
 	public:
-		using functor_t = void(*)(T&);
+		using functor_t = ::prp_functor_t<void, T&>;
 
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T>)
@@ -195,7 +204,7 @@ export namespace net
 	class IProperty<T, Context, true, Copyable, Readonly> final
 	{
 	public:
-		using functor_t = void(*)(Context&, T&);
+		using functor_t = ::prp_functor_t<void, Context&, T&>;
 
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T>)
