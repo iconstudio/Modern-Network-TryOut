@@ -1,19 +1,15 @@
 export module  Net.Coroutine:BasicCoroutine;
 import Net.Handler;
-export import <coroutine>;
+import <coroutine>;
 
 export namespace net::coroutine
 {
-	using std::suspend_never;
-	using std::suspend_always;
-	using std::coroutine_handle;
-
 	template<typename Co, typename Promise>
-	class BasicCoroutine : public Handler<coroutine_handle<Promise>>
+	class BasicCoroutine : public Handler<std::coroutine_handle<Promise>>
 	{
 	public:
 		using promise_type = Promise;
-		using handle_type = coroutine_handle<promise_type>;
+		using handle_type = std::coroutine_handle<promise_type>;
 		using super = Handler<handle_type>;
 
 		using super::super;
