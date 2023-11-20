@@ -18,15 +18,15 @@ noexcept
 	: Socket(EmptySocket)
 {}
 
+Socket::Socket(EmptySocketType)
+noexcept
+	: Socket(INVALID_SOCKET, InternetProtocols::Unknown, IpAddressFamily::Unknown)
+{}
+
 Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept
 	: Handler(sock)
 	, myProtocol(protocol), myFamily(family)
 	, IsAddressReusable(this, false, SetAddressReusable)
-{}
-
-Socket::Socket(EmptySocketType)
-noexcept
-	: Socket(INVALID_SOCKET, InternetProtocols::Unknown, IpAddressFamily::Unknown)
 {}
 
 Socket&
@@ -40,10 +40,6 @@ noexcept
 
 	return *this = Socket{ EmptySocket };
 }
-
-Socket::~Socket()
-noexcept
-{}
 
 SocketListeningResult
 Socket::Open()

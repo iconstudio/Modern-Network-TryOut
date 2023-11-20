@@ -43,9 +43,10 @@ export namespace net
 
 		// Constructors, Destructors, Assignees
 
+		Socket() noexcept;
 		Socket(EmptySocketType) noexcept;
 		Socket& operator=(EmptySocketType) noexcept;
-		~Socket() noexcept;
+		~Socket() noexcept = default;
 
 		// Opt-in Interfaces
 
@@ -166,7 +167,6 @@ export namespace net
 		friend struct AttentSocket;
 
 	private:
-		Socket() noexcept;
 		Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept;
 
 		Socket(const Socket&) = delete;
