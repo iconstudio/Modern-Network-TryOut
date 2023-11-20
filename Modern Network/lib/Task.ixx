@@ -46,9 +46,6 @@ export namespace net
 	public:
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
-		using promise_handle_type = std::promise<T>;
-		using future_type = std::future<T>;
-		using public_future_type = std::shared_future<T>;
 
 		struct promise_type
 		{
@@ -65,7 +62,7 @@ export namespace net
 			{
 				myValueHandle = std::forward_like<T>(value);
 
-				myEventHandle.test_and_set();
+				myEventHandle.store(true);
 				myEventHandle.notify_one();
 			}
 
@@ -74,7 +71,7 @@ export namespace net
 				return {};
 			}
 
-			static constexpr std::suspend_always final_suspend() noexcept
+			static constexpr std::suspend_never final_suspend() noexcept
 			{
 				return {};
 			}
@@ -85,15 +82,15 @@ export namespace net
 				throw;
 			}
 
-			std::atomic_flag myEventHandle;
+			std::atomic_bool myEventHandle;
 			T myValueHandle;
 		};
 
-		Task(const handle_type& handle, std::atomic_flag& event_handle, T& value_ref) noexcept
+		Task(const handle_type& handle, std::atomic_bool& event_handle, T& value_ref) noexcept
 			: myHandle(handle), myEvent(event_handle), myValue(value_ref)
 		{}
 
-		Task(handle_type&& handle, std::atomic_flag& event_handle, T& value_ref) noexcept
+		Task(handle_type&& handle, std::atomic_bool& event_handle, T& value_ref) noexcept
 			: myHandle(std::move(handle)), myEvent(event_handle), myValue(value_ref)
 		{}
 
@@ -101,6 +98,8 @@ export namespace net
 		{
 			if (myHandle)
 			{
+				myEvent.store(true);
+				myEvent.notify_all();
 				myHandle.destroy();
 			}
 		}
@@ -110,14 +109,24 @@ export namespace net
 			return false;
 		}
 
-		handle_type await_suspend(std::coroutine_handle<void> previous_frame)
+		void await_suspend(std::coroutine_handle<void>)
 		{
 			std::thread([this] {
-				myEvent.wait(true);
+				while (true)
+				{
+					bool expected = true;
+					if (myEvent.compare_exchange_strong(expected, true))
+					{
+						break;
+					}
+					else
+					{
+						std::this_thread::yield();
+					}
+				}
+
 				myHandle();
 			}).detach();
-
-			return myHandle;
 		}
 
 		T& await_resume()&
@@ -146,7 +155,7 @@ export namespace net
 			return myHandle.done();
 		}
 
-		T& operator()()
+		T& operator()()&
 		{
 			if (myHandle)
 			{
@@ -155,6 +164,17 @@ export namespace net
 			}
 
 			return myValue;
+		}
+
+		T&& operator()()&&
+		{
+			if (myHandle)
+			{
+				myEvent.wait(true);
+				myHandle();
+			}
+
+			return std::move(myValue);
 		}
 
 		[[nodiscard]]
@@ -189,7 +209,7 @@ export namespace net
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
-		std::atomic_flag& myEvent;
+		std::atomic_bool& myEvent;
 		T& myValue;
 	};
 

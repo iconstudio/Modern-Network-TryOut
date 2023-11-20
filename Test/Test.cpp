@@ -60,15 +60,6 @@ net::Coroutine Accepter()
 
 net::Coroutine Runner()
 {
-	std::println("1");
-	co_await net::coroutine::WaitForSeconds(1);
-
-	std::println("2");
-	co_await net::coroutine::WaitForSeconds(1);
-
-	std::println("3");
-	co_await net::coroutine::WaitForSeconds(1);
-
 	std::println("Accepter started");
 	Accepter();
 
@@ -124,7 +115,10 @@ int main()
 
 	serverListener = net::Socket::Create(net::SocketType::Synchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
-	if (serverListener.BindHost(10000))
+	const net::EndPoint server{ net::IPv4Address::Loopback, 30000 };
+
+	//if (serverListener.BindHost(10000))
+	if (serverListener.Bind(server))
 	{
 		std::println("The listener is binded!");
 	}
