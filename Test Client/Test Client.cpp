@@ -30,7 +30,7 @@ inline std::string_view as_string(const std::span<const std::byte> buffer, const
 
 net::Coroutine Worker()
 {
-	co_await net::coroutine::WaitForSeconds(1);
+	//co_await net::coroutine::WaitForSeconds(1);
 
 	net::EndPoint server{ net::IPv4Address::Loopback, 30000 };
 
@@ -75,6 +75,8 @@ int main()
 	{
 		std::println("The client is binded!");
 	}
+
+	client.IsAddressReusable = true;
 
 	std::println("=========== Update ===========");
 	Worker();

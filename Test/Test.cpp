@@ -58,14 +58,14 @@ net::Coroutine Accepter()
 	co_return;
 }
 
-net::Coroutine Runner()
+void Runner()
 {
 	std::println("Accepter started");
 	Accepter();
 
 	std::println("Worker started");
 
-	co_await net::coroutine::WaitForSeconds(1);
+	//co_await net::coroutine::WaitForSeconds(1);
 
 	net::io::Context listen_context{};
 	listen_context.Clear();
@@ -82,7 +82,9 @@ net::Coroutine Runner()
 
 	while (true)
 	{
-		auto recv = co_await lastClient.ReceiveAsync(listen_context, buffer);
+		auto recv_task = lastClient.ReceiveAsync(listen_context, buffer);
+		auto recv = recv_task();
+
 		listen_context.Clear();
 
 		if (recv.has_value())
@@ -101,8 +103,6 @@ net::Coroutine Runner()
 			break;
 		}
 	}
-
-	co_return;
 }
 
 int main()
