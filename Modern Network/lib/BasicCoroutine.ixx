@@ -17,10 +17,7 @@ export namespace net::coroutine
 
 		virtual ~BasicCoroutine() noexcept(noexcept(GetHandle().destroy()))
 		{
-			if (GetHandle())
-			{
-				GetHandle().destroy();
-			}
+			GetHandle().destroy();
 		}
 
 		void Resume() const noexcept(noexcept(Co::Resume()))
