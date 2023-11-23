@@ -2,8 +2,6 @@ module;
 #include <stdexcept>
 #include <utility>
 #include <thread>
-#include <future>
-#include <chrono>
 
 export module Net.Task;
 export import <coroutine>;
@@ -20,20 +18,19 @@ export namespace net
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
 		struct Awaiter;
-		struct Finalizer;
 
 		struct promise_type
 		{
 			[[nodiscard]]
 			Task<T> get_return_object() noexcept
 			{
-				return Task(handle_type::from_promise(*this), myHandle.get_future());
+				return Task(handle_type::from_promise(*this));
 			}
 
 			template<typename U>
 			void return_value(U&& value)
 			{
-				myHandle.set_value(std::forward<U>(value));
+				myValue = std::forward<U>(value);
 			}
 
 			static constexpr std::suspend_always initial_suspend() noexcept
@@ -49,19 +46,21 @@ export namespace net
 			[[noreturn]]
 			void unhandled_exception()
 			{
-				myHandle.set_exception_at_thread_exit(std::current_exception());
+				throw;
 			}
 
-			std::promise<T> myHandle;
+			T myValue;
+#if _DEBUG
 			std::coroutine_handle<void> previousFrame;
+#endif // _DEBUG
 		};
 
-		constexpr Task(const handle_type& handle, std::future<T>&& value_handle) noexcept
-			: myHandle(handle), ownedValueHandle(std::move(value_handle))
+		constexpr Task(const handle_type& handle) noexcept
+			: myHandle(handle)
 		{}
 
-		constexpr Task(handle_type&& handle, std::future<T>&& value_handle) noexcept
-			: myHandle(std::move(handle)), ownedValueHandle(std::move(value_handle))
+		constexpr Task(handle_type&& handle) noexcept
+			: myHandle(std::move(handle))
 		{}
 
 		~Task() noexcept(noexcept(myHandle.destroy()))
@@ -80,8 +79,12 @@ export namespace net
 
 		T operator()()
 		{
-			myHandle();
-			return ownedValueHandle.get();
+			if (myHandle)
+			{
+				myHandle.resume();
+			}
+
+			return std::move(myHandle.promise().myValue);
 		}
 
 		Awaiter operator co_await()
@@ -89,7 +92,6 @@ export namespace net
 			return Awaiter
 			{
 				.coHandle = myHandle,
-				.valueHandle = ownedValueHandle.share()
 			};
 		}
 
@@ -102,73 +104,46 @@ export namespace net
 	private:
 		struct Awaiter
 		{
-			bool await_ready() const noexcept
+			static constexpr bool await_ready() noexcept
 			{
-				return isRetrieved and not valueHandle.valid();
+				return false;
 			}
 
 			std::coroutine_handle<void> await_suspend(std::coroutine_handle<void> previous_handle)
 			{
+#if _DEBUG
 				coHandle.promise().previousFrame = previous_handle;
+#endif // _DEBUG
 
-				if (previous_handle and valueHandle.valid())
-				{
-					std::thread([this, previous_handle] {
-						valueHandle.wait();
-						isRetrieved = true;
-						previous_handle();
-					}).detach();
-
-					return coHandle;
-				}
-				else
-				{
-					isRetrieved = true;
-
-					return previous_handle;
-				}
+				return coHandle;
 			}
 
-			T await_resume() const
+			T& await_resume()&
 			{
-				return valueHandle.get();
+				return coHandle.promise().myValue;
+			}
+
+			const T& await_resume() const&
+			{
+				return coHandle.promise().myValue;
+			}
+
+			T&& await_resume()&&
+			{
+				return std::move(coHandle.promise().myValue);
+			}
+
+			const T&& await_resume() const&&
+			{
+				return std::move(coHandle.promise().myValue);
 			}
 
 			handle_type coHandle;
-			std::shared_future<T> valueHandle;
-			volatile bool isRetrieved;
-		};
-
-		struct Finalizer
-		{
-			static constexpr bool await_ready() noexcept { return false; }
-			static constexpr void await_resume() noexcept {}
-
-			std::coroutine_handle<void> await_suspend(handle_type current_frame) noexcept
-			{
-				// final_awaiter::await_suspend is called when the execution of the
-				// current coroutine (referred to by 'current_frame') is about to finish.
-				// If the current coroutine was resumed by another coroutine via
-				// co_await get_task(), a handle to that coroutine has been stored
-				// as current_frame.promise().previous. In that case, return the handle to resume
-				// the previous coroutine.
-				// Otherwise, return noop_coroutine(), whose resumption does nothing.
-
-				if (std::coroutine_handle<void> previous = current_frame.promise().previousFrame; previous)
-				{
-					return previous;
-				}
-				else
-				{
-					return std::noop_coroutine();
-				}
-			}
 		};
 
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
-		std::future<T> ownedValueHandle;
 	};
 }
 
