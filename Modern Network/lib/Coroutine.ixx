@@ -25,8 +25,6 @@ export namespace net::coroutine
 			: BasicCoroutine(static_cast<handle_type&&>(handle)), isTriggered()
 		{}
 
-		~Coroutine() noexcept(noexcept(BasicCoroutine::~BasicCoroutine())) = default;
-
 		void Start() const;
 		void StartAsync() const;
 		void Resume() const;
