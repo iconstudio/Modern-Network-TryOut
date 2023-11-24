@@ -87,15 +87,26 @@ export namespace net
 		{
 			struct awaiter
 			{
-				bool await_ready() const noexcept { return false; }
-				T await_resume() noexcept { return std::move(coHandle.promise().myValue); }
-				auto await_suspend(std::coroutine_handle<> previous_handle)
+				static constexpr bool await_ready() noexcept { return false; }
+
+				auto await_suspend(std::coroutine_handle<void> previous_handle)
 				{
 #if _DEBUG
 					coHandle.promise().previousFrame = previous_handle;
 #endif // _DEBUG
 
+					std::thread{
+						[this, previous_handle]() noexcept {
+						Wait();
+						previous_handle();
+					} }.detach();
+
 					return coHandle;
+				}
+
+				T await_resume()
+				{
+					return std::move(coHandle.promise().myValue);
 				}
 
 				void Wait() const noexcept
@@ -105,11 +116,11 @@ export namespace net
 					}
 				}
 
-				std::coroutine_handle<promise_type> coHandle;
+				handle_type coHandle;
 				volatile std::atomic_flag& coEvent;
 			};
 
-			return awaiter{ myHandle, coEvent };
+			return awaiter{ .coHandle = myHandle, .coEvent = coEvent };
 		}
 
 		[[nodiscard]]
