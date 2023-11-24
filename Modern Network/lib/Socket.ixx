@@ -95,12 +95,12 @@ export namespace net
 
 		// Maybe asynchronous Send
 
-		SocketSendingResult Send(_Maybenull_ io::Context& context, std::span<const std::byte> memory) const noexcept;
-		SocketSendingResult Send(_Maybenull_ io::Context& context, std::span<const std::byte> memory, size_t size) const noexcept;
-		SocketSendingResult Send(_Maybenull_ io::Context& context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size) const noexcept;
-		bool Send(_Maybenull_ io::Context& context, std::span<const std::byte> memory, SendingErrorCodes& error_code) const noexcept;
-		bool Send(_Maybenull_ io::Context& context, std::span<const std::byte> memory, size_t size, SendingErrorCodes& error_code) const noexcept;
-		bool Send(_Maybenull_ io::Context& context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size, SendingErrorCodes& error_code) const noexcept;
+		SocketSendingResult Send(io::Context& context, std::span<const std::byte> memory) const noexcept;
+		SocketSendingResult Send(io::Context& context, std::span<const std::byte> memory, size_t size) const noexcept;
+		SocketSendingResult Send(io::Context& context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size) const noexcept;
+		bool Send(io::Context& context, std::span<const std::byte> memory, SendingErrorCodes& error_code) const noexcept;
+		bool Send(io::Context& context, std::span<const std::byte> memory, size_t size, SendingErrorCodes& error_code) const noexcept;
+		bool Send(io::Context& context, _In_reads_bytes_(size)const std::byte* const& memory, size_t size, SendingErrorCodes& error_code) const noexcept;
 
 		// Synchronous Receive
 
@@ -113,25 +113,25 @@ export namespace net
 
 		// Maybe asynchronous Receive
 
-		SocketReceivingResult Receive(_Maybenull_ io::Context& context, std::span<std::byte> memory) const noexcept;
-		SocketReceivingResult Receive(_Maybenull_ io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
-		SocketReceivingResult Receive(_Maybenull_ io::Context& context, _In_reads_bytes_(size)std::byte* const& memory, size_t size) const noexcept;
-		bool Receive(_Maybenull_ io::Context& context, std::span<std::byte> memory, ReceivingErrorCodes& error_code) const noexcept;
-		bool Receive(_Maybenull_ io::Context& context, std::span<std::byte> memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
-		bool Receive(_Maybenull_ io::Context& context, _In_reads_bytes_(size)std::byte* const& memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
+		SocketReceivingResult Receive(io::Context& context, std::span<std::byte> memory) const noexcept;
+		SocketReceivingResult Receive(io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
+		SocketReceivingResult Receive(io::Context& context, _In_reads_bytes_(size)std::byte* const& memory, size_t size) const noexcept;
+		bool Receive(io::Context& context, std::span<std::byte> memory, ReceivingErrorCodes& error_code) const noexcept;
+		bool Receive(io::Context& context, std::span<std::byte> memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
+		bool Receive(io::Context& context, _In_reads_bytes_(size)std::byte* const& memory, size_t size, ReceivingErrorCodes& error_code) const noexcept;
 
 		// Asynchronous Send & Receive
 
 		[[nodiscard]]
-		Task<SocketSendingResult> MakeSendTask(_Maybenull_ io::Context& context, std::span<const std::byte> memory) const noexcept;
-		Task<SocketSendingResult> MakeSendTask(_Maybenull_ io::Context& context, std::span<const std::byte> memory, size_t size) const noexcept;
+		Task<SocketSendingResult> MakeSendTask(io::Context& context, std::span<const std::byte> memory) const noexcept;
+		Task<SocketSendingResult> MakeSendTask(io::Context& context, std::span<const std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
-		Task<SocketSendingResult> MakeSendTask(_Maybenull_ io::Context& context, const _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
+		Task<SocketSendingResult> MakeSendTask(io::Context& context, const _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 		[[nodiscard]]
-		Task<SocketReceivingResult> MakeReceiveTask(_Maybenull_ io::Context& context, std::span<std::byte> memory) const noexcept;
-		Task<SocketReceivingResult> MakeReceiveTask(_Maybenull_ io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
+		Task<SocketReceivingResult> MakeReceiveTask(io::Context& context, std::span<std::byte> memory) const noexcept;
+		Task<SocketReceivingResult> MakeReceiveTask(io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
-		Task<SocketReceivingResult> MakeReceiveTask(_Maybenull_ io::Context& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
+		Task<SocketReceivingResult> MakeReceiveTask(io::Context& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 
 		// Observers
 
