@@ -123,15 +123,15 @@ export namespace net
 		// Asynchronous Send & Receive
 
 		[[nodiscard]]
-		Task<SocketSendingResult> SendAsync(_Maybenull_ io::Context& context, std::span<const std::byte> memory) const noexcept;
-		Task<SocketSendingResult> SendAsync(_Maybenull_ io::Context& context, std::span<const std::byte> memory, size_t size) const noexcept;
+		Task<SocketSendingResult> MakeSendTask(_Maybenull_ io::Context& context, std::span<const std::byte> memory) const noexcept;
+		Task<SocketSendingResult> MakeSendTask(_Maybenull_ io::Context& context, std::span<const std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
-		Task<SocketSendingResult> SendAsync(_Maybenull_ io::Context& context, const _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
+		Task<SocketSendingResult> MakeSendTask(_Maybenull_ io::Context& context, const _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 		[[nodiscard]]
-		Task<SocketReceivingResult> ReceiveAsync(_Maybenull_ io::Context& context, std::span<std::byte> memory) const noexcept;
-		Task<SocketReceivingResult> ReceiveAsync(_Maybenull_ io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
+		Task<SocketReceivingResult> MakeReceiveTask(_Maybenull_ io::Context& context, std::span<std::byte> memory) const noexcept;
+		Task<SocketReceivingResult> MakeReceiveTask(_Maybenull_ io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
-		Task<SocketReceivingResult> ReceiveAsync(_Maybenull_ io::Context& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
+		Task<SocketReceivingResult> MakeReceiveTask(_Maybenull_ io::Context& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 
 		// Observers
 

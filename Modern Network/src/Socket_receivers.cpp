@@ -231,7 +231,7 @@ const noexcept
 }
 
 net::Task<net::SocketReceivingResult>
-net::Socket::ReceiveAsync(net::io::Context& context, std::span<std::byte> memory)
+net::Socket::MakeReceiveTask(net::io::Context& context, std::span<std::byte> memory)
 const noexcept
 {
 	if (SocketReceivingResult sent = Receive(context, memory); not sent)
@@ -259,7 +259,7 @@ const noexcept
 }
 
 net::Task<net::SocketReceivingResult>
-net::Socket::ReceiveAsync(net::io::Context& context, std::span<std::byte> memory, size_t size)
+net::Socket::MakeReceiveTask(net::io::Context& context, std::span<std::byte> memory, size_t size)
 const noexcept
 {
 	if (SocketReceivingResult sent = Receive(context, memory, size); not sent)
@@ -287,7 +287,7 @@ const noexcept
 }
 
 net::Task<net::SocketReceivingResult>
-net::Socket::ReceiveAsync(net::io::Context& context, std::byte* const& memory, size_t size)
+net::Socket::MakeReceiveTask(net::io::Context& context, std::byte* const& memory, size_t size)
 const noexcept
 {
 	if (SocketReceivingResult sent = Receive(context, memory, size); not sent)
