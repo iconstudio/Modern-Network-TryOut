@@ -32,7 +32,7 @@ net::Coroutine Worker()
 {
 	//co_await net::coroutine::WaitForSeconds(1);
 
-	net::EndPoint server{ net::IPv4Address::Loopback, 30000 };
+	net::EndPoint server{ net::IPv4Address::Loopback, 10000 };
 
 	if (client.Connect(server).has_value())
 	{

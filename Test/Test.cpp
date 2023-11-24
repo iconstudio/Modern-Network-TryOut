@@ -38,7 +38,7 @@ inline std::string_view as_string(const std::span<const std::byte> buffer, const
 	return std::string_view{ reinterpret_cast<const char*>(buffer.data()), size };
 }
 
-net::Coroutine Accepter()
+void Accepter()
 {
 	//while (true)
 	{
@@ -54,18 +54,16 @@ net::Coroutine Accepter()
 			//break;
 		}
 	}
-
-	co_return;
 }
 
-void Runner()
+net::Coroutine Runner()
 {
 	std::println("Accepter started");
 	Accepter();
 
 	std::println("Worker started");
 
-	//co_await net::coroutine::WaitForSeconds(1);
+	co_await net::coroutine::WaitForSeconds(1);
 
 	net::io::Context listen_context{};
 	listen_context.Clear();
@@ -83,7 +81,8 @@ void Runner()
 	while (true)
 	{
 		auto recv_task = lastClient.ReceiveAsync(listen_context, buffer);
-		auto recv = recv_task();
+		//auto recv = recv_task();
+		auto recv = co_await recv_task;
 
 		listen_context.Clear();
 
@@ -115,7 +114,7 @@ int main()
 
 	serverListener = net::Socket::Create(net::SocketType::Synchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
-	const net::EndPoint server{ net::IPv4Address::Loopback, 30000 };
+	const net::EndPoint server{ net::IPv4Address::Loopback, 10000 };
 
 	//if (serverListener.BindHost(10000))
 	if (serverListener.Bind(server))
