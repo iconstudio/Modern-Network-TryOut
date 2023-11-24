@@ -2,9 +2,10 @@ module;
 #pragma comment(lib, "Ws2_32.lib")
 #define NOMINMAX
 #include <WinSock2.h>
-#include <utility>
 
 module Net.Socket;
+import <utility>;
+import <thread>;
 import <coroutine>;
 
 net::SocketReceivingResult
@@ -312,4 +313,17 @@ const noexcept
 	{
 		co_return transferred_bytes;
 	}
+}
+
+net::Task<net::SocketSendingResult>
+net::Socket::AsyncSend(io::Context& context, std::span<const std::byte> memory)
+const noexcept
+{
+	auto task = MakeSendTask(context, memory);
+
+	std::thread{
+		[&] { task(); }
+	}.detach();
+	
+	return task;
 }

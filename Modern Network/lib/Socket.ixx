@@ -133,6 +133,19 @@ export namespace net
 		[[nodiscard]]
 		Task<SocketReceivingResult> MakeReceiveTask(io::Context& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 
+		// Asynchronous Send & Receive
+
+		[[nodiscard]]
+		Task<SocketSendingResult> AsyncSend(io::Context& context, std::span<const std::byte> memory) const noexcept;
+		Task<SocketSendingResult> AsyncSend(io::Context& context, std::span<const std::byte> memory, size_t size) const noexcept;
+		[[nodiscard]]
+		Task<SocketSendingResult> AsyncSend(io::Context& context, const _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
+		[[nodiscard]]
+		Task<SocketReceivingResult> AsyncRecv(io::Context& context, std::span<std::byte> memory) const noexcept;
+		Task<SocketReceivingResult> AsyncRecv(io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
+		[[nodiscard]]
+		Task<SocketReceivingResult> AsyncRecv(io::Context& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
+
 		// Observers
 
 		[[nodiscard]]

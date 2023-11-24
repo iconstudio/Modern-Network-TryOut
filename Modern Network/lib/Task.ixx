@@ -69,7 +69,7 @@ export namespace net
 		{
 			if (myHandle)
 			{
-				myHandle.destroy();
+				//myHandle.destroy();
 			}
 		}
 
@@ -97,7 +97,9 @@ export namespace net
 
 					std::thread{
 						[this, previous_handle]() noexcept {
-						Wait();
+						while (not coEvent.test())
+						{
+						}
 						previous_handle();
 					} }.detach();
 

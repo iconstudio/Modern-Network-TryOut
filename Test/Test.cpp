@@ -80,9 +80,10 @@ net::Coroutine Runner()
 
 	while (true)
 	{
-		auto recv_task = lastClient.ReceiveAsync(listen_context, buffer);
-		//auto recv = recv_task();
-		auto recv = co_await recv_task;
+		//auto recv_task = lastClient.MakeReceiveTask(listen_context, buffer);
+		//auto recv = co_await recv_task;
+		//auto recv = co_await recv_task;
+		auto recv = co_await lastClient.MakeReceiveTask(listen_context, buffer);
 
 		listen_context.Clear();
 
@@ -102,6 +103,8 @@ net::Coroutine Runner()
 			break;
 		}
 	}
+
+	co_await std::suspend_always{};
 }
 
 int main()
