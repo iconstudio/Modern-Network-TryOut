@@ -18,7 +18,6 @@ export namespace net
 	public:
 		struct promise_type;
 		using handle_type = std::coroutine_handle<promise_type>;
-		struct Awaiter;
 
 		struct promise_type
 		{
@@ -84,14 +83,33 @@ export namespace net
 			return std::move(myHandle.promise().myValue);
 		}
 
-		Awaiter operator co_await()&
+		auto operator co_await()
 		{
-			return Awaiter{ myHandle, coEvent };
-		}
+			struct awaiter
+			{
+				bool await_ready() const noexcept { return false; }
+				T await_resume() noexcept { return std::move(coHandle.promise().myValue); }
+				auto await_suspend(std::coroutine_handle<> previous_handle)
+				{
+#if _DEBUG
+					coHandle.promise().previousFrame = previous_handle;
+#endif // _DEBUG
 
-		Awaiter operator co_await()&&
-		{
-			return Awaiter{ myHandle, coEvent };
+					return coHandle;
+				}
+
+				void Wait() const noexcept
+				{
+					while (not coEvent.test())
+					{
+					}
+				}
+
+				std::coroutine_handle<promise_type> coHandle;
+				volatile std::atomic_flag& coEvent;
+			};
+
+			return awaiter{ myHandle, coEvent };
 		}
 
 		[[nodiscard]]
@@ -107,66 +125,6 @@ export namespace net
 		}
 
 	private:
-		struct Awaiter
-		{
-			constexpr Awaiter(const handle_type& handle, volatile std::atomic_flag& event)
-				: coHandle(handle), coEvent(event)
-			{}
-
-			static constexpr bool await_ready() noexcept
-			{
-				return false;
-			}
-
-			void await_suspend(std::coroutine_handle<void> previous_handle)
-			{
-#if _DEBUG
-				coHandle.promise().previousFrame = previous_handle;
-#endif // _DEBUG
-
-				std::thread{
-				[&] {
-					coHandle();
-				} }.detach();
-			}
-
-			T& await_resume() & noexcept
-			{
-				Wait();
-				return coHandle.promise().myValue;
-			}
-
-			const T& await_resume() const& noexcept
-			{
-				Wait();
-				return coHandle.promise().myValue;
-			}
-
-			T&& await_resume() && noexcept
-			{
-				Wait();
-				return std::move(coHandle.promise().myValue);
-			}
-
-			const T&& await_resume() const&& noexcept
-			{
-				Wait();
-				return std::move(coHandle.promise().myValue);
-			}
-
-			handle_type coHandle;
-
-		private:
-			void Wait() const noexcept
-			{
-				while (not coEvent.test())
-				{
-				}
-			}
-
-			volatile std::atomic_flag& coEvent;
-		};
-
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
