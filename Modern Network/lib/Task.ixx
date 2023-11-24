@@ -2,6 +2,7 @@ module;
 #include <stdexcept>
 #include <utility>
 #include <thread>
+#include <atomic>
 
 export module Net.Task;
 export import <coroutine>;
@@ -24,13 +25,14 @@ export namespace net
 			[[nodiscard]]
 			Task<T> get_return_object() noexcept
 			{
-				return Task(handle_type::from_promise(*this));
+				return Task(handle_type::from_promise(*this), myEvent);
 			}
 
 			template<typename U>
 			void return_value(U&& value)
 			{
 				myValue = std::forward<U>(value);
+				myEvent.test_and_set();
 			}
 
 			static constexpr std::suspend_always initial_suspend() noexcept
@@ -50,17 +52,18 @@ export namespace net
 			}
 
 			T myValue;
+			volatile std::atomic_flag myEvent;
 #if _DEBUG
 			std::coroutine_handle<void> previousFrame;
 #endif // _DEBUG
 		};
 
-		constexpr Task(const handle_type& handle) noexcept
-			: myHandle(handle)
+		constexpr Task(const handle_type& handle, volatile std::atomic_flag& event) noexcept
+			: myHandle(handle), coEvent(event)
 		{}
 
-		constexpr Task(handle_type&& handle) noexcept
-			: myHandle(std::move(handle))
+		constexpr Task(handle_type&& handle, volatile std::atomic_flag& event) noexcept
+			: myHandle(std::move(handle)), coEvent(event)
 		{}
 
 		~Task() noexcept(noexcept(myHandle.destroy()))
@@ -69,12 +72,6 @@ export namespace net
 			{
 				myHandle.destroy();
 			}
-		}
-
-		[[nodiscard]]
-		bool IsDone() const noexcept
-		{
-			return myHandle.done();
 		}
 
 		T operator()()
@@ -87,12 +84,20 @@ export namespace net
 			return std::move(myHandle.promise().myValue);
 		}
 
-		Awaiter operator co_await()
+		Awaiter operator co_await()&
 		{
-			return Awaiter
-			{
-				.coHandle = myHandle,
-			};
+			return Awaiter{ myHandle, coEvent };
+		}
+
+		Awaiter operator co_await()&&
+		{
+			return Awaiter{ myHandle, coEvent };
+		}
+
+		[[nodiscard]]
+		bool IsDone() const noexcept
+		{
+			return myHandle.done();
 		}
 
 		[[nodiscard]]
@@ -104,46 +109,68 @@ export namespace net
 	private:
 		struct Awaiter
 		{
+			constexpr Awaiter(const handle_type& handle, volatile std::atomic_flag& event)
+				: coHandle(handle), coEvent(event)
+			{}
+
 			static constexpr bool await_ready() noexcept
 			{
 				return false;
 			}
 
-			std::coroutine_handle<void> await_suspend(std::coroutine_handle<void> previous_handle)
+			void await_suspend(std::coroutine_handle<void> previous_handle)
 			{
 #if _DEBUG
 				coHandle.promise().previousFrame = previous_handle;
 #endif // _DEBUG
 
-				return coHandle;
+				std::thread{
+				[&] {
+					coHandle();
+				} }.detach();
 			}
 
-			T& await_resume()&
+			T& await_resume() & noexcept
 			{
+				Wait();
 				return coHandle.promise().myValue;
 			}
 
-			const T& await_resume() const&
+			const T& await_resume() const& noexcept
 			{
+				Wait();
 				return coHandle.promise().myValue;
 			}
 
-			T&& await_resume()&&
+			T&& await_resume() && noexcept
 			{
+				Wait();
 				return std::move(coHandle.promise().myValue);
 			}
 
-			const T&& await_resume() const&&
+			const T&& await_resume() const&& noexcept
 			{
+				Wait();
 				return std::move(coHandle.promise().myValue);
 			}
 
 			handle_type coHandle;
+
+		private:
+			void Wait() const noexcept
+			{
+				while (not coEvent.test())
+				{
+				}
+			}
+
+			volatile std::atomic_flag& coEvent;
 		};
 
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
 
 		handle_type myHandle;
+		volatile std::atomic_flag& coEvent;
 	};
 }
 
