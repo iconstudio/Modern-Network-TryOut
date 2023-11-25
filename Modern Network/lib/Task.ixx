@@ -1,11 +1,9 @@
-module;
-#include <stdexcept>
-#include <utility>
-#include <thread>
-#include <atomic>
-
 export module Net.Task;
-export import <coroutine>;
+import <stdexcept>;
+import <utility>;
+import <thread>;
+import <atomic>;
+import <coroutine>;
 
 export namespace net
 {
