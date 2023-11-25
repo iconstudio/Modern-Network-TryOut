@@ -21,6 +21,9 @@ export namespace net
 
 		struct promise_type
 		{
+			promise_type() noexcept = default;
+			~promise_type() noexcept = default;
+
 			[[nodiscard]]
 			Task<T> get_return_object() noexcept
 			{
