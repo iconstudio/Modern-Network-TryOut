@@ -1,6 +1,8 @@
 export module Net.Task;
 import <stdexcept>;
 import <utility>;
+import <thread>;
+import <latch>;
 import <coroutine>;
 
 export namespace net
@@ -64,6 +66,24 @@ export namespace net
 			if (myHandle)
 			{
 				myHandle.destroy();
+			}
+		}
+
+		void Start() const
+		{
+			if (myHandle)
+			{
+				myHandle.resume();
+			}
+		}
+
+		void StartAsync() const
+		{
+			if (myHandle)
+			{
+				std::thread{
+					[myHandle]() { myHandle.resume(); }
+				}.detach();
 			}
 		}
 
