@@ -72,7 +72,7 @@ export namespace net
 		{
 			if (myHandle)
 			{
-				//myHandle.destroy();
+				myHandle.destroy();
 			}
 		}
 
