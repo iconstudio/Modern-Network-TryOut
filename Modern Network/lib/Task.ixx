@@ -27,7 +27,7 @@ export namespace net
 			[[nodiscard]]
 			Task<T> get_return_object() noexcept
 			{
-				return Task(handle_type::from_promise(*this), myEvent);
+				return Task<T>(handle_type::from_promise(*this), myEvent);
 			}
 
 			template<typename U>
