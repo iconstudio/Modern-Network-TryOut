@@ -88,7 +88,7 @@ export namespace net
 		{
 			struct awaiter
 			{
-				static constexpr bool await_ready() noexcept { return false; }
+				static constexpr bool await_ready() noexcept { return true; }
 
 				auto await_suspend(std::coroutine_handle<void> previous_handle)
 				{
@@ -109,6 +109,7 @@ export namespace net
 
 				T await_resume()
 				{
+					coHandle();
 					return std::move(coHandle.promise().myValue);
 				}
 

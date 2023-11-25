@@ -1,6 +1,4 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
-#include <WinSock2.h>
-#include <MSWSock.h>
 #include <memory>
 #include <string_view>
 #include <print>
@@ -70,7 +68,7 @@ net::Coroutine Runner()
 
 	std::byte recv_buffer[512]{};
 	size_t recv_size = 0;
-	std::memset(recv_buffer, 0, sizeof(recv_buffer));
+	//std::memset(recv_buffer, 0, sizeof(recv_buffer));
 
 	//net::SocketClosingErrorCodes close_err;
 	//const bool closed = lastClient.Close(close_err);
@@ -80,10 +78,10 @@ net::Coroutine Runner()
 
 	while (true)
 	{
-		//auto recv_task = lastClient.MakeReceiveTask(listen_context, buffer);
+		auto recv_task = lastClient.MakeReceiveTask(listen_context, buffer);
 		//auto recv = co_await recv_task;
-		//auto recv = co_await recv_task;
-		auto recv = co_await lastClient.MakeReceiveTask(listen_context, buffer);
+		auto recv = co_await recv_task;
+		//auto recv = recv_task();
 
 		listen_context.Clear();
 
@@ -103,8 +101,6 @@ net::Coroutine Runner()
 			break;
 		}
 	}
-
-	co_await std::suspend_always{};
 }
 
 int main()
