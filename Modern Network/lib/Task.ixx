@@ -82,8 +82,9 @@ export namespace net
 			if (myHandle)
 			{
 				std::thread{
-					[myHandle]() { myHandle.resume(); }
-				}.detach();
+					[h = myHandle] {
+					h.resume();
+				} }.detach();
 			}
 		}
 
