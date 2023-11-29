@@ -67,7 +67,8 @@ net::io::Station::Create(std::uint64_t id) noexcept
 net::io::Station::Stationary
 net::io::Station::Create(std::uint64_t id, std::uint32_t concurrency_hint) noexcept
 {
-	NativeHandle io_port = NativeHandle::Create(::CreateIoCompletionPort(nullptr, nullptr, std::move(id), std::move(concurrency_hint)));
+	auto ptr = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, std::move(id), std::move(concurrency_hint));
+	NativeHandle io_port = NativeHandle::Create(ptr);
 
 	if (not io_port)
 	{
