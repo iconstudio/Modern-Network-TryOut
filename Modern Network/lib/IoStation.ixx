@@ -15,8 +15,8 @@ export namespace net::io
 
 		~Station() noexcept;
 
-		SocketResult Register(Socket& socket) noexcept;
-		bool TryRegister(Socket& socket, ErrorCodes& error_code) noexcept;
+		SocketResult Register(Socket& socket, std::uint64_t id) noexcept;
+		bool TryRegister(Socket& socket, std::uint64_t id, ErrorCodes& error_code) noexcept;
 
 		static Stationary Create() noexcept;
 		static Stationary Create(std::uint32_t concurrency_hint) noexcept;
