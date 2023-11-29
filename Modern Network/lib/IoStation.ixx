@@ -20,6 +20,8 @@ export namespace net::io
 
 		static Stationary Create() noexcept;
 		static Stationary Create(std::uint32_t concurrency_hint) noexcept;
+		static Stationary Create(std::uint64_t id) noexcept;
+		static Stationary Create(std::uint64_t id, std::uint32_t concurrency_hint) noexcept;
 
 		constexpr Station(Station&&) noexcept = default;
 		constexpr Station& operator=(Station&&) noexcept = default;
