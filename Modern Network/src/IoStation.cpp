@@ -6,9 +6,15 @@ module Net.Io.Station;
 import <thread>;
 import <limits>;
 
+net::io::Station::~Station()
+noexcept
+{
+	::CloseHandle(std::move(*this).GetHandle().GetPointer());
+}
+
 net::SocketResult
 net::io::Station::Register(net::Socket& socket, std::uint64_t id)
-noexcept
+const noexcept
 {
 	auto& target = socket.GetHandle();
 	auto handle = GetHandle().GetPointer();
@@ -26,9 +32,17 @@ noexcept
 
 bool
 net::io::Station::TryRegister(net::Socket& socket, std::uint64_t id, net::ErrorCodes& error_code)
-noexcept
+const noexcept
 {
-	return false;
+	if (auto result = Register(socket, id); result)
+	{
+		return true;
+	}
+	else
+	{
+		error_code = std::move(result).error();
+		return false;
+	}
 }
 
 net::io::Station::Stationary

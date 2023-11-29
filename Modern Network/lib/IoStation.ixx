@@ -16,8 +16,8 @@ export namespace net::io
 		constexpr Station() noexcept = default;
 		~Station() noexcept;
 
-		SocketResult Register(Socket& socket, std::uint64_t id) noexcept;
-		bool TryRegister(Socket& socket, std::uint64_t id, ErrorCodes& error_code) noexcept;
+		SocketResult Register(Socket& socket, std::uint64_t id) const noexcept;
+		bool TryRegister(Socket& socket, std::uint64_t id, ErrorCodes& error_code) const noexcept;
 
 		static Stationary Create() noexcept;
 		static Stationary Create(std::uint32_t concurrency_hint) noexcept;
@@ -28,7 +28,6 @@ export namespace net::io
 		constexpr Station& operator=(Station&&) noexcept = default;
 
 	private:
-		constexpr Station() noexcept = default;
 		constexpr Station(NativeHandle&& handle) noexcept;
 
 		Station(const Station&) = delete;
