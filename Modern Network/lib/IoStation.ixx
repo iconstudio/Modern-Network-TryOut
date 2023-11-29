@@ -13,6 +13,7 @@ export namespace net::io
 	public:
 		using Stationary = std::expected<Station, ErrorCodes>;
 
+		constexpr Station() noexcept = default;
 		~Station() noexcept;
 
 		SocketResult Register(Socket& socket, std::uint64_t id) noexcept;
