@@ -1,7 +1,5 @@
-module;
-#include <type_traits>
-
 export module Net.NativeHandle;
+import <type_traits>;
 import <format>;
 import Net.Property;
 
@@ -20,9 +18,9 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		constexpr void*&& GetPointer() && noexcept
+		constexpr void* && GetPointer() && noexcept
 		{
-			return static_cast<void*&&>(nativePointer);
+			return std::move(std::exchange(nativePointer, nullptr));
 		}
 
 		[[nodiscard]]
