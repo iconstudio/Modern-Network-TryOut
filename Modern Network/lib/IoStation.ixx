@@ -4,6 +4,7 @@ import Net.Handler;
 import Net.Socket;
 import Net.ErrorCode;
 import <cstdint>;
+import <limits>;
 import <expected>;
 
 export namespace net::io
@@ -28,6 +29,8 @@ export namespace net::io
 		constexpr Station& operator=(Station&&) noexcept = default;
 
 	private:
+		static constexpr std::uint64_t defaultID = std::numeric_limits<std::uint64_t>::max();
+
 		constexpr Station(NativeHandle&& handle) noexcept;
 
 		Station(const Station&) = delete;

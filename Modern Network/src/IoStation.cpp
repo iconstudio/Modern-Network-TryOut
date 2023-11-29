@@ -4,7 +4,6 @@ module;
 
 module Net.Io.Station;
 import <thread>;
-import <limits>;
 
 net::io::Station::~Station()
 noexcept
@@ -49,14 +48,14 @@ net::io::Station::Stationary
 net::io::Station::Create()
 noexcept
 {
-	return Create(std::numeric_limits<std::uint64_t>::max(), std::thread::hardware_concurrency());
+	return Create(defaultID, std::thread::hardware_concurrency());
 }
 
 net::io::Station::Stationary
 net::io::Station::Create(std::uint32_t concurrency_hint)
 noexcept
 {
-	return Create(std::numeric_limits<std::uint64_t>::max(), std::move(concurrency_hint));
+	return Create(defaultID, std::move(concurrency_hint));
 }
 
 net::io::Station::Stationary
