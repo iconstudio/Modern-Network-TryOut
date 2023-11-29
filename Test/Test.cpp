@@ -9,6 +9,7 @@ import Net;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
 import Net.Io.Context;
+import Net.Io.Station;
 import Net.Socket;
 import Net.Coroutine;
 import Net.Coroutine.Awaiter.Concurrent;
@@ -16,6 +17,8 @@ import Net.Coroutine.Awaiter.Concurrent;
 
 net::Socket serverListener = net::Socket::EmptySocket;
 //net::coroutine::Scheduler globalScheduler{};
+
+net::io::Station ioStation;
 
 constexpr size_t maxClients = 1000;
 std::array<net::Socket*, maxClients> everyClients{};
@@ -56,6 +59,9 @@ void Accepter()
 
 net::Coroutine Runner()
 {
+	auto station = net::io::Station::Create();
+	ioStation = std::move(station.value());
+
 	std::println("Accepter started");
 	Accepter();
 
