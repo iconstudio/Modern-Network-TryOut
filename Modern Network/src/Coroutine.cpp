@@ -22,8 +22,8 @@ const
 		isTriggered = true;
 
 		std::thread{
-			[this] {
-				myHandle();
+			[handle = myHandle] {
+				handle();
 			}
 		}.detach();
 	}
