@@ -38,6 +38,38 @@ net::io::Station::~Station()
 noexcept
 {}
 
+bool
+net::io::Station::Destroy()
+noexcept
+{
+	if (auto& handle = GetHandle(); handle)
+	{
+		const bool result = (1 == handle.Delegate(::CloseHandle));
+		myHandle = nullptr;
+
+		return result;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool
+net::io::Station::Destroy(net::ErrorCodes& error_code)
+noexcept
+{
+	if (auto result = Destroy(); result)
+	{
+		return true;
+	}
+	else
+	{
+		error_code = AcquireNetworkError();
+		return false;
+	}
+}
+
 net::SocketResult
 net::io::Station::Register(net::Socket& socket, std::uint64_t id)
 noexcept

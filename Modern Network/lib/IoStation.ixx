@@ -17,6 +17,8 @@ export namespace net::io
 		constexpr Station() noexcept = default;
 		~Station() noexcept;
 
+		bool Destroy() noexcept;
+		bool Destroy(ErrorCodes& error_code) noexcept;
 		SocketResult Register(Socket& socket, std::uint64_t id) noexcept;
 		bool TryRegister(Socket& socket, std::uint64_t id, ErrorCodes& error_code) noexcept;
 
