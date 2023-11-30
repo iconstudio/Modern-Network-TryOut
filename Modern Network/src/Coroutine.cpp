@@ -1,6 +1,14 @@
 module Net.Coroutine;
 import <thread>;
 
+net::coroutine::Coroutine::~Coroutine()
+{
+	if (triggerHandle)
+	{
+		delete triggerHandle;
+	}
+}
+
 void
 net::coroutine::Coroutine::Start()
 const

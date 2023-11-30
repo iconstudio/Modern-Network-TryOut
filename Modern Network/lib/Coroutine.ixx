@@ -18,12 +18,16 @@ export namespace net::coroutine
 		using handle_type = BasicCoroutine::handle_type;
 
 		constexpr Coroutine(const handle_type& handle) noexcept
-			: BasicCoroutine(handle), isTriggered()
+			: BasicCoroutine(handle)
+			, isTriggered(), triggerHandle()
 		{}
 
 		constexpr Coroutine(handle_type&& handle) noexcept
-			: BasicCoroutine(static_cast<handle_type&&>(handle)), isTriggered()
+			: BasicCoroutine(static_cast<handle_type&&>(handle))
+			, isTriggered(), triggerHandle()
 		{}
+
+		~Coroutine();
 
 		void Start() const;
 		void StartAsync() const;
@@ -41,6 +45,7 @@ export namespace net::coroutine
 
 	private:
 		mutable volatile std::atomic_bool isTriggered;
+		void* triggerHandle;
 	};
 }
 
