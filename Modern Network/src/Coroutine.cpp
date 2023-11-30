@@ -20,12 +20,14 @@ const
 	if (myHandle and not isTriggered)
 	{
 		isTriggered = true;
-
-		std::thread{
-			[handle = myHandle] {
+		static const auto pred = [](std::coroutine_handle<void> handle) -> void {
+			if (handle)
+			{
 				handle();
 			}
-		}.detach();
+		};
+
+		std::thread{ pred, myHandle }.detach();
 	}
 }
 
