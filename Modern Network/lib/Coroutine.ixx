@@ -11,7 +11,7 @@ export namespace net::coroutine
 	using std::suspend_always;
 	using std::coroutine_handle;
 
-	class Coroutine final
+	class Coroutine
 		: public BasicCoroutine<Coroutine, BasicPromise<Coroutine, suspend_always, suspend_always, void>>
 	{
 	public:
@@ -27,7 +27,7 @@ export namespace net::coroutine
 			, isTriggered(), triggerHandle()
 		{}
 
-		~Coroutine();
+		virtual ~Coroutine();
 
 		void Start() const;
 		void StartAsync() const;
