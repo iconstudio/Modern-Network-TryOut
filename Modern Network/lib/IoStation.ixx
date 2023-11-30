@@ -8,13 +8,14 @@ import Net.Io.Schedule;
 import <cstdint>;
 import <limits>;
 import <expected>;
+import <memory>;
 import <coroutine>;
 import <stop_token>;
 
 export namespace net::io
 {
 	class [[nodiscard]] Station final
-		: public net::Handler<net::NativeHandle>
+		: public net::Handler<net::NativeHandle>, public std::enable_shared_from_this<Station>
 	{
 	private:
 		struct Awaiter
@@ -33,8 +34,8 @@ export namespace net::io
 	public:
 		using Stationary = std::expected<net::io::Station, net::ErrorCodes>;
 
-		constexpr Station() noexcept = default;
-		~Station() noexcept;
+		Station() = default;
+		~Station() = default;
 
 		net::SocketResult Register(net::Socket& socket, std::uint64_t id) noexcept;
 		bool TryRegister(net::Socket& socket, std::uint64_t id, net::ErrorCodes& error_code) noexcept;

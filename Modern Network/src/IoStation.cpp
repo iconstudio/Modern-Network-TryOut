@@ -40,10 +40,6 @@ const noexcept
 	return mySwitch.get_token();
 }
 
-net::io::Station::~Station()
-noexcept
-{}
-
 net::SocketResult
 net::io::Station::Register(net::Socket& socket, std::uint64_t id)
 noexcept
