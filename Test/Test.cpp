@@ -62,12 +62,12 @@ net::Coroutine Runner()
 	std::println("Accepter started");
 	Accepter();
 
-	////auto reg_result = ioStation.Register(lastClient, 0);
-	//if (reg_result)
+	auto reg_result = ioStation.Register(lastClient, 0);
+	if (reg_result)
 	{
 		std::println("The client is registered");
 	}
-	//else
+	else
 	{
 		std::println("The client is not registered");
 	}
@@ -94,7 +94,6 @@ net::Coroutine Runner()
 		auto recv_task = lastClient.MakeReceiveTask(listen_context, buffer);
 		//auto recv = co_await recv_task;
 		auto recv = co_await recv_task;
-		//auto recv = recv_task();
 
 		listen_context.Clear();
 
@@ -111,6 +110,19 @@ net::Coroutine Runner()
 		else
 		{
 			std::println("Server receives are failed due to '{}'", recv.error());
+			break;
+		}
+	}
+}
+
+net::Coroutine Worker()
+{
+	while (true)
+	{
+		auto io_event = co_await ioStation;
+		if (not io_event.isSucceed)
+		{
+			std::println("Server is ended");
 			break;
 		}
 	}
@@ -168,6 +180,8 @@ int main()
 
 	auto runner = Runner();
 	runner.StartAsync();
+	auto worker = Worker();
+	worker.StartAsync();
 
 	while (true)
 	{
