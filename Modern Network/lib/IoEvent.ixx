@@ -9,6 +9,6 @@ export namespace net::io
 		bool isSucceed;
 		std::uint64_t eventId;
 		unsigned long ioBytes;
-		Context* ioContext;
+		net::io::Context* ioContext;
 	};
 }

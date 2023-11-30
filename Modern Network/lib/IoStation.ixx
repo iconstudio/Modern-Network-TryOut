@@ -35,10 +35,10 @@ export namespace net::io
 		constexpr Station() noexcept = default;
 		~Station() noexcept;
 
-		SocketResult Register(Socket& socket, std::uint64_t id) noexcept;
-		bool TryRegister(Socket& socket, std::uint64_t id, ErrorCodes& error_code) noexcept;
+		SocketResult Register(net::Socket& socket, std::uint64_t id) noexcept;
+		bool TryRegister(net::Socket& socket, std::uint64_t id, net::ErrorCodes& error_code) noexcept;
 		bool Destroy() noexcept;
-		bool Destroy(ErrorCodes& error_code) noexcept;
+		bool Destroy(net::ErrorCodes& error_code) noexcept;
 
 		Awaiter operator co_await() noexcept;
 
@@ -49,7 +49,7 @@ export namespace net::io
 		constexpr Station& operator=(Station&&) noexcept = default;
 
 	private:
-		constexpr Station(NativeHandle&& handle) noexcept;
+		constexpr Station(net::NativeHandle&& handle) noexcept;
 
 		Station(const Station&) = delete;
 		Station& operator=(const Station&) = delete;
