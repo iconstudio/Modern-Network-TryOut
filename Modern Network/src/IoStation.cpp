@@ -1,5 +1,6 @@
 module;
 #define NOMINMAX
+#pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
 
 module Net.Io.Station;
@@ -12,9 +13,19 @@ noexcept
 	return Create(std::thread::hardware_concurrency());
 }
 
+net::io::Station::Stationary
+net::io::Station::Create(std::uint32_t concurrency_hint)
+noexcept
+{
+	auto ptr = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, std::move(concurrency_hint));
+	NativeHandle io_port = NativeHandle::Create(ptr);
+
+	if (not io_port)
 	{
 		return std::unexpected(AcquireNetworkError());
 	}
+
+	return Station{ std::move(io_port) };
 }
 
 constexpr
@@ -31,10 +42,19 @@ net::SocketResult
 net::io::Station::Register(net::Socket& socket, std::uint64_t id)
 noexcept
 {
-	auto& target = socket.GetHandle();
-	auto handle = GetHandle().GetPointer();
-	auto port = ::CreateIoCompletionPort(reinterpret_cast<::HANDLE>(target), const_cast<void*>(handle), id, 0);
+#if _DEBUG
+	auto& sk = socket.GetHandle();
+	const HANDLE target = reinterpret_cast<::HANDLE>(sk);
 
+	auto& handle = GetHandle();
+	auto ptr = handle.GetPointer();
+
+	auto port = ::CreateIoCompletionPort(target, const_cast<void*>(ptr), id, 0);
+#else
+	auto port = ::CreateIoCompletionPort(reinterpret_cast<::HANDLE>(socket.GetHandle()), const_cast<void*>(GetHandle().GetPointer()), id, 0);
+#endif
+
+	WSA_FLAG_OVERLAPPED;
 	NativeHandle result = NativeHandle::Create(port);
 
 	if (not result)

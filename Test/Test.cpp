@@ -59,11 +59,18 @@ void Accepter()
 
 net::Coroutine Runner()
 {
-	auto station = net::io::Station::Create();
-	ioStation = std::move(station.value());
-
 	std::println("Accepter started");
 	Accepter();
+
+	auto reg_result = ioStation.Register(lastClient, 0);
+	if (reg_result)
+	{
+		std::println("The client is registered");
+	}
+	else
+	{
+		std::println("The client is not registered");
+	}
 
 	std::println("Worker started");
 
@@ -117,7 +124,18 @@ int main()
 
 	std::println("=========== Awake ===========");
 
-	serverListener = net::Socket::Create(net::SocketType::Synchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
+	auto station = net::io::Station::Create();
+	ioStation = std::move(station.value());
+	if (ioStation.GetHandle())
+	{
+		std::println("The station is created");
+	}
+	else
+	{
+		std::println("The station has failed to be created");
+	}
+
+	serverListener = net::Socket::Create(net::SocketType::Asynchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
 	const net::EndPoint server{ net::IPv4Address::Loopback, 10000 };
 
@@ -129,6 +147,16 @@ int main()
 
 	serverListener.IsAddressReusable = true;
 
+	auto reg_result = ioStation.Register(serverListener, 1);
+	if (reg_result)
+	{
+		std::println("The listener is registered");
+	}
+	else
+	{
+		std::println("The listener is not registered");
+	}
+
 	std::println("=========== Start ===========");
 
 	if (serverListener.Open().has_value())
@@ -138,7 +166,7 @@ int main()
 
 	std::println("=========== Update ===========");
 
-	Runner();
+	Runner().StartAsync();
 
 	while (true)
 	{
