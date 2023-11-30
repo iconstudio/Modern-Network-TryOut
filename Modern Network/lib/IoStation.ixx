@@ -3,7 +3,7 @@ import Net.NativeHandle;
 import Net.Handler;
 import Net.Socket;
 import Net.ErrorCode;
-import Net.Io.Context;
+import Net.Io.Event;
 import <cstdint>;
 import <limits>;
 import <expected>;
@@ -15,14 +15,6 @@ export namespace net::io
 		: public Handler<NativeHandle>
 	{
 	private:
-		struct Event
-		{
-			bool isSucceed;
-			std::uint64_t eventId;
-			unsigned long ioBytes;
-			Context* ioContext;
-		};
-
 		struct Awaiter
 		{
 			static constexpr bool await_ready() noexcept
@@ -31,14 +23,14 @@ export namespace net::io
 			}
 
 			std::coroutine_handle<void> await_suspend(std::coroutine_handle<void> previous_frame) noexcept;
-			Event await_resume() noexcept;
+			net::io::Event await_resume() noexcept;
 
-			Station& ioStation;
-			Event myResult;
+			net::io::Station& ioStation;
+			net::io::Event myResult;
 		};
 
 	public:
-		using Stationary = std::expected<Station, ErrorCodes>;
+		using Stationary = std::expected<net::io::Station, net::ErrorCodes>;
 
 		constexpr Station() noexcept = default;
 		~Station() noexcept;

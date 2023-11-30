@@ -139,7 +139,7 @@ noexcept
 	return previous_frame;
 }
 
-net::io::Station::Event
+net::io::Event
 net::io::Station::Awaiter::await_resume()
 noexcept
 {
