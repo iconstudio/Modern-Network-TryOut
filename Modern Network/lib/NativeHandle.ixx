@@ -1,6 +1,7 @@
 export module Net.NativeHandle;
 import <type_traits>;
 import <format>;
+import Net.Constraints;
 import Net.Property;
 
 export namespace net
@@ -11,6 +12,34 @@ export namespace net
 		constexpr NativeHandle() noexcept = default;
 		constexpr ~NativeHandle() noexcept = default;
 
+		template<invocables<void*> Fn, typename... Args>
+		constexpr decltype(auto) Delegate(Fn&& fn, Args&&... args)
+			noexcept(noexcept(fn(nativePointer, std::forward<Args>(args)...)))
+		{
+			if constexpr (same_as<invoke_result_t<Fn, void*, Args&&...>, void>)
+			{
+				std::forward<Fn>(fn)(nativePointer, std::forward<Args>(args)...);
+			}
+			else
+			{
+				return std::forward<Fn>(fn)(nativePointer, std::forward<Args>(args)...);
+			}
+		}
+
+		template<invocables<const void*> Fn, typename... Args>
+		constexpr decltype(auto) Delegate(Fn&& fn, Args&&... args)
+			const noexcept(noexcept(fn(nativePointer, std::forward<Args>(args)...)))
+		{
+			if constexpr (same_as<invoke_result_t<Fn, const void*, Args&&...>, void>)
+			{
+				std::forward<Fn>(fn)(nativePointer, std::forward<Args>(args)...);
+			}
+			else
+			{
+				return std::forward<Fn>(fn)(nativePointer, std::forward<Args>(args)...);
+			}
+		}
+
 		[[nodiscard]]
 		constexpr const void* GetPointer() const& noexcept
 		{
@@ -18,7 +47,7 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		constexpr void* && GetPointer() && noexcept
+		constexpr void*&& GetPointer() && noexcept
 		{
 			return std::move(std::exchange(nativePointer, nullptr));
 		}
