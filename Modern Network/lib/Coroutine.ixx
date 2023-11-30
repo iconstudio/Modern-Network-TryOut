@@ -47,9 +47,31 @@ export namespace net::coroutine
 		mutable volatile std::atomic_bool isTriggered;
 		void* triggerHandle;
 	};
+
+	class Action final
+		: public BasicCoroutine<Action, BasicPromise<Action, suspend_never, suspend_always, void>>
+	{
+	public:
+		using handle_type = BasicCoroutine::handle_type;
+
+		constexpr Action(const handle_type& handle) noexcept
+			: BasicCoroutine(handle)
+		{}
+
+		constexpr Action(handle_type&& handle) noexcept
+			: BasicCoroutine(static_cast<handle_type&&>(handle))
+		{}
+
+		void Resume() const;
+		void operator()() const;
+
+		[[nodiscard]]
+		constexpr bool operator==(const Action&) const noexcept = default;
+	};
 }
 
 export namespace net
 {
 	using Coroutine = coroutine::Coroutine;
+	using CoAction = coroutine::Action;
 }

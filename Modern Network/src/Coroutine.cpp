@@ -57,3 +57,23 @@ const
 		myHandle();
 	}
 }
+
+void
+net::coroutine::Action::Resume()
+const
+{
+	if (myHandle)
+	{
+		myHandle();
+	}
+}
+
+void
+net::coroutine::Action::operator()()
+const
+{
+	if (myHandle)
+	{
+		myHandle();
+	}
+}
