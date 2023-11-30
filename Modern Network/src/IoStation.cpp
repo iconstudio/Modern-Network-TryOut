@@ -111,3 +111,37 @@ noexcept
 		return false;
 	}
 }
+
+net::io::Station::Awaiter
+net::io::Station::operator co_await()
+noexcept
+{
+	return Awaiter{ *this };
+}
+
+std::coroutine_handle<void>
+net::io::Station::Awaiter::await_suspend(std::coroutine_handle<void> previous_frame)
+noexcept
+{
+	auto& handle = ioStation.GetHandle();
+
+	::LPOVERLAPPED overlapped{};
+
+	::BOOL result = ::GetQueuedCompletionStatus(handle
+		, std::addressof(myResult.ioBytes)
+		, std::addressof(myResult.eventId)
+		, std::addressof(overlapped)
+		, INFINITE);
+
+	myResult.ioContext = reinterpret_cast<net::io::Context*>(overlapped);
+	myResult.isSucceed = (1 == result);
+
+	return previous_frame;
+}
+
+net::io::Station::Event
+net::io::Station::Awaiter::await_resume()
+noexcept
+{
+	return myResult;
+}
