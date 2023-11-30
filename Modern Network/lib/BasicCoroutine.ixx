@@ -1,4 +1,4 @@
-export module  Net.Coroutine:BasicCoroutine;
+export module Net.Coroutine:BasicCoroutine;
 import Net.Handler;
 import <coroutine>;
 
