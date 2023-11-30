@@ -1,6 +1,6 @@
 export module Net.Coroutine;
 export import :TimedAwaiter;
-import :BasicCoroutine;
+export import :BasicCoroutine;
 import :BasicPromise;
 import <atomic>;
 export import <coroutine>;
