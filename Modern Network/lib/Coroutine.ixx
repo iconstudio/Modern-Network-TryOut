@@ -44,6 +44,11 @@ export namespace net::coroutine
 		constexpr bool operator==(const Coroutine&) const noexcept = default;
 
 	private:
+		Coroutine(const Coroutine&) = delete;
+		Coroutine(Coroutine&&) = delete;
+		Coroutine& operator=(const Coroutine&) = delete;
+		Coroutine& operator=(Coroutine&&) = delete;
+
 		mutable volatile std::atomic_bool isTriggered;
 		void* triggerHandle;
 	};
@@ -67,6 +72,12 @@ export namespace net::coroutine
 
 		[[nodiscard]]
 		constexpr bool operator==(const Action&) const noexcept = default;
+
+	private:
+		Action(const Action&) = delete;
+		Action(Action&&) = delete;
+		Action& operator=(const Action&) = delete;
+		Action& operator=(Action&&) = delete;
 	};
 }
 

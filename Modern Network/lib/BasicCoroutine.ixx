@@ -44,5 +44,11 @@ export namespace net::coroutine
 
 		[[nodiscard]]
 		constexpr bool operator==(const BasicCoroutine&) const noexcept = default;
+
+	private:
+		BasicCoroutine(const BasicCoroutine&) = delete;
+		BasicCoroutine(BasicCoroutine&&) = delete;
+		BasicCoroutine& operator=(const BasicCoroutine&) = delete;
+		BasicCoroutine& operator=(BasicCoroutine&&) = delete;
 	};
 }
