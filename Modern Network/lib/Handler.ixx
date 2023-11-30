@@ -21,6 +21,18 @@ export namespace net
 		{}
 
 		[[nodiscard]]
+		constexpr H& GetHandle() & noexcept
+		{
+			return myHandle;
+		}
+
+		[[nodiscard]]
+		constexpr volatile H& GetHandle() volatile& noexcept
+		{
+			return myHandle;
+		}
+
+		[[nodiscard]]
 		constexpr const H& GetHandle() const& noexcept
 		{
 			return myHandle;
