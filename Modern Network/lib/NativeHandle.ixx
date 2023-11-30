@@ -69,6 +69,16 @@ export namespace net
 			return nullptr != (void*)nativePointer;
 		}
 
+		constexpr operator void*() noexcept
+		{
+			return nativePointer;
+		}
+
+		constexpr operator const void* () const noexcept
+		{
+			return nativePointer;
+		}
+
 		constexpr NativeHandle(NativeHandle&&) noexcept = default;
 		constexpr NativeHandle& operator=(NativeHandle&&) noexcept = default;
 		constexpr bool operator==(const NativeHandle&) const noexcept = default;
