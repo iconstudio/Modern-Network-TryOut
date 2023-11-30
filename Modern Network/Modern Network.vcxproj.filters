@@ -264,9 +264,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="lib\IoEvent.ixx">
-      <Filter>Source Files</Filter>
+      <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\IoSchedule.ixx">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IoSchedule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -168,6 +168,7 @@
     <ClCompile Include="src\ConcurrentAwaiter.cpp" />
     <ClCompile Include="src\Coroutine.cpp" />
     <ClCompile Include="src\EndPoint.cpp" />
+    <ClCompile Include="src\IoSchedule.cpp" />
     <ClCompile Include="src\IoStation.cpp" />
     <ClCompile Include="src\Schedule.cpp" />
     <ClCompile Include="src\Scheduler.cpp" />
