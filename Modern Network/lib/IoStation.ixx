@@ -13,7 +13,7 @@ import <coroutine>;
 export namespace net::io
 {
 	class [[nodiscard]] Station final
-		: public Handler<NativeHandle>
+		: public net::Handler<net::NativeHandle>
 	{
 	private:
 		struct Awaiter
@@ -36,7 +36,7 @@ export namespace net::io
 		constexpr Station() noexcept = default;
 		~Station() noexcept;
 
-		SocketResult Register(net::Socket& socket, std::uint64_t id) noexcept;
+		net::SocketResult Register(net::Socket& socket, std::uint64_t id) noexcept;
 		bool TryRegister(net::Socket& socket, std::uint64_t id, net::ErrorCodes& error_code) noexcept;
 		bool Destroy() noexcept;
 		bool Destroy(net::ErrorCodes& error_code) noexcept;
