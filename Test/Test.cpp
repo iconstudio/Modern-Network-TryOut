@@ -4,6 +4,7 @@
 #include <print>
 #include <array>
 #include <span>
+#include <vector>
 
 import Net;
 import Net.IpAddress;
@@ -39,8 +40,9 @@ inline std::string_view as_string(const std::span<const std::byte> buffer, const
 	return std::string_view{ reinterpret_cast<const char*>(buffer.data()), size };
 }
 
-void Accepter()
+net::Coroutine Accepter()
 {
+	std::println("Accepter started");
 	//while (true)
 	{
 		auto acceptance = serverListener.Accept();
@@ -55,12 +57,8 @@ void Accepter()
 			//break;
 		}
 	}
-}
 
-net::Coroutine Runner()
-{
-	std::println("Accepter started");
-	Accepter();
+	co_await net::coroutine::WaitForSeconds(1);
 
 	auto reg_result = ioStation.Register(lastClient, 0);
 	if (reg_result)
@@ -72,30 +70,49 @@ net::Coroutine Runner()
 		std::println("The client is not registered");
 	}
 
-	std::println("Worker started");
+	co_return;
+}
 
-	co_await net::coroutine::WaitForSeconds(1);
+net::Coroutine Worker()
+{
+	std::println("Worker is started");
+
+	auto&& io_schedule = co_await ioStation.Schedule();
+
+	while (true)
+	{
+		auto& io_event = co_await io_schedule->Start();
+
+		if (not io_event.isSucceed)
+		{
+			std::println("Worker has been failed");
+			break;
+		}
+	}
+}
+
+net::Coroutine Receiver()
+{
+	std::println("Receiver is started");
 
 	net::io::Context listen_context{};
 	listen_context.Clear();
 
 	std::byte recv_buffer[512]{};
 	size_t recv_size = 0;
-	//std::memset(recv_buffer, 0, sizeof(recv_buffer));
-
 	//net::SocketClosingErrorCodes close_err;
 	//const bool closed = lastClient.Close(close_err);
 
 	std::span buffer{ recv_buffer };
 	std::span<std::byte> send_buf;
 
+	std::println("Receiving is started");
+
 	while (true)
 	{
 		auto recv_task = lastClient.MakeReceiveTask(listen_context, buffer);
-		//auto recv = co_await recv_task;
-		auto recv = co_await recv_task;
 
-		listen_context.Clear();
+		auto recv = co_await recv_task;
 
 		if (recv.has_value())
 		{
@@ -103,6 +120,7 @@ net::Coroutine Runner()
 			send_buf = buffer.subspan(0, recv_size);
 
 			std::println("Server received '{}' bytes: {}", recv_size, as_string(send_buf, recv_size));
+			listen_context.Clear();
 
 			auto sent = lastClient.Send(listen_context, send_buf, recv_size);
 			listen_context.Clear();
@@ -110,19 +128,6 @@ net::Coroutine Runner()
 		else
 		{
 			std::println("Server receives are failed due to '{}'", recv.error());
-			break;
-		}
-	}
-}
-
-net::Coroutine Worker()
-{
-	while (true)
-	{
-		auto io_event = co_await ioStation;
-		if (not io_event.isSucceed)
-		{
-			std::println("Server is ended");
 			break;
 		}
 	}
@@ -178,10 +183,19 @@ int main()
 
 	std::println("=========== Update ===========");
 
-	auto runner = Runner();
-	runner.StartAsync();
-	auto worker = Worker();
+	auto runner = Accepter();
+	runner.Start();
+	auto worker = Receiver();
 	worker.StartAsync();
+
+	std::vector<net::Coroutine> workers{};
+	for (size_t i = 0; i < 6; ++i)
+	{
+		auto& worker = workers.emplace_back(Worker());
+		worker.StartAsync();
+	}
+
+	//std::println("Server is ended");
 
 	while (true)
 	{
