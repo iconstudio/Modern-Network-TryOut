@@ -5,14 +5,27 @@ module;
 module Net.Io.Station;
 import <thread>;
 
-net::io::Station::~Station()
+net::io::Station::Stationary
+net::io::Station::Create()
 noexcept
 {
-	if (auto handle = std::move(*this).GetHandle().GetPointer(); handle)
+	return Create(std::thread::hardware_concurrency());
+}
+
 	{
-		::CloseHandle(handle);
+		return std::unexpected(AcquireNetworkError());
 	}
 }
+
+constexpr
+net::io::Station::Station(net::NativeHandle&& handle)
+noexcept
+	: Handler(std::move(handle))
+{}
+
+net::io::Station::~Station()
+noexcept
+{}
 
 net::SocketResult
 net::io::Station::Register(net::Socket& socket, std::uint64_t id)
