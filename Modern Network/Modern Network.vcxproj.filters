@@ -266,5 +266,8 @@
     <ClCompile Include="lib\IoEvent.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\IoSchedule.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

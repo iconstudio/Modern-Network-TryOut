@@ -4,6 +4,7 @@ import Net.Handler;
 import Net.Socket;
 import Net.ErrorCode;
 import Net.Io.Event;
+import Net.Io.Schedule;
 import <cstdint>;
 import <limits>;
 import <expected>;
@@ -40,6 +41,7 @@ export namespace net::io
 		bool Destroy() noexcept;
 		bool Destroy(net::ErrorCodes& error_code) noexcept;
 
+		[[nodiscard]] net::io::Schedule Schedule() noexcept;
 		Awaiter operator co_await() noexcept;
 
 		[[nodiscard]] static Stationary Create() noexcept;
