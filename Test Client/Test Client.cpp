@@ -79,7 +79,7 @@ int main()
 	client.IsAddressReusable = true;
 
 	std::println("=========== Update ===========");
-	Worker();
+	Worker().Start();
 
 	while (true)
 	{}

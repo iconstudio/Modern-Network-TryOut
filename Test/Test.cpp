@@ -62,12 +62,12 @@ net::Coroutine Runner()
 	std::println("Accepter started");
 	Accepter();
 
-	auto reg_result = ioStation.Register(lastClient, 0);
-	if (reg_result)
+	////auto reg_result = ioStation.Register(lastClient, 0);
+	//if (reg_result)
 	{
 		std::println("The client is registered");
 	}
-	else
+	//else
 	{
 		std::println("The client is not registered");
 	}
@@ -150,11 +150,11 @@ int main()
 	auto reg_result = ioStation.Register(serverListener, 1);
 	if (reg_result)
 	{
-		std::println("The listener is registered");
+		std::println("The listener is linked to the port");
 	}
 	else
 	{
-		std::println("The listener is not registered");
+		std::println("The listener is not linked to the port");
 	}
 
 	std::println("=========== Start ===========");
@@ -166,7 +166,8 @@ int main()
 
 	std::println("=========== Update ===========");
 
-	Runner().StartAsync();
+	auto runner = Runner();
+	runner.StartAsync();
 
 	while (true)
 	{
