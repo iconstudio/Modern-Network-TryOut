@@ -121,13 +121,6 @@ noexcept
 	return Awaiter{ *this };
 }
 
-net::io::Station::Awaiter
-net::io::Station::operator co_await()
-noexcept
-{
-	return Awaiter{ *this };
-}
-
 std::unique_ptr<net::io::Schedule>
 net::io::Station::Awaiter::await_resume()
 {

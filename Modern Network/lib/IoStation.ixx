@@ -43,7 +43,6 @@ export namespace net::io
 		bool Destroy(net::ErrorCodes& error_code) noexcept;
 
 		[[nodiscard]] Awaiter Schedule() noexcept;
-		Awaiter operator co_await() noexcept;
 
 		[[nodiscard]] static Stationary Create() noexcept;
 		[[nodiscard]] static Stationary Create(std::uint32_t concurrency_hint) noexcept;
