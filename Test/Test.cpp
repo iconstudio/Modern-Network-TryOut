@@ -81,6 +81,12 @@ net::Coroutine Worker()
 
 	while (true)
 	{
+		if (io_schedule->IsCancelled())
+		{
+			std::println("Worker has been cancelled");
+			break;
+		}
+
 		auto& io_event = co_await io_schedule->Start();
 
 		if (not io_event.isSucceed)
