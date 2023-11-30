@@ -28,11 +28,17 @@ noexcept
 	return Station{ std::move(io_port) };
 }
 
-constexpr
 net::io::Station::Station(net::NativeHandle&& handle)
 noexcept
-	: Handler(std::move(handle))
+	: Handler(std::move(handle)), mySwitch()
 {}
+
+std::stop_token
+net::io::Station::MakeCancelToken()
+const noexcept
+{
+	return mySwitch.get_token();
+}
 
 net::io::Station::~Station()
 noexcept
@@ -113,35 +119,21 @@ noexcept
 }
 
 net::io::Station::Awaiter
+net::io::Station::Schedule()
+noexcept
+{
+	return Awaiter{ *this };
+}
+
+net::io::Station::Awaiter
 net::io::Station::operator co_await()
 noexcept
 {
 	return Awaiter{ *this };
 }
 
-std::coroutine_handle<void>
-net::io::Station::Awaiter::await_suspend(std::coroutine_handle<void> previous_frame)
-noexcept
-{
-	auto& handle = ioStation.GetHandle();
-
-	::LPOVERLAPPED overlapped{};
-
-	::BOOL result = ::GetQueuedCompletionStatus(handle
-		, std::addressof(myResult.ioBytes)
-		, std::addressof(myResult.eventId)
-		, std::addressof(overlapped)
-		, INFINITE);
-
-	myResult.ioContext = reinterpret_cast<net::io::Context*>(overlapped);
-	myResult.isSucceed = (1 == result);
-
-	return previous_frame;
-}
-
-net::io::Event
+std::unique_ptr<net::io::Schedule>
 net::io::Station::Awaiter::await_resume()
-noexcept
 {
-	return myResult;
+	return std::make_unique<net::io::Schedule>(ioStation, ioStation.MakeCancelToken());
 }

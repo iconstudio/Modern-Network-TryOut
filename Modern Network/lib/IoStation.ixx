@@ -9,6 +9,7 @@ import <cstdint>;
 import <limits>;
 import <expected>;
 import <coroutine>;
+import <stop_token>;
 
 export namespace net::io
 {
@@ -20,14 +21,13 @@ export namespace net::io
 		{
 			static constexpr bool await_ready() noexcept
 			{
-				return false;
+				return true;
 			}
-
-			std::coroutine_handle<void> await_suspend(std::coroutine_handle<void> previous_frame) noexcept;
-			net::io::Event await_resume() noexcept;
+			static constexpr void await_suspend(std::coroutine_handle<void>) noexcept
+			{}
+			[[nodiscard]] std::unique_ptr<net::io::Schedule> await_resume();
 
 			net::io::Station& ioStation;
-			net::io::Event myResult;
 		};
 
 	public:
@@ -41,7 +41,7 @@ export namespace net::io
 		bool Destroy() noexcept;
 		bool Destroy(net::ErrorCodes& error_code) noexcept;
 
-		[[nodiscard]] net::io::Schedule Schedule() noexcept;
+		[[nodiscard]] Awaiter Schedule() noexcept;
 		Awaiter operator co_await() noexcept;
 
 		[[nodiscard]] static Stationary Create() noexcept;
@@ -51,9 +51,13 @@ export namespace net::io
 		constexpr Station& operator=(Station&&) noexcept = default;
 
 	private:
-		constexpr Station(net::NativeHandle&& handle) noexcept;
+		Station(net::NativeHandle&& handle) noexcept;
+
+		[[nodiscard]] std::stop_token MakeCancelToken() const noexcept;
 
 		Station(const Station&) = delete;
 		Station& operator=(const Station&) = delete;
+
+		std::stop_source mySwitch;
 	};
 }
