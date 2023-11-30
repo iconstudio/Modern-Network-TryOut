@@ -8,7 +8,10 @@ import <thread>;
 net::io::Station::~Station()
 noexcept
 {
-	::CloseHandle(std::move(*this).GetHandle().GetPointer());
+	if (auto handle = std::move(*this).GetHandle().GetPointer(); handle)
+	{
+		::CloseHandle(handle);
+	}
 }
 
 net::SocketResult
