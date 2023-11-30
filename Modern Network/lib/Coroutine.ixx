@@ -12,7 +12,7 @@ export namespace net::coroutine
 	using std::coroutine_handle;
 
 	class Coroutine final
-		: public BasicCoroutine<Coroutine, BasicPromise<Coroutine, suspend_never, suspend_always, void>>
+		: public BasicCoroutine<Coroutine, BasicPromise<Coroutine, suspend_always, suspend_always, void>>
 	{
 	public:
 		using handle_type = BasicCoroutine::handle_type;
