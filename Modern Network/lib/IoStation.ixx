@@ -20,10 +20,10 @@ export namespace net::io
 		SocketResult Register(Socket& socket, std::uint64_t id) const noexcept;
 		bool TryRegister(Socket& socket, std::uint64_t id, ErrorCodes& error_code) const noexcept;
 
-		static Stationary Create() noexcept;
-		static Stationary Create(std::uint32_t concurrency_hint) noexcept;
-		static Stationary Create(std::uint64_t id) noexcept;
-		static Stationary Create(std::uint64_t id, std::uint32_t concurrency_hint) noexcept;
+		[[nodiscard]] static Stationary Create() noexcept;
+		[[nodiscard]] static Stationary Create(std::uint32_t concurrency_hint) noexcept;
+		[[nodiscard]] static Stationary Create(std::uint64_t id) noexcept;
+		[[nodiscard]] static Stationary Create(std::uint64_t id, std::uint32_t concurrency_hint) noexcept;
 
 		constexpr Station(Station&&) noexcept = default;
 		constexpr Station& operator=(Station&&) noexcept = default;
