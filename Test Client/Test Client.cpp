@@ -28,7 +28,7 @@ inline std::string_view as_string(const std::span<const std::byte> buffer, const
 	return std::string_view{ reinterpret_cast<const char*>(buffer.data()), size };
 }
 
-net::Coroutine Worker()
+net::CoAction Worker()
 {
 	//co_await net::coroutine::WaitForSeconds(1);
 
@@ -79,7 +79,7 @@ int main()
 	client.IsAddressReusable = true;
 
 	std::println("=========== Update ===========");
-	Worker().Start();
+	Worker();
 
 	while (true)
 	{}
