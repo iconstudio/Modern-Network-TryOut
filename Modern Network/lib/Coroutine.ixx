@@ -2,6 +2,7 @@ export module Net.Coroutine;
 export import :TimedAwaiter;
 export import :BasicCoroutine;
 import :BasicPromise;
+import <utility>;
 import <atomic>;
 export import <coroutine>;
 
@@ -40,14 +41,25 @@ export namespace net::coroutine
 			return isTriggered.load(std::memory_order_relaxed);
 		}
 
+		Coroutine(Coroutine&& other) noexcept
+			: BasicCoroutine(std::move(std::exchange(other.GetHandle(), nullptr)))
+			, isTriggered(other.IsTriggered()), triggerHandle(std::move(other.triggerHandle))
+		{}
+
+		Coroutine& operator=(Coroutine&& other) noexcept
+		{
+			myHandle = std::move(std::exchange(other.GetHandle(), nullptr));
+			isTriggered = other.IsTriggered();
+			triggerHandle = std::move(other.triggerHandle);
+			return *this;
+		}
+
 		[[nodiscard]]
 		constexpr bool operator==(const Coroutine&) const noexcept = default;
 
 	private:
 		Coroutine(const Coroutine&) = delete;
-		Coroutine(Coroutine&&) = delete;
 		Coroutine& operator=(const Coroutine&) = delete;
-		Coroutine& operator=(Coroutine&&) = delete;
 
 		mutable volatile std::atomic_bool isTriggered;
 		void* triggerHandle;
