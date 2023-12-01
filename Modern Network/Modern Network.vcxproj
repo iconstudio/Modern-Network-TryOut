@@ -160,10 +160,6 @@
     <ClCompile Include="lib\TypeList.ixx" />
     <ClCompile Include="lib\ValuePromise.ixx" />
     <ClCompile Include="Modern Network.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\ConcurrentAwaiter.cpp" />
     <ClCompile Include="src\Coroutine.cpp" />
