@@ -39,6 +39,7 @@ export namespace net::io
 
 		net::SocketResult Register(net::Socket& socket, std::uint64_t id) noexcept;
 		bool TryRegister(net::Socket& socket, std::uint64_t id, net::ErrorCodes& error_code) noexcept;
+		void Stop();
 		bool Destroy() noexcept;
 		bool Destroy(net::ErrorCodes& error_code) noexcept;
 

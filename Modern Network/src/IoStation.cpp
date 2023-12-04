@@ -82,6 +82,12 @@ noexcept
 	}
 }
 
+void
+net::io::Station::Stop()
+{
+	mySwitch.request_stop();
+}
+
 bool
 net::io::Station::Destroy()
 noexcept
