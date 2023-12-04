@@ -263,5 +263,8 @@
     <ClCompile Include="src\IoSchedule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\SkipList.ixx">
+      <Filter>lib\Containers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

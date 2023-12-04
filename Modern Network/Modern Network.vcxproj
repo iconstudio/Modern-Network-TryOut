@@ -142,6 +142,7 @@
     <ClCompile Include="lib\Schedule.ixx" />
     <ClCompile Include="lib\Scheduler.ixx" />
     <ClCompile Include="lib\ServerSetupError.ixx" />
+    <ClCompile Include="lib\SkipList.ixx" />
     <ClCompile Include="lib\Socket.ixx" />
     <ClCompile Include="lib\SocketClosingErrorCodes.ixx" />
     <ClCompile Include="lib\SocketGeneralErrorCodes.ixx" />
