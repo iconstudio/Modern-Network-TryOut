@@ -103,7 +103,7 @@ export namespace net
 	class IProperty<T, void, true, Copyable, Readonly, Nothrow> final
 	{
 	public:
-		using functor_t = ::prp_functor_t<void, T&>;
+		using functor_t = std::conditional_t<Nothrow, ::prp_nothrow_functor_t<void, T&>, ::prp_functor_t<void, T&>>;
 
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T, functor_t>)
@@ -115,7 +115,7 @@ export namespace net
 		constexpr IProperty(U&& trans_value, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_default_constructibles<T> and nothrow_constructible<functor_t, Fn&&>)
 			requires constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
-		: myValue(static_cast<U&&>(trans_value)), mySetter(static_cast<functor_t>(setter))
+		: myValue(static_cast<U&&>(trans_value)), mySetter(std::forward_like<functor_t>(setter))
 		{}
 
 		template<bool C2, bool R2, bool E2>
@@ -143,7 +143,7 @@ export namespace net
 			requires move_constructibles<T, U> and constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
 		constexpr IProperty(IProperty<U, X2, S2, C2, R2, E2>&& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_constructible<functor_t, Fn&&>)
-			: myValue(static_cast<U&&>(other.myValue)), mySetter(std::exchange(setter, nullptr))
+			: myValue(static_cast<U&&>(other.myValue)), mySetter(std::forward_like<Fn>(setter))
 		{}
 
 		[[nodiscard]]
@@ -211,7 +211,7 @@ export namespace net
 	class IProperty<T, Context, true, Copyable, Readonly, Nothrow> final
 	{
 	public:
-		using functor_t = ::prp_functor_t<void, Context&, T&>;
+		using functor_t = std::conditional_t<Nothrow, ::prp_nothrow_functor_t<void, Context&, T&>, ::prp_functor_t<void, Context&, T&>>;
 
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T, functor_t>)
@@ -261,7 +261,7 @@ export namespace net
 			noexcept(nothrow_constructible<T, U&&> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
 			, myValue(static_cast<U&&>(other.myValue))
-			, mySetter(static_cast<functor_t&&>(setter))
+			, mySetter(std::forward_like<functor_t>(setter))
 		{}
 
 		[[nodiscard]]
