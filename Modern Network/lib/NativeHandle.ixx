@@ -14,9 +14,9 @@ export namespace net
 
 		template<invocables<void*> Fn, typename... Args>
 		constexpr decltype(auto) Delegate(Fn&& fn, Args&&... args)
-			noexcept(noexcept(fn(nativePointer, std::forward<Args>(args)...)))
+			noexcept(noexcept((fn)(nativePointer, std::forward<Args>(args)...)))
 		{
-			if constexpr (same_as<invoke_result_t<Fn, void*, Args&&...>, void>)
+			if constexpr (same_as<std::invoke_result_t<Fn, void*, Args&&...>, void>)
 			{
 				std::forward<Fn>(fn)(nativePointer, std::forward<Args>(args)...);
 			}
@@ -28,9 +28,9 @@ export namespace net
 
 		template<invocables<const void*> Fn, typename... Args>
 		constexpr decltype(auto) Delegate(Fn&& fn, Args&&... args)
-			const noexcept(noexcept(fn(nativePointer, std::forward<Args>(args)...)))
+			const noexcept(noexcept((fn)(nativePointer, std::forward<Args>(args)...)))
 		{
-			if constexpr (same_as<invoke_result_t<Fn, const void*, Args&&...>, void>)
+			if constexpr (same_as<std::invoke_result_t<Fn, const void*, Args&&...>, void>)
 			{
 				std::forward<Fn>(fn)(nativePointer, std::forward<Args>(args)...);
 			}
