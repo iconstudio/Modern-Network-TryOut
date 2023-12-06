@@ -1,8 +1,3 @@
-module;
-#include <cstddef>
-#include <cstdint>
-#include <span>
-
 export module Net.Socket;
 export import :Result;
 export import :Options;
@@ -15,6 +10,9 @@ import Net.Task;
 import Net.IpAddress;
 import Net.InternetProtocols;
 import Net.EndPoint;
+import <cstddef>;
+import <cstdint>;
+import <span>;
 
 export namespace net
 {
