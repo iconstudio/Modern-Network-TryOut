@@ -46,6 +46,7 @@ net::Coroutine Accepter()
 	//while (true)
 	{
 		auto acceptance = serverListener.Accept();
+		//auto acceptance2 = serverListener.ReserveAccept(lastClient);
 
 		if (acceptance.has_value())
 		{
