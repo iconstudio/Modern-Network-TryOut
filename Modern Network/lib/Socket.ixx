@@ -82,6 +82,13 @@ export namespace net
 		[[nodiscard]]
 		AcceptingResult Accept(EndPoint& endpoint) const noexcept;
 
+		// Asynchronous Accept
+
+		SocketResult ReserveAccept(Socket& client) const;
+		SocketResult ReserveAccept(Socket& client, std::span<std::byte> accept_buffer) const;
+		SocketResult ReserveAccept(io::Context& context, Socket& client) const;
+		SocketResult ReserveAccept(io::Context& context, Socket& client, std::span<std::byte> accept_buffer) const;
+
 		// Synchronous Send
 
 		SocketSendingResult Send(std::span<const std::byte> memory) const noexcept;
