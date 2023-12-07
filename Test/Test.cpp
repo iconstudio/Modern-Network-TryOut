@@ -26,7 +26,9 @@ std::array<net::Socket*, maxClients> everyClients{};
 
 size_t lastClientIndex = 0;
 size_t clientsNumber = 0;
+
 net::Socket lastClient = net::Socket::EmptySocket;
+net::io::Context acceptContext{};
 
 [[nodiscard]]
 inline std::string_view as_string(const std::span<const std::byte> buffer) noexcept
@@ -43,23 +45,8 @@ inline std::string_view as_string(const std::span<const std::byte> buffer, const
 net::Coroutine Accepter()
 {
 	std::println("Accepter started");
-	//while (true)
-	{
-		auto acceptance = serverListener.Accept();
-		//auto acceptance2 = serverListener.ReserveAccept(lastClient);
 
-		if (acceptance.has_value())
-		{
-			lastClient = std::move(acceptance.value());
-		}
-		else
-		{
-			std::println("The acceptance is failed due to '{}'", acceptance.error());
-			//break;
-		}
-	}
-
-	co_await net::coroutine::WaitForSeconds(1);
+	lastClient = net::Socket::Create(net::SocketType::Asynchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
 	auto reg_result = ioStation.Register(lastClient, 0);
 	if (reg_result)
@@ -71,6 +58,28 @@ net::Coroutine Accepter()
 		std::println("The client is not registered");
 	}
 
+	//while (true)
+	{
+		//auto acceptance = serverListener.Accept();
+
+		auto acceptance2 = serverListener.ReserveAccept(acceptContext, lastClient);
+		auto&& io_schedule = co_await ioStation.Schedule();
+
+		//if (acceptance.has_value())
+		if (acceptance2.has_value())
+		{
+			acceptContext.Clear();
+			//lastClient = std::move(acceptance2.value());
+		}
+		else
+		{
+			//std::println("The acceptance is failed due to '{}'", acceptance.error());
+			std::println("The acceptance is failed due to '{}'", acceptance2.error());
+			//break;
+		}
+	}
+
+	co_await net::coroutine::WaitForSeconds(1);
 	co_return;
 }
 
