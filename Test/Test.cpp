@@ -161,12 +161,6 @@ net::Coroutine Worker()
 
 		auto& io_event = co_await io_schedule->Start();
 
-		if (not io_event.isSucceed)
-		{
-			std::println("Worker has been failed");
-			break;
-		}
-
 		if (*io_event.ioContext == acceptContext)
 		{
 			if (acceptStatus.has_value())
@@ -174,14 +168,17 @@ net::Coroutine Worker()
 				acceptContext.Clear();
 				isClientReady.test_and_set();
 				isClientReady.notify_one();
-				//lastClient = std::move(acceptance2.value());
 			}
 			else
 			{
-				//std::println("The acceptance is failed due to '{}'", acceptance.error());
 				std::println("The acceptance is failed due to '{}'", acceptStatus.error());
-				//break;
+				break;
 			}
+		}
+		else if (not io_event.isSucceed)
+		{
+			std::println("Worker has been failed");
+			break;
 		}
 	}
 }
