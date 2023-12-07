@@ -1,6 +1,7 @@
 export module Net.Io.Context;
 import Net.NativeHandle;
 import <cstdint>;
+import <type_traits>;
 
 export namespace net::io
 {
@@ -22,6 +23,12 @@ export namespace net::io
 			eventObject = nullptr;
 		}
 
+		[[nodiscard]]
+		constexpr bool operator==(const Context& other) const noexcept
+		{
+			return std::addressof(other) == this;
+		}
+
 	protected:
 		std::uint64_t ioLower;
 		std::uint64_t ioUpper;
@@ -35,5 +42,9 @@ export namespace net::io
 			NativeHandle offset = {};
 		};
 		NativeHandle eventObject;
+
+	private:
+		Context(const Context&) = delete;
+		Context& operator=(const Context&) = delete;
 	};
 }
