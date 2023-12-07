@@ -185,6 +185,7 @@ net::Coroutine Worker()
 
 net::Coroutine Receiver()
 {
+	isClientReady.wait(true);
 	while (not isClientReady.test());
 
 	std::println("Receiver is started");
