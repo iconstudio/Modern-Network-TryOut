@@ -84,8 +84,6 @@ export namespace net
 
 		// Asynchronous Accept
 
-		SocketResult ReserveAccept(Socket& client) const;
-		SocketResult ReserveAccept(Socket& client, std::span<std::byte> accept_buffer) const;
 		SocketResult ReserveAccept(io::Context& context, Socket& client) const;
 		SocketResult ReserveAccept(io::Context& context, Socket& client, std::span<std::byte> accept_buffer) const;
 

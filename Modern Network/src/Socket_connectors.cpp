@@ -333,75 +333,6 @@ const noexcept
 }
 
 net::SocketResult
-net::Socket::ReserveAccept(Socket& client)
-const
-{
-	char temp_buffer[::DEFAULT_ACCEPT_SIZE * 2];
-	if (not IsAvailable())
-	{
-		return std::unexpected(AcquireNetworkError());
-	}
-
-	::DWORD result_bytes;
-
-	if (1 == ::AcceptEx(myHandle, client.GetHandle()
-		, temp_buffer, 0UL
-		, ::DEFAULT_ACCEPT_SIZE
-		, ::DEFAULT_ACCEPT_SIZE
-		, std::addressof(result_bytes)
-		, nullptr)
-	)
-	{
-		return 1U;
-	}
-	else
-	{
-		if (auto error = AcquireNetworkError(); error != ErrorCodes::PendedIoOperation)
-		{
-			return unexpected(std::move(error));
-		}
-		else
-		{
-			return 0U;
-		}
-	}
-}
-
-net::SocketResult
-net::Socket::ReserveAccept(Socket& client, std::span<std::byte> accept_buffer)
-const
-{
-	if (not IsAvailable())
-	{
-		return std::unexpected(AcquireNetworkError());
-	}
-
-	::DWORD result_bytes;
-
-	if (1 == ::AcceptEx(myHandle, client.GetHandle()
-		, accept_buffer.data(), static_cast<::DWORD>(accept_buffer.size_bytes())
-		, ::DEFAULT_ACCEPT_SIZE
-		, ::DEFAULT_ACCEPT_SIZE
-		, std::addressof(result_bytes)
-		, nullptr)
-	)
-	{
-		return 1U;
-	}
-	else
-	{
-		if (auto error = AcquireNetworkError(); error != ErrorCodes::PendedIoOperation)
-		{
-			return unexpected(std::move(error));
-		}
-		else
-		{
-			return 0U;
-		}
-	}
-}
-
-net::SocketResult
 net::Socket::ReserveAccept(net::io::Context& context, Socket& client)
 const
 {
@@ -411,7 +342,7 @@ const
 		return std::unexpected(AcquireNetworkError());
 	}
 
-	::DWORD result_bytes;
+	::DWORD result_bytes{};
 
 	if (1 == ::AcceptEx(myHandle, client.GetHandle()
 		, temp_buffer, 0UL
@@ -445,7 +376,7 @@ const
 		return std::unexpected(AcquireNetworkError());
 	}
 
-	::DWORD result_bytes;
+	::DWORD result_bytes{};
 
 	if (1 == ::AcceptEx(myHandle, client.GetHandle()
 		, accept_buffer.data(), static_cast<::DWORD>(accept_buffer.size_bytes())
