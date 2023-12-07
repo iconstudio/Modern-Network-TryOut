@@ -16,8 +16,8 @@ export namespace net::io
 			ioLower = 0;
 			ioUpper = 0;
 
-			int* repr = reinterpret_cast<int*>(std::addressof(offset));
-			*repr = 0;
+			std::uintptr_t* repr = reinterpret_cast<std::uintptr_t*>(std::addressof(offset));
+			*repr = 0ULL;
 
 			eventObject = nullptr;
 		}
