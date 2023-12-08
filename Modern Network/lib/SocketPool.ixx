@@ -13,7 +13,7 @@ export namespace net
 	struct EncapsuledSocket
 	{
 		[[nodiscard]]
-		static inline constexpr friend bool operator<(const EncapsuledSocket& lhs, const EncapsuledSocket& rhs) noexcept
+		inline constexpr friend bool operator<(const EncapsuledSocket& lhs, const EncapsuledSocket& rhs) noexcept
 		{
 			return lhs.id < rhs.id;
 		}
