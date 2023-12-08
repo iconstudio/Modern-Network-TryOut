@@ -269,5 +269,8 @@
     <ClCompile Include="lib\SocketPool.ixx">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="src\SocketPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
