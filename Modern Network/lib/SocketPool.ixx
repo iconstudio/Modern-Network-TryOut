@@ -1,4 +1,6 @@
 export module Net.SocketPool;
+import Net.InternetProtocols;
+import Net.IpAddress;
 import Net.Socket;
 import Net.Property;
 import Net.Io.Station;
@@ -33,7 +35,7 @@ export namespace net
 		void Add(Socket* const& socket_ptr, std::uint64_t id);
 		[[nodiscard]]
 		bool TryAdd(Socket* const& socket_ptr, std::uint64_t id) noexcept;
-		Socket* const Allocate(std::uint64_t id);
+		Socket* const Allocate(std::uint64_t id, SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family);
 
 		[[nodiscard]]
 		data_t::iterator Find(std::uint64_t id) noexcept;

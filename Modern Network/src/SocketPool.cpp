@@ -53,6 +53,22 @@ noexcept
 	return false;
 }
 
+net::Socket* const
+net::SocketPool::Allocate(std::uint64_t id, SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family)
+{
+	auto sk_result = Socket::Create(type, protocol, family);
+	if (sk_result.IsAvailable())
+	{
+		auto& ck = myPool.emplace_back();
+		*ck.sk = std::exchange(sk_result, {});
+		ck.id = id;
+
+		return ck.sk;
+	}
+
+	return nullptr;
+}
+
 net::SocketPool::data_t::iterator
 net::SocketPool::Find(std::uint64_t id)
 noexcept
