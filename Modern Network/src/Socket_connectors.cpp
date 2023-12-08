@@ -7,27 +7,12 @@ module;
 #include <MSWSock.h>
 
 module Net.Socket;
-import <mutex>;
-import <atomic>;
 import <coroutine>;
 
 ::SOCKADDR_STORAGE SerializeEndpoint(const net::EndPoint& endpoint) noexcept;
 ::SOCKADDR_STORAGE SerializeEndpoint(net::EndPoint&& endpoint) noexcept;
 
-std::atomic_bool acceptex_state{};
-std::once_flag acceptex_flag{};
-
 static inline constexpr unsigned long DEFAULT_ACCEPT_SIZE = sizeof(SOCKADDR_IN) + 16UL;
-static inline constexpr ::SOCKET InvalidSocket = INVALID_SOCKET;
-
-bool AcquireAcceptEx()
-{
-	std::call_once(acceptex_flag, [&]() {
-
-	});
-
-	return false;
-}
 
 net::SocketResult
 net::Socket::Bind(const net::IpAddress& address, const std::uint16_t& port)
