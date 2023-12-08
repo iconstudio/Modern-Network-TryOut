@@ -5,6 +5,8 @@ module;
 
 module Net.Socket;
 import <type_traits>;
+import <mutex>;
+import <print>;
 
 net::SocketOptioningResult RawSetOption(const net::NativeSocket& sock, int option, const void* buffer, int buff_size) noexcept;
 net::SocketOptioningResult RawGetOption(const net::NativeSocket& sock, int option) noexcept;
@@ -12,6 +14,21 @@ net::SocketOptioningResult RawGetOption(const net::NativeSocket& sock, int optio
 using namespace net;
 
 const Socket::EmptySocketType Socket::EmptySocket = {};
+::RIO_BUF buf;
+static inline constexpr ::SOCKET InvalidSocket = INVALID_SOCKET;
+constinit static inline ::SOCKET internalSocket = InvalidSocket;
+constinit static inline std::once_flag internalInitFlag{};
+
+constinit static inline ::WSAOVERLAPPED rioContext{};
+constinit static inline ::RIO_EXTENSION_FUNCTION_TABLE rioFunctions{};
+
+static void CALLBACK rioRoutine(const ::DWORD err, const ::DWORD bytes, ::LPWSAOVERLAPPED ctx, const ::DWORD flags)
+{
+	if (0 != err)
+	{
+		std::println("Socket error: {}", err);
+	}
+}
 
 Socket::Socket()
 noexcept
@@ -20,14 +37,30 @@ noexcept
 
 Socket::Socket(EmptySocketType)
 noexcept
-	: Socket(INVALID_SOCKET, InternetProtocols::Unknown, IpAddressFamily::Unknown)
+	: Handler(INVALID_SOCKET)
+	, myProtocol(InternetProtocols::Unknown), myFamily(IpAddressFamily::Unknown)
+	, IsAddressReusable(this, false, SetAddressReusable)
 {}
 
 Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept
 	: Handler(sock)
 	, myProtocol(protocol), myFamily(family)
 	, IsAddressReusable(this, false, SetAddressReusable)
-{}
+{
+	std::call_once(internalInitFlag, [&]() {
+		::GUID fntable_id = WSAID_MULTIPLE_RIO;
+		::DWORD temp_bytes = 0;
+
+#if _DEBUG
+		const int result = 
+#endif // _DEBUG
+			::WSAIoctl(sock, SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER
+			, std::addressof(fntable_id), sizeof(GUID)
+			, reinterpret_cast<void**>(std::addressof(rioFunctions)), sizeof(rioFunctions)
+			, std::addressof(temp_bytes)
+			, std::addressof(rioContext), ::rioRoutine);
+	});
+}
 
 Socket&
 Socket::operator=(EmptySocketType)
@@ -109,7 +142,7 @@ Socket
 Socket::Create(SocketType type
 	, const InternetProtocols& protocol
 	, const IpAddressFamily& family)
-noexcept
+	noexcept
 {
 	const auto flags = std::to_underlying(type);
 
@@ -142,7 +175,7 @@ Socket::Create(SocketType type
 	, const InternetProtocols& protocol
 	, const IpAddressFamily& family
 	, ErrorCodes& error_code)
-noexcept
+	noexcept
 {
 	if (Socket result = Create(type, protocol, family); result.IsAvailable())
 	{
@@ -160,7 +193,7 @@ Socket::TryCreate(SocketType type
 	, const InternetProtocols& protocol
 	, const IpAddressFamily& family
 	, AttentSocket& out)
-noexcept
+	noexcept
 {
 	if (Socket result = Create(type, protocol, family); result.IsAvailable())
 	{
@@ -183,7 +216,7 @@ Socket::TryCreate(SocketType type
 	, const IpAddressFamily& family
 	, AttentSocket& out
 	, ErrorCodes& error_code)
-noexcept
+	noexcept
 {
 	if (Socket result = Create(type, protocol, family); result.IsAvailable())
 	{
@@ -205,7 +238,7 @@ Socket::FactoryResult
 Socket::TryCreate(SocketType type
 	, const InternetProtocols& protocol
 	, const IpAddressFamily& family)
-noexcept
+	noexcept
 {
 	if (Socket result = Create(type, protocol, family); result.IsAvailable())
 	{
