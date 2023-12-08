@@ -35,6 +35,18 @@ export namespace net
 			std::ranges::sort_heap(myPool);
 		}
 
+		Socket* Allocate(size_t id);
+
+		constexpr data_t::iterator Find(size_t id) noexcept
+		{
+			return std::ranges::find(myPool);
+		}
+
+		constexpr data_t::const_iterator Find(size_t id) const noexcept
+		{
+			return std::ranges::find(myPool);
+		}
+
 		[[nodiscard]]
 		constexpr span_t Subrange(const size_t& count) noexcept
 		{
