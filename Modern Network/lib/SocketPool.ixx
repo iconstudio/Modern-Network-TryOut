@@ -37,7 +37,7 @@ export namespace net
 			if (myStation.Register(*socket_ptr, id))
 			{
 				myPool.push_back(EncapsuledSocket{ socket_ptr, id });
-				std::ranges::sort_heap(myPool);
+				std::sort_heap(myPool.begin(), myPool.end());
 			}
 		}
 
@@ -49,7 +49,7 @@ export namespace net
 				try
 				{
 					myPool.push_back(EncapsuledSocket{ socket_ptr, id });
-					std::ranges::sort_heap(myPool);
+					std::sort_heap(myPool.begin(), myPool.end());
 				}
 				catch (...)
 				{
