@@ -1,5 +1,6 @@
 export module Net.SocketPool;
 import Net.Socket;
+import Net.Property;
 import Net.Io.Station;
 import <cstdint>;
 import <vector>;
@@ -17,7 +18,7 @@ export namespace net
 			return lhs.id < rhs.id;
 		}
 
-		Socket* const sk;
+		ReadonlyProperty<Socket*> sk;
 		std::uint64_t id;
 	};
 
