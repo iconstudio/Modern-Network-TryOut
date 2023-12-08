@@ -1,5 +1,7 @@
 export module Net.SocketPool;
 import Net.Socket;
+import Net.Io.Station;
+import <cstdint>;
 import <vector>;
 import <array>;
 import <span>;
@@ -15,8 +17,8 @@ export namespace net
 			return lhs.id < rhs.id;
 		}
 
-		Socket* sk;
-		size_t id;
+		Socket* const sk;
+		std::uint64_t id;
 	};
 
 	class SocketPool
@@ -29,20 +31,46 @@ export namespace net
 		SocketPool(const size_t& size);
 		~SocketPool();
 
-		constexpr void Add(Socket* const& socket_ptr, size_t id)
+		void Add(Socket* const& socket_ptr, std::uint64_t id)
 		{
-			myPool.push_back(EncapsuledSocket{ socket_ptr, id });
-			std::ranges::sort_heap(myPool);
+			if (myStation.Register(*socket_ptr, id))
+			{
+				myPool.push_back(EncapsuledSocket{ socket_ptr, id });
+				std::ranges::sort_heap(myPool);
+			}
 		}
 
-		Socket* Allocate(size_t id);
+		[[nodiscard]]
+		bool TryAdd(Socket* const& socket_ptr, std::uint64_t id) noexcept
+		{
+			if (myStation.Register(*socket_ptr, id))
+			{
+				try
+				{
+					myPool.push_back(EncapsuledSocket{ socket_ptr, id });
+					std::ranges::sort_heap(myPool);
+				}
+				catch (...)
+				{
+					return false;
+				}
 
-		constexpr data_t::iterator Find(size_t id) noexcept
+				return true;
+			}
+
+			return false;
+		}
+
+		Socket* const Allocate(std::uint64_t id);
+
+		[[nodiscard]]
+		constexpr data_t::iterator Find(std::uint64_t id) noexcept
 		{
 			return std::ranges::find(myPool);
 		}
 
-		constexpr data_t::const_iterator Find(size_t id) const noexcept
+		[[nodiscard]]
+		constexpr data_t::const_iterator Find(std::uint64_t id) const noexcept
 		{
 			return std::ranges::find(myPool);
 		}
@@ -118,6 +146,9 @@ export namespace net
 		{
 			return myPool.max_size();
 		}
+
+	protected:
+		io::Station myStation;
 
 	private:
 		SocketPool(const SocketPool&) = delete;
