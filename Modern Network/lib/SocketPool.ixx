@@ -67,13 +67,17 @@ export namespace net
 		[[nodiscard]]
 		constexpr data_t::iterator Find(std::uint64_t id) noexcept
 		{
-			return std::ranges::find(myPool);
+			return std::ranges::find(myPool, id
+				, [](const EncapsuledSocket& ck) noexcept { return ck.id; }
+			);
 		}
 
 		[[nodiscard]]
 		constexpr data_t::const_iterator Find(std::uint64_t id) const noexcept
 		{
-			return std::ranges::find(myPool);
+			return std::ranges::find(myPool, id
+				, [](const EncapsuledSocket& ck) noexcept { return ck.id; }
+			);
 		}
 
 		[[nodiscard]]
