@@ -3,27 +3,36 @@ import Net.Socket;
 import <vector>;
 import <array>;
 import <span>;
+import <algorithm>;
 
 export namespace net
 {
+	struct EncapsuledSocket
+	{
+		[[nodiscard]]
+		static inline constexpr friend bool operator<(const EncapsuledSocket& lhs, const EncapsuledSocket& rhs) noexcept
+		{
+			return lhs.id < rhs.id;
+		}
+
+		Socket* sk;
+		size_t id;
+	};
+
 	class SocketPool
 	{
 	public:
-		using data_t = std::vector<Socket*>;
-		using span_t = std::span<Socket*>;
-		using const_span_t = std::span<Socket* const>;
+		using data_t = std::vector<EncapsuledSocket>;
+		using span_t = std::span<EncapsuledSocket>;
+		using const_span_t = std::span<const EncapsuledSocket>;
 
 		SocketPool(const size_t& size);
 		~SocketPool();
 
-		constexpr void Add(Socket* const& socket_ptr)
+		constexpr void Add(Socket* const& socket_ptr, size_t id)
 		{
-			myPool.push_back(socket_ptr);
-		}
-
-		constexpr void Add(Socket&& socket)
-		{
-			myPool.emplace(myPool.end(), std::exchange(socket, {}));
+			myPool.push_back(EncapsuledSocket{ socket_ptr, id });
+			std::ranges::sort_heap(myPool);
 		}
 
 		[[nodiscard]]
