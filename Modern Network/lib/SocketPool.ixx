@@ -26,8 +26,10 @@ export namespace net
 	{
 	public:
 		using data_t = std::vector<EncapsuledSocket>;
-		using span_t = std::span<EncapsuledSocket>;
-		using const_span_t = std::span<const EncapsuledSocket>;
+		using iterator = data_t::iterator;
+		using const_iterator = data_t::const_iterator;
+		using view_t = std::span<EncapsuledSocket>;
+		using const_view_t = std::span<const EncapsuledSocket>;
 
 		SocketPool(const size_t& size);
 		~SocketPool();
@@ -43,27 +45,27 @@ export namespace net
 		data_t::const_iterator Find(std::uint64_t id) const noexcept;
 
 		[[nodiscard]]
-		constexpr span_t Subrange(const size_t& count) noexcept
+		constexpr view_t Subrange(const size_t& count) noexcept
 		{
-			return span_t{ myPool.begin(), count };
+			return view_t{ myPool.begin(), count };
 		}
 
 		[[nodiscard]]
-		constexpr const_span_t Subrange(const size_t& count) const noexcept
+		constexpr const_view_t Subrange(const size_t& count) const noexcept
 		{
-			return const_span_t{ myPool.begin(), count };
+			return const_view_t{ myPool.begin(), count };
 		}
 
 		[[nodiscard]]
-		constexpr span_t Subrange(const size_t& first_index, const size_t& count) noexcept
+		constexpr view_t Subrange(const size_t& first_index, const size_t& count) noexcept
 		{
-			return span_t{ myPool.begin() + first_index, count };
+			return view_t{ myPool.begin() + first_index, count };
 		}
 
 		[[nodiscard]]
-		constexpr const_span_t Subrange(const size_t& first_index, const size_t& count) const noexcept
+		constexpr const_view_t Subrange(const size_t& first_index, const size_t& count) const noexcept
 		{
-			return const_span_t{ myPool.begin() + first_index, count };
+			return const_view_t{ myPool.begin() + first_index, count };
 		}
 
 		[[nodiscard]]
