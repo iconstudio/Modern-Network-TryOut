@@ -1,5 +1,9 @@
+module;
+#include <algorithm>
+
 module Net.SocketPool;
-import <algorithm>;
+import <type_traits>;
+import <array>;
 
 net::SocketPool::SocketPool(const size_t& size)
 	: myStation(), myPool()
@@ -85,4 +89,77 @@ const noexcept
 	return std::ranges::find(myPool, id
 		, [](const EncapsuledSocket& ck) noexcept { return ck.id; }
 	);
+}
+
+template<std::uint64_t ...Ids>
+net::SocketPool::seek_t
+net::SocketPool::Search()
+noexcept
+{
+	std::array<std::uint64_t, sizeof...(Ids)> indices{ static_cast<std::uint64_t&&>(Ids)... };
+	return Search(indices);
+}
+
+template<std::uint64_t ...Ids>
+net::SocketPool::const_seek_t
+net::SocketPool::Search()
+const noexcept
+{
+	std::array<std::uint64_t, sizeof...(Ids)> indices{ static_cast<std::uint64_t&&>(Ids)... };
+	return Search(indices);
+}
+
+template<net::actual_integral ...Ids>
+net::SocketPool::seek_t
+net::SocketPool::Search(Ids ...ids)
+noexcept
+{
+	std::array<std::uint64_t, sizeof...(Ids)> indices{ static_cast<std::uint64_t&&>(ids)... };
+	return Search(indices);
+}
+
+template<net::actual_integral ...Ids>
+net::SocketPool::const_seek_t
+net::SocketPool::Search(Ids ...ids)
+const noexcept
+{
+	std::array<std::uint64_t, sizeof...(Ids)> indices{ static_cast<std::uint64_t&&>(ids)... };
+	return Search(indices);
+}
+
+net::SocketPool::seek_t
+net::SocketPool::Search(std::span<std::uint64_t> ids) noexcept
+{
+#if _DEBUG
+	auto r =
+#else // _DEBUG
+	return
+#endif // !_DEBUG
+		std::ranges::search(myPool.begin(), myPool.end(), ids.cbegin(), ids.cend()
+			, [](const EncapsuledSocket& ck, const std::uint64_t& id) noexcept -> bool {
+		return ck.id == id;
+	});
+
+#if _DEBUG
+	return r;
+#endif // _DEBUG
+}
+
+net::SocketPool::const_seek_t
+net::SocketPool::Search(std::span<std::uint64_t> ids)
+const noexcept
+{
+#if _DEBUG
+	auto r =
+#else // _DEBUG
+	return
+#endif // !_DEBUG
+		std::ranges::search(myPool, ids
+			, [](const EncapsuledSocket& ck, const std::uint64_t& id) noexcept -> bool {
+		return ck.id == id;
+	});
+
+#if _DEBUG
+	return r;
+#endif // _DEBUG
 }
