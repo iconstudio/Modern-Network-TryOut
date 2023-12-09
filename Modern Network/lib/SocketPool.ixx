@@ -1,4 +1,5 @@
 export module Net.SocketPool;
+import Net.Constraints;
 import Net.InternetProtocols;
 import Net.IpAddress;
 import Net.Socket;
@@ -30,6 +31,8 @@ export namespace net
 		using const_iterator = data_t::const_iterator;
 		using view_t = std::span<EncapsuledSocket>;
 		using const_view_t = std::span<const EncapsuledSocket>;
+		using seek_t = std::ranges::subrange<iterator>;
+		using const_seek_t = std::ranges::subrange<const_iterator>;
 
 		SocketPool(const size_t& size);
 		~SocketPool();
@@ -43,6 +46,16 @@ export namespace net
 		data_t::iterator Find(std::uint64_t id) noexcept;
 		[[nodiscard]]
 		data_t::const_iterator Find(std::uint64_t id) const noexcept;
+		template<std::uint64_t... Ids>
+		[[nodiscard]] seek_t Search() noexcept;
+		template<std::uint64_t... Ids>
+		[[nodiscard]] const_seek_t Search() const noexcept;
+		template<actual_integral... Ids>
+		[[nodiscard]] seek_t Search(Ids... ids) noexcept;
+		template<actual_integral... Ids>
+		[[nodiscard]] const_seek_t Search(Ids... ids) const noexcept;
+		[[nodiscard]] seek_t Search(std::span<std::uint64_t> id) noexcept;
+		[[nodiscard]] const_seek_t Search(std::span<std::uint64_t> ids) const noexcept;
 
 		[[nodiscard]]
 		constexpr view_t Subrange(const size_t& count) noexcept
