@@ -141,6 +141,9 @@ export namespace net
 			return myPool.max_size();
 		}
 
+		[[nodiscard]]
+		bool IsAvailable() const noexcept;
+
 	protected:
 		io::Station myStation;
 

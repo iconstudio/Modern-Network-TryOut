@@ -163,3 +163,10 @@ const noexcept
 	return r;
 #endif // _DEBUG
 }
+
+bool
+net::SocketPool::IsAvailable()
+const noexcept
+{
+	return myStation.GetHandle() != nullptr && 0 < myPool.capacity();
+}
