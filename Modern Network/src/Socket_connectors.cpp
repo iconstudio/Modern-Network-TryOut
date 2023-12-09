@@ -324,7 +324,7 @@ const
 	char temp_buffer[::DEFAULT_ACCEPT_SIZE * 2];
 	if (not IsAvailable())
 	{
-		return std::unexpected(AcquireNetworkError());
+		return unexpected(AcquireNetworkError());
 	}
 
 	::DWORD result_bytes{};
@@ -337,7 +337,7 @@ const
 		, reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context)))
 	)
 	{
-		return 1U;
+		return result_bytes;
 	}
 	else
 	{
@@ -358,7 +358,7 @@ const
 {
 	if (not IsAvailable())
 	{
-		return std::unexpected(AcquireNetworkError());
+		return unexpected(AcquireNetworkError());
 	}
 
 	::DWORD result_bytes{};
@@ -371,7 +371,7 @@ const
 		, reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context)))
 	)
 	{
-		return 1U;
+		return result_bytes;
 	}
 	else
 	{
