@@ -79,9 +79,17 @@ export namespace net
 			return nativePointer;
 		}
 
+		[[nodiscard]]
+		constexpr bool operator==(nullptr_t) const noexcept
+		{
+			return nativePointer == nullptr;
+		}
+
+		[[nodiscard]]
+		constexpr bool operator==(const NativeHandle&) const noexcept = default;
+
 		constexpr NativeHandle(NativeHandle&&) noexcept = default;
 		constexpr NativeHandle& operator=(NativeHandle&&) noexcept = default;
-		constexpr bool operator==(const NativeHandle&) const noexcept = default;
 
 	private:
 		constexpr NativeHandle(void* const& handle) noexcept
