@@ -136,3 +136,42 @@ export namespace net
 		data_t myPool;
 	};
 }
+
+export namespace std
+{
+	[[nodiscard]]
+	constexpr auto begin(net::SocketPool& pool) noexcept
+	{
+		return pool.begin();
+	}
+
+	[[nodiscard]]
+	constexpr auto end(net::SocketPool& pool) noexcept
+	{
+		return pool.end();
+	}
+
+	[[nodiscard]]
+	constexpr auto begin(const net::SocketPool& pool) noexcept
+	{
+		return pool.begin();
+	}
+
+	[[nodiscard]]
+	constexpr auto end(const net::SocketPool& pool) noexcept
+	{
+		return pool.end();
+	}
+
+	[[nodiscard]]
+	constexpr auto cbegin(const net::SocketPool& pool) noexcept
+	{
+		return pool.cbegin();
+	}
+
+	[[nodiscard]]
+	constexpr auto cend(const net::SocketPool& pool) noexcept
+	{
+		return pool.cend();
+	}
+}
