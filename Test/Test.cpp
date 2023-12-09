@@ -12,6 +12,7 @@ import Net.IpAddress.IPv4;
 import Net.Io.Context;
 import Net.Io.Station;
 import Net.Socket;
+import Net.SocketPool;
 import Net.Coroutine;
 import Net.Coroutine.Awaiter.Concurrent;
 //import Net.Scheduler;
@@ -31,6 +32,8 @@ net::Socket lastClient = net::Socket::EmptySocket;
 net::io::Context acceptContext{};
 net::SocketResult acceptStatus{};
 volatile std::atomic_flag isClientReady{};
+
+net::SocketPool clientPool{ 40 };
 
 net::Coroutine Accepter();
 net::Coroutine Worker();
