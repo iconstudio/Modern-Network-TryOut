@@ -37,25 +37,25 @@ export namespace net
 		SocketPool(const size_t& size);
 		~SocketPool();
 
-		void Add(Socket* const& socket_ptr, std::uint64_t id);
+		void Add(Socket* const& socket_ptr, const std::uint64_t id);
 		[[nodiscard]]
-		bool TryAdd(Socket* const& socket_ptr, std::uint64_t id) noexcept;
+		bool TryAdd(Socket* const& socket_ptr, const std::uint64_t id) noexcept;
 		Socket* const Allocate(std::uint64_t id, SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family);
 
 		[[nodiscard]]
-		data_t::iterator Find(std::uint64_t id) noexcept;
+		data_t::iterator Find(const std::uint64_t id) noexcept;
 		[[nodiscard]]
-		data_t::const_iterator Find(std::uint64_t id) const noexcept;
+		data_t::const_iterator Find(const std::uint64_t id) const noexcept;
 		template<std::uint64_t... Ids>
 		[[nodiscard]] seek_t Search() noexcept;
 		template<std::uint64_t... Ids>
 		[[nodiscard]] const_seek_t Search() const noexcept;
 		template<actual_integral... Ids>
-		[[nodiscard]] seek_t Search(Ids... ids) noexcept;
+		[[nodiscard]] seek_t Search(Ids&&... ids) noexcept;
 		template<actual_integral... Ids>
-		[[nodiscard]] const_seek_t Search(Ids... ids) const noexcept;
-		[[nodiscard]] seek_t Search(std::span<std::uint64_t> id) noexcept;
-		[[nodiscard]] const_seek_t Search(std::span<std::uint64_t> ids) const noexcept;
+		[[nodiscard]] const_seek_t Search(Ids&&... ids) const noexcept;
+		[[nodiscard]] seek_t Search(const std::span<const std::uint64_t> id) noexcept;
+		[[nodiscard]] const_seek_t Search(const std::span<const std::uint64_t> ids) const noexcept;
 
 		[[nodiscard]]
 		constexpr view_t Subrange(const size_t& count) noexcept

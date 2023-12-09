@@ -26,7 +26,7 @@ net::SocketPool::~SocketPool()
 }
 
 void
-net::SocketPool::Add(net::Socket* const& socket_ptr, std::uint64_t id)
+net::SocketPool::Add(net::Socket* const& socket_ptr, const std::uint64_t id)
 {
 	if (myStation.Register(*socket_ptr, id))
 	{
@@ -36,7 +36,7 @@ net::SocketPool::Add(net::Socket* const& socket_ptr, std::uint64_t id)
 }
 
 bool
-net::SocketPool::TryAdd(net::Socket* const& socket_ptr, std::uint64_t id)
+net::SocketPool::TryAdd(net::Socket* const& socket_ptr, const std::uint64_t id)
 noexcept
 {
 	if (myStation.Register(*socket_ptr, id))
@@ -58,7 +58,7 @@ noexcept
 }
 
 net::Socket* const
-net::SocketPool::Allocate(std::uint64_t id, SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family)
+net::SocketPool::Allocate(const std::uint64_t id, SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family)
 {
 	auto sk_result = Socket::Create(type, protocol, family);
 	if (sk_result.IsAvailable())
@@ -74,7 +74,7 @@ net::SocketPool::Allocate(std::uint64_t id, SocketType type, const InternetProto
 }
 
 net::SocketPool::data_t::iterator
-net::SocketPool::Find(std::uint64_t id)
+net::SocketPool::Find(const std::uint64_t id)
 noexcept
 {
 	return std::ranges::find(myPool, id
@@ -83,7 +83,7 @@ noexcept
 }
 
 net::SocketPool::data_t::const_iterator
-net::SocketPool::Find(std::uint64_t id)
+net::SocketPool::Find(const std::uint64_t id)
 const noexcept
 {
 	return std::ranges::find(myPool, id
@@ -111,7 +111,7 @@ const noexcept
 
 template<net::actual_integral ...Ids>
 net::SocketPool::seek_t
-net::SocketPool::Search(Ids ...ids)
+net::SocketPool::Search(Ids&& ...ids)
 noexcept
 {
 	std::array<std::uint64_t, sizeof...(Ids)> indices{ static_cast<std::uint64_t&&>(ids)... };
@@ -120,7 +120,7 @@ noexcept
 
 template<net::actual_integral ...Ids>
 net::SocketPool::const_seek_t
-net::SocketPool::Search(Ids ...ids)
+net::SocketPool::Search(Ids&& ...ids)
 const noexcept
 {
 	std::array<std::uint64_t, sizeof...(Ids)> indices{ static_cast<std::uint64_t&&>(ids)... };
@@ -128,7 +128,7 @@ const noexcept
 }
 
 net::SocketPool::seek_t
-net::SocketPool::Search(std::span<std::uint64_t> ids) noexcept
+net::SocketPool::Search(const std::span<const std::uint64_t> ids) noexcept
 {
 #if _DEBUG
 	auto r =
@@ -146,7 +146,7 @@ net::SocketPool::Search(std::span<std::uint64_t> ids) noexcept
 }
 
 net::SocketPool::const_seek_t
-net::SocketPool::Search(std::span<std::uint64_t> ids)
+net::SocketPool::Search(const std::span<const std::uint64_t> ids)
 const noexcept
 {
 #if _DEBUG
