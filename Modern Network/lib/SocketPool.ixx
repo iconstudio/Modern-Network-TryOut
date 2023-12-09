@@ -103,6 +103,18 @@ export namespace net
 		}
 
 		[[nodiscard]]
+		constexpr data_t::pointer data() noexcept
+		{
+			return myPool.data();
+		}
+
+		[[nodiscard]]
+		constexpr data_t::const_pointer data() const noexcept
+		{
+			return myPool.data();
+		}
+
+		[[nodiscard]]
 		constexpr data_t::size_type size() const noexcept
 		{
 			return myPool.size();
