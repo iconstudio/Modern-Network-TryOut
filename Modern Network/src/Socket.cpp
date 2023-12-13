@@ -11,6 +11,8 @@ import <print>;
 net::SocketOptioningResult RawSetOption(const net::NativeSocket& sock, int option, const void* buffer, int buff_size) noexcept;
 net::SocketOptioningResult RawGetOption(const net::NativeSocket& sock, int option) noexcept;
 
+static inline constexpr unsigned long DEFAULT_ACCEPT_SIZE = sizeof(SOCKADDR_IN) + 16UL;
+
 using namespace net;
 
 const Socket::EmptySocketType Socket::EmptySocket = {};
@@ -22,6 +24,7 @@ constinit static inline std::once_flag internalInitFlag{};
 constinit static inline ::WSAOVERLAPPED rioContext{};
 constinit static inline ::RIO_EXTENSION_FUNCTION_TABLE rioFunctions{};
 
+constinit static inline ::LPFN_ACCEPTEX fnAcceptEx = nullptr;
 constinit static inline ::LPFN_TRANSMITFILE fnTransmitFile = nullptr;
 
 static void CALLBACK rioRoutine(const ::DWORD err, const ::DWORD bytes, ::LPWSAOVERLAPPED ctx, const ::DWORD flags)
@@ -31,6 +34,7 @@ static void CALLBACK rioRoutine(const ::DWORD err, const ::DWORD bytes, ::LPWSAO
 		std::println("Socket error: {}", err);
 	}
 }
+void SocketFunctionInitializer(const net::NativeSocket& sock);
 
 Socket::Socket()
 noexcept
@@ -49,29 +53,7 @@ Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily fa
 	, myProtocol(protocol), myFamily(family)
 	, IsAddressReusable(this, false, SetAddressReusable)
 {
-	std::call_once(internalInitFlag, [&]() {
-		::GUID fntable_id = WSAID_MULTIPLE_RIO;
-		::DWORD temp_bytes = 0;
-
-		auto* fntable_addr = std::addressof(fntable_id);
-		auto* bytes_addr = std::addressof(temp_bytes);
-
-#if _DEBUG
-		int result = 
-#endif // _DEBUG
-			::WSAIoctl(sock, SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER
-			, fntable_addr, sizeof(GUID)
-			, reinterpret_cast<void**>(std::addressof(rioFunctions)), sizeof(rioFunctions)
-			, bytes_addr
-			, std::addressof(rioContext), ::rioRoutine);
-
-		fntable_id = WSAID_TRANSMITFILE;
-		::WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER
-			, fntable_addr, sizeof(GUID)
-			, std::addressof(fnTransmitFile), sizeof(fnTransmitFile)
-			, bytes_addr
-			, nullptr, nullptr);
-	});
+	std::call_once(internalInitFlag, ::SocketFunctionInitializer, sock);
 }
 
 Socket&
@@ -200,6 +182,75 @@ const noexcept
 	{
 		error_code = SocketClosingErrorCodes::NotASocket;
 		return false;
+	}
+}
+
+net::SocketResult
+net::Socket::ReserveAccept(net::io::Context& context, Socket& client)
+const
+{
+	char temp_buffer[::DEFAULT_ACCEPT_SIZE * 2];
+	if (not IsAvailable())
+	{
+		return unexpected(AcquireNetworkError());
+	}
+
+	::DWORD result_bytes{};
+
+	if (1 == ::fnAcceptEx(myHandle, client.GetHandle()
+		, temp_buffer, 0UL
+		, ::DEFAULT_ACCEPT_SIZE
+		, ::DEFAULT_ACCEPT_SIZE
+		, std::addressof(result_bytes)
+		, reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context)))
+	)
+	{
+		return result_bytes;
+	}
+	else
+	{
+		if (auto error = AcquireNetworkError(); error != ErrorCodes::PendedIoOperation)
+		{
+			return unexpected(std::move(error));
+		}
+		else
+		{
+			return 0U;
+		}
+	}
+}
+
+net::SocketResult
+net::Socket::ReserveAccept(net::io::Context& context, Socket& client, std::span<std::byte> accept_buffer)
+const
+{
+	if (not IsAvailable())
+	{
+		return unexpected(AcquireNetworkError());
+	}
+
+	::DWORD result_bytes{};
+
+	if (1 == ::fnAcceptEx(myHandle, client.GetHandle()
+		, accept_buffer.data(), static_cast<::DWORD>(accept_buffer.size_bytes())
+		, ::DEFAULT_ACCEPT_SIZE
+		, ::DEFAULT_ACCEPT_SIZE
+		, std::addressof(result_bytes)
+		, reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context)))
+	)
+	{
+		return result_bytes;
+	}
+	else
+	{
+		if (auto error = AcquireNetworkError(); error != ErrorCodes::PendedIoOperation)
+		{
+			return unexpected(std::move(error));
+		}
+		else
+		{
+			return 0U;
+		}
 	}
 }
 
@@ -365,4 +416,43 @@ noexcept
 	}
 
 	return unexpected(AcquireSocketOptionError());
+}
+
+void
+SocketFunctionInitializer(const net::NativeSocket& sock)
+{
+	::GUID fntable_id = WSAID_MULTIPLE_RIO;
+	::DWORD temp_bytes = 0;
+
+	::GUID* fntable_addr = std::addressof(fntable_id);
+	::DWORD* bytes_addr = std::addressof(temp_bytes);
+
+#if _DEBUG
+	int result =
+#endif // _DEBUG
+		::WSAIoctl(sock, SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER
+		, fntable_addr, sizeof(GUID)
+		, reinterpret_cast<void**>(std::addressof(rioFunctions)), sizeof(rioFunctions)
+		, bytes_addr
+		, std::addressof(rioContext), ::rioRoutine);
+
+	fntable_id = WSAID_ACCEPTEX;
+#if _DEBUG
+	result =
+#endif // _DEBUG
+	::WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER
+		, fntable_addr, sizeof(GUID)
+		, std::addressof(fnAcceptEx), sizeof(fnAcceptEx)
+		, bytes_addr
+		, nullptr, nullptr);
+
+	fntable_id = WSAID_TRANSMITFILE;
+#if _DEBUG
+	result =
+#endif // _DEBUG
+	::WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER
+		, fntable_addr, sizeof(GUID)
+		, std::addressof(fnTransmitFile), sizeof(fnTransmitFile)
+		, bytes_addr
+		, nullptr, nullptr);
 }
