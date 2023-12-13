@@ -89,14 +89,18 @@ const noexcept
 
 bool
 Socket::Close()
-noexcept
+const noexcept
 {
 	if (IsAvailable())
 	{
-		bool result = (0 == ::closesocket(myHandle));
-		myHandle = INVALID_SOCKET;
-
-		return result;
+		if (IsAddressReusable)
+		{
+			return (1 == ::TransmitFile(myHandle, nullptr, 0, 0, nullptr, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET));
+		}
+		else
+		{
+			return (0 == ::closesocket(myHandle));
+		}
 	}
 	else
 	{
@@ -106,19 +110,33 @@ noexcept
 
 bool
 Socket::Close(SocketClosingErrorCodes& error_code)
-noexcept
+const noexcept
 {
 	if (IsAvailable())
 	{
-		if (0 == ::closesocket(myHandle))
+		if (IsAddressReusable)
 		{
-			myHandle = INVALID_SOCKET;
-			return true;
+			if (1 == ::TransmitFile(myHandle, nullptr, 0, 0, nullptr, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET))
+			{
+				return true;
+			}
+			else
+			{
+				error_code = AcquireClosingError();
+				return false;
+			}
 		}
 		else
 		{
-			error_code = AcquireClosingError();
-			return false;
+			if (0 == ::closesocket(myHandle))
+			{
+				return true;
+			}
+			else
+			{
+				error_code = AcquireClosingError();
+				return false;
+			}
 		}
 	}
 	else

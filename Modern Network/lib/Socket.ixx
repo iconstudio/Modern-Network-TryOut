@@ -56,8 +56,8 @@ export namespace net
 
 		bool ReusableAddress() const noexcept;
 		void ReusableAddress(bool flag) noexcept;
-		bool Close() noexcept;
-		bool Close(SocketClosingErrorCodes& error_code) noexcept;
+		bool Close() const noexcept;
+		bool Close(SocketClosingErrorCodes& error_code) const noexcept;
 
 		// Opt-out Methods
 
