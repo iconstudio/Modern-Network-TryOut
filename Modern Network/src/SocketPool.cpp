@@ -64,7 +64,7 @@ net::SocketPool::Allocate(const std::uint64_t id, SocketType type, const Interne
 	if (sk_result.IsAvailable())
 	{
 		auto& ck = myPool.emplace_back();
-		*ck.sk = std::exchange(sk_result, {});
+		ck.sk = new Socket{ std::exchange(sk_result, {}) };
 		ck.id = id;
 
 		return ck.sk;
