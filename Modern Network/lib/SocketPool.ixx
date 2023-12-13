@@ -42,6 +42,11 @@ export namespace net
 		bool TryAdd(Socket* const& socket_ptr, const std::uint64_t id) noexcept;
 		Socket* const Allocate(std::uint64_t id, SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family);
 
+		[[nodiscard]] auto Schedule() noexcept
+		{
+			return myStation.Schedule();
+		}
+
 		[[nodiscard]]
 		data_t::iterator Find(const std::uint64_t id) noexcept;
 		[[nodiscard]]
