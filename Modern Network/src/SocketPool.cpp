@@ -63,11 +63,21 @@ net::SocketPool::Allocate(const std::uint64_t id, SocketType type, const Interne
 	auto sk_result = Socket::Create(type, protocol, family);
 	if (sk_result.IsAvailable())
 	{
-		auto& ck = myPool.emplace_back();
-		ck.sk = new Socket{ std::exchange(sk_result, {}) };
-		ck.id = id;
+		auto sk = new Socket{ std::exchange(sk_result, {}) };
 
-		return ck.sk;
+		if (myStation.Register(*sk, id))
+		{
+			auto& ck = myPool.emplace_back();
+			ck.sk = sk;
+			ck.id = id;
+
+			return ck.sk;
+		}
+		else
+		{
+			sk->Close();
+			delete sk;
+		}
 	}
 
 	return nullptr;
