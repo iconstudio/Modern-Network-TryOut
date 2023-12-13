@@ -18,7 +18,7 @@ net::Coroutine Worker();
 
 int main()
 {
-	std::println("=========$ Server $=========");
+	std::println("=========$ Client $=========");
 	std::println("=========== Init ===========");
 	net::core::Initialize();
 

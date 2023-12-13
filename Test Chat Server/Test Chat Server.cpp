@@ -12,7 +12,24 @@ import Net.Coroutine;
 import Net.Coroutine.Awaiter.Concurrent;
 
 net::Socket serverListener{};
-net::SocketPool clientPool{ 40 };
+
+constexpr size_t clientsNumber = 40;
+net::SocketPool clientPool{ clientsNumber };
+
+net::Coroutine Worker();
+
+enum class IoOperation
+{
+	None = 0, Accept, Connect, Recv, Send, Close,
+};
+
+class ExContext : public net::io::Context
+{
+public:
+	using Context::Context;
+
+	IoOperation myOperation;
+};
 
 int main()
 {
@@ -27,7 +44,31 @@ int main()
 	serverListener.IsAddressReusable = true;
 
 	clientPool.Add(&serverListener, 0ULL);
+	for (size_t i = 0; i < clientsNumber; ++i)
+	{
+		auto socket = clientPool.Allocate(i + 1, net::SocketType::Asynchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
+
+		socket->IsAddressReusable = true;
+	}
 
 	std::println("=========== Start ===========");
+	std::vector<net::Coroutine> workers{};
+	for (size_t i = 0; i < 6; ++i)
+	{
+		auto& worker = workers.emplace_back(Worker());
+		worker.StartAsync();
+	}
+
+	std::println("=========== Update ===========");
+
+	while (true)
+	{
+
+	}
+	net::core::Annihilate();
+}
+
+net::Coroutine Worker()
+{
 
 }
