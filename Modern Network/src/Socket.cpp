@@ -22,6 +22,8 @@ constinit static inline std::once_flag internalInitFlag{};
 constinit static inline ::WSAOVERLAPPED rioContext{};
 constinit static inline ::RIO_EXTENSION_FUNCTION_TABLE rioFunctions{};
 
+constinit static inline ::LPFN_TRANSMITFILE fnTransmitFile = nullptr;
+
 static void CALLBACK rioRoutine(const ::DWORD err, const ::DWORD bytes, ::LPWSAOVERLAPPED ctx, const ::DWORD flags)
 {
 	if (0 != err)
@@ -51,14 +53,24 @@ Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily fa
 		::GUID fntable_id = WSAID_MULTIPLE_RIO;
 		::DWORD temp_bytes = 0;
 
+		auto* fntable_addr = std::addressof(fntable_id);
+		auto* bytes_addr = std::addressof(temp_bytes);
+
 #if _DEBUG
-		const int result = 
+		int result = 
 #endif // _DEBUG
 			::WSAIoctl(sock, SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER
-			, std::addressof(fntable_id), sizeof(GUID)
+			, fntable_addr, sizeof(GUID)
 			, reinterpret_cast<void**>(std::addressof(rioFunctions)), sizeof(rioFunctions)
-			, std::addressof(temp_bytes)
+			, bytes_addr
 			, std::addressof(rioContext), ::rioRoutine);
+
+		fntable_id = WSAID_TRANSMITFILE;
+		::WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER
+			, fntable_addr, sizeof(GUID)
+			, std::addressof(fnTransmitFile), sizeof(fnTransmitFile)
+			, bytes_addr
+			, nullptr, nullptr);
 	});
 }
 
@@ -95,7 +107,7 @@ const noexcept
 	{
 		if (IsAddressReusable)
 		{
-			return (1 == ::TransmitFile(myHandle, nullptr, 0, 0, nullptr, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET));
+			return (1 == ::fnTransmitFile(myHandle, nullptr, 0, 0, nullptr, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET));
 		}
 		else
 		{
@@ -116,7 +128,7 @@ const noexcept
 	{
 		if (IsAddressReusable)
 		{
-			if (1 == ::TransmitFile(myHandle, nullptr, 0, 0, nullptr, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET))
+			if (1 == ::fnTransmitFile(myHandle, nullptr, 0, 0, nullptr, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET))
 			{
 				return true;
 			}
@@ -155,11 +167,11 @@ const noexcept
 		auto* ctx = reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context));
 		if (IsAddressReusable)
 		{
-			return (1 == ::TransmitFile(myHandle, nullptr, 0, 0, ctx, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET));
+			return (1 == ::fnTransmitFile(myHandle, nullptr, 0, 0, ctx, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET));
 		}
 		else
 		{
-			return (1 == ::TransmitFile(myHandle, nullptr, 0, 0, ctx, nullptr, TF_DISCONNECT));
+			return (1 == ::fnTransmitFile(myHandle, nullptr, 0, 0, ctx, nullptr, TF_DISCONNECT));
 		}
 	}
 	else
