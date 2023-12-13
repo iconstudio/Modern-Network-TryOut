@@ -146,6 +146,51 @@ const noexcept
 	}
 }
 
+bool
+net::Socket::CloseAsync(io::Context& context)
+const noexcept
+{
+	if (IsAvailable())
+	{
+		auto* ctx = reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context));
+		if (IsAddressReusable)
+		{
+			return (1 == ::TransmitFile(myHandle, nullptr, 0, 0, ctx, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET));
+		}
+		else
+		{
+			return (1 == ::TransmitFile(myHandle, nullptr, 0, 0, ctx, nullptr, TF_DISCONNECT));
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool
+net::Socket::CloseAsync(io::Context& context, SocketClosingErrorCodes& error_code)
+const noexcept
+{
+	if (IsAvailable())
+	{
+		if (CloseAsync(context))
+		{
+			return true;
+		}
+		else
+		{
+			error_code = AcquireClosingError();
+			return false;
+		}
+	}
+	else
+	{
+		error_code = SocketClosingErrorCodes::NotASocket;
+		return false;
+	}
+}
+
 bool net::Socket::ReusableAddress() const noexcept
 {
 	return IsAddressReusable;

@@ -58,6 +58,8 @@ export namespace net
 		void ReusableAddress(bool flag) noexcept;
 		bool Close() const noexcept;
 		bool Close(SocketClosingErrorCodes& error_code) const noexcept;
+		bool CloseAsync(io::Context& context) const noexcept;
+		bool CloseAsync(io::Context& context, SocketClosingErrorCodes& error_code) const noexcept;
 
 		// Opt-out Methods
 
