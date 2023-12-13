@@ -26,6 +26,9 @@ export namespace net
 	class IProperty<T, Context, false, Copyable, Readonly, Nothrow> final
 	{
 	public:
+		using const_pointer = conditional_t<std::is_pointer_v<remove_cvref_t<T>>, const T, const T*>;
+		using pointer = conditional_t<Readonly, const_pointer, conditional_t<std::is_pointer_v<remove_cvref_t<T>>, T, T*>>;
+
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T>)
 			requires default_initializable<T> = default;
@@ -95,6 +98,18 @@ export namespace net
 			return *this;
 		}
 
+		[[nodiscard]]
+		constexpr pointer operator->() noexcept
+		{
+			return std::addressof(myValue);
+		}
+
+		[[nodiscard]]
+		constexpr const_pointer operator->() const noexcept
+		{
+			return std::addressof(myValue);
+		}
+
 	protected:
 		T myValue;
 	};
@@ -103,6 +118,9 @@ export namespace net
 	class IProperty<T, void, true, Copyable, Readonly, Nothrow> final
 	{
 	public:
+		using const_pointer = conditional_t<std::is_pointer_v<remove_cvref_t<T>>, const T, const T*>;
+		using pointer = conditional_t<Readonly, const_pointer, conditional_t<std::is_pointer_v<remove_cvref_t<T>>, T, T*>>;
+
 		using functor_t = std::conditional_t<Nothrow, ::prp_nothrow_functor_t<void, T&>, ::prp_functor_t<void, T&>>;
 
 		constexpr IProperty()
@@ -202,6 +220,18 @@ export namespace net
 			return *this;
 		}
 
+		[[nodiscard]]
+		constexpr pointer operator->() noexcept
+		{
+			return std::addressof(myValue);
+		}
+
+		[[nodiscard]]
+		constexpr const_pointer operator->() const noexcept
+		{
+			return std::addressof(myValue);
+		}
+
 	protected:
 		T myValue;
 		functor_t mySetter;
@@ -211,6 +241,9 @@ export namespace net
 	class IProperty<T, Context, true, Copyable, Readonly, Nothrow> final
 	{
 	public:
+		using const_pointer = conditional_t<std::is_pointer_v<remove_cvref_t<T>>, const T, const T*>;
+		using pointer = conditional_t<Readonly, const_pointer, conditional_t<std::is_pointer_v<remove_cvref_t<T>>, T, T*>>;
+
 		using functor_t = std::conditional_t<Nothrow, ::prp_nothrow_functor_t<void, Context&, T&>, ::prp_functor_t<void, Context&, T&>>;
 
 		constexpr IProperty()
@@ -318,6 +351,18 @@ export namespace net
 			mySetter(*myContext, myValue);
 
 			return *this;
+		}
+
+		[[nodiscard]]
+		constexpr pointer operator->() noexcept
+		{
+			return std::addressof(myValue);
+		}
+
+		[[nodiscard]]
+		constexpr const_pointer operator->() const noexcept
+		{
+			return std::addressof(myValue);
 		}
 
 	protected:
