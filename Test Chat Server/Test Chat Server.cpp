@@ -37,7 +37,7 @@ static inline constexpr size_t clientIdOffset = 1;
 net::SocketPool clientPool{ clientsNumber };
 std::array<ExContext, clientsNumber> clientContexts{};
 // all-in-one circular buffer
-std::array<std::byte, clientsNumber* sizeRecvBuffer> clientsRecvBuffer{};
+std::array<std::byte, clientsNumber * sizeRecvBuffer> clientsRecvBuffer{};
 
 [[nodiscard]]
 constexpr size_t GetIndexOnID(const size_t& id) noexcept
@@ -132,8 +132,8 @@ int main()
 
 net::Coroutine Worker(size_t nth)
 {
-	std::println("Worker {} is started", nth);
 	auto&& io_schedule = co_await clientPool.Schedule();
+	std::println("Worker {} is started", nth);
 
 	while (true)
 	{
@@ -210,11 +210,28 @@ net::Coroutine Worker(size_t nth)
 
 					case IoOperation::Send:
 					{
+						const auto& bytes = io_event.ioBytes;
+
 						if (not io_event.isSucceed)
 						{
 							std::println("Worker has been failed as sending on client {}", id);
 
 							delete ex_context;
+
+							if (0 == bytes)
+							{
+								std::println("Closing client {} as sending has been failed", id);
+
+								auto it = clientPool.Find(id);
+								auto& client = *it;
+								auto& socket = client.sk;
+
+								auto& ctx = clientContexts[GetIndexOnID(id)];
+								ctx.myOperation = IoOperation::Close;
+
+								socket->CloseAsync(ctx);
+							}
+
 							break; // switch (op)
 						}
 
@@ -225,9 +242,10 @@ net::Coroutine Worker(size_t nth)
 					case IoOperation::Close:
 					{
 						ex_context->Clear();
-						ex_context->myOperation = IoOperation::Accept;
+						std::println("Client {} is closed", id);
 
 						// accept again
+						ex_context->myOperation = IoOperation::Accept;
 						auto it = clientPool.Find(id);
 						auto& client = *it;
 						auto& socket = client.sk;
