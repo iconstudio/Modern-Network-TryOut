@@ -19,14 +19,23 @@ noexcept
 	auto& ev_handle = ioSchedule.GetEvent();
 
 	::LPOVERLAPPED overlapped{};
-	::BOOL result = ::GetQueuedCompletionStatus(ioSchedule.ioStation.GetHandle()
-		, std::addressof(ev_handle.ioBytes)
-		, std::addressof(ev_handle.eventId)
-		, std::addressof(overlapped)
-		, INFINITE);
+	::BOOL result = 0;
+	try
+	{
+		result = ::GetQueuedCompletionStatus(ioSchedule.ioStation.GetHandle()
+			, std::addressof(ev_handle.ioBytes)
+			, std::addressof(ev_handle.eventId)
+			, std::addressof(overlapped)
+			, INFINITE);
 
-	ev_handle.ioContext = reinterpret_cast<net::io::Context*>(overlapped);
-	ev_handle.isSucceed = (1 == result);
+		ev_handle.ioContext = reinterpret_cast<net::io::Context*>(overlapped);
+		ev_handle.isSucceed = (1 == result);
+	}
+	catch (...)
+	{
+		ev_handle.ioContext = nullptr;
+		ev_handle.isSucceed = false;
+	}
 
 	return ev_handle;
 }
