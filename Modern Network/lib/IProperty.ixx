@@ -26,8 +26,8 @@ export namespace net
 	class IProperty<T, Context, false, Copyable, Readonly, Nothrow> final
 	{
 	public:
-		using const_pointer = conditional_t<std::is_pointer_v<remove_cvref_t<T>>, const T, const T*>;
-		using pointer = conditional_t<Readonly, const_pointer, conditional_t<std::is_pointer_v<remove_cvref_t<T>>, T, T*>>;
+		using const_pointer = conditional_t<std::is_pointer_v<T>, add_pointer_t<const remove_pointer_t<T>>, const T*>;
+		using pointer = conditional_t<Readonly, const_pointer, conditional_t<std::is_pointer_v<T>, T, T*>>;
 
 		constexpr IProperty()
 			noexcept(nothrow_default_constructibles<T>)
@@ -100,14 +100,31 @@ export namespace net
 
 		[[nodiscard]]
 		constexpr pointer operator->() noexcept
+			requires (not Readonly)
 		{
-			return std::addressof(myValue);
+			if constexpr (std::is_pointer_v<T>)
+			{
+
+				return myValue;
+			}
+			else
+			{
+				return std::addressof(myValue);
+			}
 		}
 
 		[[nodiscard]]
 		constexpr const_pointer operator->() const noexcept
 		{
-			return std::addressof(myValue);
+			if constexpr (std::is_pointer_v<T>)
+			{
+
+				return myValue;
+			}
+			else
+			{
+				return std::addressof(myValue);
+			}
 		}
 
 	protected:
@@ -118,8 +135,8 @@ export namespace net
 	class IProperty<T, void, true, Copyable, Readonly, Nothrow> final
 	{
 	public:
-		using const_pointer = conditional_t<std::is_pointer_v<remove_cvref_t<T>>, const T, const T*>;
-		using pointer = conditional_t<Readonly, const_pointer, conditional_t<std::is_pointer_v<remove_cvref_t<T>>, T, T*>>;
+		using const_pointer = conditional_t<std::is_pointer_v<T>, add_pointer_t<const remove_pointer_t<T>>, const T*>;
+		using pointer = conditional_t<Readonly, const_pointer, conditional_t<std::is_pointer_v<T>, T, T*>>;
 
 		using functor_t = std::conditional_t<Nothrow, ::prp_nothrow_functor_t<void, T&>, ::prp_functor_t<void, T&>>;
 
@@ -222,14 +239,31 @@ export namespace net
 
 		[[nodiscard]]
 		constexpr pointer operator->() noexcept
+			requires (not Readonly)
 		{
-			return std::addressof(myValue);
+			if constexpr (std::is_pointer_v<T>)
+			{
+
+				return myValue;
+			}
+			else
+			{
+				return std::addressof(myValue);
+			}
 		}
 
 		[[nodiscard]]
 		constexpr const_pointer operator->() const noexcept
 		{
-			return std::addressof(myValue);
+			if constexpr (std::is_pointer_v<T>)
+			{
+
+				return myValue;
+			}
+			else
+			{
+				return std::addressof(myValue);
+			}
 		}
 
 	protected:
@@ -241,8 +275,8 @@ export namespace net
 	class IProperty<T, Context, true, Copyable, Readonly, Nothrow> final
 	{
 	public:
-		using const_pointer = conditional_t<std::is_pointer_v<remove_cvref_t<T>>, const T, const T*>;
-		using pointer = conditional_t<Readonly, const_pointer, conditional_t<std::is_pointer_v<remove_cvref_t<T>>, T, T*>>;
+		using const_pointer = conditional_t<std::is_pointer_v<T>, add_pointer_t<const remove_pointer_t<T>>, const T*>;
+		using pointer = conditional_t<Readonly, const_pointer, conditional_t<std::is_pointer_v<T>, T, T*>>;
 
 		using functor_t = std::conditional_t<Nothrow, ::prp_nothrow_functor_t<void, Context&, T&>, ::prp_functor_t<void, Context&, T&>>;
 
@@ -355,14 +389,31 @@ export namespace net
 
 		[[nodiscard]]
 		constexpr pointer operator->() noexcept
+			requires (not Readonly)
 		{
-			return std::addressof(myValue);
+			if constexpr (std::is_pointer_v<T>)
+			{
+
+				return myValue;
+			}
+			else
+			{
+				return std::addressof(myValue);
+			}
 		}
 
 		[[nodiscard]]
 		constexpr const_pointer operator->() const noexcept
 		{
-			return std::addressof(myValue);
+			if constexpr (std::is_pointer_v<T>)
+			{
+
+				return myValue;
+			}
+			else
+			{
+				return std::addressof(myValue);
+			}
 		}
 
 	protected:
