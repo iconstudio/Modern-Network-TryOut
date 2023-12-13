@@ -165,7 +165,7 @@ net::Coroutine Worker(size_t nth)
 						if (not io_event.isSucceed)
 						{
 							std::println("Worker has been failed as acceptance on {}", id);
-							break;
+							break; // switch (op)
 						}
 
 						ex_context->myOperation = IoOperation::Recv;
@@ -173,12 +173,13 @@ net::Coroutine Worker(size_t nth)
 
 						auto it = clientPool.Find(id);
 						auto& client = *it;
+						auto& socket = client.sk;
 
-						auto r = client.sk->Receive(*ex_context, GetBuffer(id));
+						auto r = socket->Receive(*ex_context, GetBuffer(id));
 
 						if (r)
 						{
-							std::println("Client {}'s receive are reserved ({})", id, r.value());
+							std::println("Client {}'s receive are reserved", id);
 						}
 						else
 						{
@@ -191,8 +192,16 @@ net::Coroutine Worker(size_t nth)
 					{
 						if (not io_event.isSucceed)
 						{
-							std::println("Worker has been failed as receiving on {}", id);
-							break;
+							std::println("Worker has been failed as receiving on client {}", id);
+
+							auto it = clientPool.Find(id);
+							auto& client = *it;
+							auto& socket = client.sk;
+
+							ex_context->myOperation = IoOperation::Close;
+							socket->CloseAsync(*ex_context);
+
+							break; // switch (op)
 						}
 
 						auto& bytes = io_event.ioBytes;
@@ -203,10 +212,10 @@ net::Coroutine Worker(size_t nth)
 					{
 						if (not io_event.isSucceed)
 						{
-							std::println("Worker has been failed as sending on {}", id);
+							std::println("Worker has been failed as sending on client {}", id);
 
 							delete ex_context;
-							break;
+							break; // switch (op)
 						}
 
 						delete ex_context;
@@ -215,7 +224,22 @@ net::Coroutine Worker(size_t nth)
 
 					case IoOperation::Close:
 					{
+						ex_context->Clear();
+						ex_context->myOperation = IoOperation::Accept;
 
+						// accept again
+						auto it = clientPool.Find(id);
+						auto& client = *it;
+						auto& socket = client.sk;
+
+						auto acceptance = serverListener.ReserveAccept(*ex_context, *socket);
+						if (not acceptance)
+						{
+							std::println("Client {} cannot be accepted due to {}", id, acceptance.error());
+
+							std::abort();
+							break;
+						}
 					}
 					break;
 
