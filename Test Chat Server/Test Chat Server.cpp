@@ -4,6 +4,7 @@
 #include <span>
 #include <print>
 #include <thread>
+#include <atomic>
 
 import Net;
 import Net.IpAddress;
@@ -18,6 +19,7 @@ void Worker(size_t nth);
 enum class IoOperation
 {
 	None = 0, Accept, Connect, Recv, Send, Close,
+	BroadcastMessage
 };
 
 class ExContext : public net::io::Context
@@ -27,6 +29,14 @@ public:
 
 	size_t myID;
 	IoOperation myOperation;
+};
+
+class ChatMsgContext : public ExContext
+{
+public:
+	using ExContext::ExContext;
+
+	std::atomic_int refCount;
 };
 
 class Client
@@ -247,6 +257,12 @@ void Worker(size_t nth)
 					}
 
 					delete ex_context;
+				}
+				break;
+
+				case IoOperation::BroadcastMessage:
+				{
+
 				}
 				break;
 
