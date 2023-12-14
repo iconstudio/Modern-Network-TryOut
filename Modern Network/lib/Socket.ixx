@@ -13,6 +13,7 @@ import Net.EndPoint;
 import <cstddef>;
 import <cstdint>;
 import <span>;
+import <memory>;
 
 export namespace net
 {
@@ -143,6 +144,20 @@ export namespace net
 		Task<SocketReceivingResult> MakeReceiveTask(io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketReceivingResult> MakeReceiveTask(io::Context& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
+
+		[[nodiscard]]
+		Task<SocketSendingResult> MakeSendTask(const std::shared_ptr<io::Context>& context, std::span<const std::byte> memory) const noexcept;
+		[[nodiscard]]
+		Task<SocketSendingResult> MakeSendTask(const std::shared_ptr<io::Context>& context, std::span<const std::byte> memory, size_t size) const noexcept;
+		[[nodiscard]]
+		Task<SocketSendingResult> MakeSendTask(const std::shared_ptr<io::Context>& context, const _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
+		[[nodiscard]]
+
+		Task<SocketReceivingResult> MakeReceiveTask(const std::shared_ptr<io::Context>& context, std::span<std::byte> memory) const noexcept;
+		[[nodiscard]]
+		Task<SocketReceivingResult> MakeReceiveTask(const std::shared_ptr<io::Context>& context, std::span<std::byte> memory, size_t size) const noexcept;
+		[[nodiscard]]
+		Task<SocketReceivingResult> MakeReceiveTask(const std::shared_ptr<io::Context>& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 
 		// Asynchronous Send & Receive
 

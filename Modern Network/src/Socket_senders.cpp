@@ -259,6 +259,27 @@ const noexcept
 	}
 }
 
+net::Task<net::SocketSendingResult>
+net::Socket::MakeSendTask(const std::shared_ptr<io::Context>& context, std::span<const std::byte> memory)
+const noexcept
+{
+	return MakeSendTask(*context, std::move(memory));
+}
+
+net::Task<net::SocketSendingResult>
+net::Socket::MakeSendTask(const std::shared_ptr<io::Context>& context, std::span<const std::byte> memory, size_t size)
+const noexcept
+{
+	return MakeSendTask(*context, std::move(memory), std::move(size));
+}
+
+net::Task<net::SocketSendingResult>
+net::Socket::MakeSendTask(const std::shared_ptr<io::Context>& context, const std::byte* const& memory, size_t size)
+const noexcept
+{
+	return MakeSendTask(*context, memory, std::move(size));
+}
+
 net::SocketSendingResult
 RawSend(const net::NativeSocket& sock
 	, ::WSABUF& buffer)

@@ -315,6 +315,27 @@ const noexcept
 	}
 }
 
+net::Task<net::SocketReceivingResult>
+net::Socket::MakeReceiveTask(const std::shared_ptr<io::Context>& context, std::span<std::byte> memory)
+const noexcept
+{
+	return MakeReceiveTask(*context, std::move(memory));
+}
+
+net::Task<net::SocketReceivingResult>
+net::Socket::MakeReceiveTask(const std::shared_ptr<io::Context>& context, std::span<std::byte> memory, size_t size)
+const noexcept
+{
+	return MakeReceiveTask(*context, std::move(memory), std::move(size));
+}
+
+net::Task<net::SocketReceivingResult>
+net::Socket::MakeReceiveTask(const std::shared_ptr<io::Context>& context, std::byte* const& memory, size_t size)
+const noexcept
+{
+	return MakeReceiveTask(*context, memory, std::move(size));
+}
+
 net::Task<net::SocketSendingResult>
 net::Socket::AsyncSend(io::Context& context, std::span<const std::byte> memory)
 const noexcept
