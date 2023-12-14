@@ -3,6 +3,7 @@
 #include <array>
 #include <span>
 #include <print>
+#include <thread>
 
 import Net;
 import Net.IpAddress;
@@ -11,10 +12,8 @@ import Net.Io.Context;
 import Net.Io.Station;
 import Net.Socket;
 import Net.SocketPool;
-import Net.Coroutine;
-import Net.Coroutine.Awaiter.Concurrent;
 
-net::Coroutine Worker(size_t nth);
+void Worker(size_t nth);
 
 enum class IoOperation
 {
@@ -35,7 +34,7 @@ static inline constexpr size_t clientsNumber = 40;
 static inline constexpr size_t sizeRecvBuffer = 256;
 static inline constexpr size_t clientIdOffset = 1;
 net::SocketPool clientPool{ clientsNumber };
-std::array<ExContext, clientsNumber> clientContexts{};
+std::array<ExContext*, clientsNumber> clientContexts{};
 // all-in-one circular buffer
 std::array<std::byte, clientsNumber * sizeRecvBuffer> clientsRecvBuffer{};
 
@@ -70,6 +69,12 @@ int main()
 	clientPool.Add(&serverListener, 0ULL);
 	std::println("The listener is ready.");
 
+	for (auto& ctx : clientContexts)
+	{
+		ctx = new ExContext{};
+	}
+	std::println("Contexts are ready.");
+
 	for (size_t i = 0; i < clientsNumber; ++i)
 	{
 		const size_t id = i + clientIdOffset;
@@ -79,8 +84,8 @@ int main()
 		socket->IsAddressReusable = true;
 
 		auto& ctx = clientContexts[i];
-		ctx.myID = id;
-		ctx.myOperation = IoOperation::None;
+		ctx->myID = id;
+		ctx->myOperation = IoOperation::None;
 	}
 	std::println("Clients are ready.");
 
@@ -92,11 +97,10 @@ int main()
 		std::println("The listener is opened.");
 	}
 
-	std::vector<net::Coroutine> workers{};
+	std::vector<std::jthread> workers{};
 	for (size_t i = 0; i < 6; ++i)
 	{
-		auto& worker = workers.emplace_back(Worker(i));
-		worker.StartAsync();
+		auto& worker = workers.emplace_back(Worker, i);
 	}
 
 	for (auto& client : clientPool)
@@ -110,9 +114,9 @@ int main()
 		}
 
 		auto& ctx = clientContexts[GetIndexOnID(id)];
-		ctx.myOperation = IoOperation::Accept;
+		ctx->myOperation = IoOperation::Accept;
 
-		auto acceptance = serverListener.ReserveAccept(ctx, socket);
+		auto acceptance = serverListener.ReserveAccept(*ctx, socket);
 		if (not acceptance)
 		{
 			std::abort();
@@ -130,20 +134,20 @@ int main()
 	net::core::Annihilate();
 }
 
-net::Coroutine Worker(size_t nth)
+void Worker(size_t nth)
 {
-	auto&& io_schedule = co_await clientPool.Schedule();
+	//auto io_schedule = clientPool.Schedule();
 	std::println("Worker {} is started", nth);
 
 	while (true)
 	{
-		if (io_schedule->IsCancelled())
+		//if (io_schedule.IsCancelled())
 		{
-			std::println("Worker has been cancelled");
-			break;
+			//std::println("Worker has been cancelled");
+			//break;
 		}
 
-		auto& io_event = co_await io_schedule->Start();
+		auto io_event = clientPool.WaitForIoResult();
 		auto& io_context = io_event.ioContext;
 		auto& io_id = io_event.eventId;
 
@@ -227,9 +231,9 @@ net::Coroutine Worker(size_t nth)
 								auto& socket = client.sk;
 
 								auto& ctx = clientContexts[GetIndexOnID(id)];
-								ctx.myOperation = IoOperation::Close;
+								ctx->myOperation = IoOperation::Close;
 
-								socket->CloseAsync(ctx);
+								socket->CloseAsync(*ctx);
 							}
 
 							break; // switch (op)
@@ -251,12 +255,12 @@ net::Coroutine Worker(size_t nth)
 						auto& socket = client.sk;
 
 						auto acceptance = serverListener.ReserveAccept(*ex_context, *socket);
-						if (not acceptance)
+						//if (not acceptance)
 						{
-							std::println("Client {} cannot be accepted due to {}", id, acceptance.error());
+							//std::println("Client {} cannot be accepted due to {}", id, acceptance.error());
 
-							std::abort();
-							break;
+							//std::abort();
+							//break;
 						}
 					}
 					break;
