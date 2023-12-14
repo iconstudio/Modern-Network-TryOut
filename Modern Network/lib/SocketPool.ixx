@@ -46,6 +46,10 @@ export namespace net
 		{
 			return myStation.Schedule();
 		}
+		[[nodiscard]] auto WaitForIoResult() noexcept
+		{
+			return myStation.WaitForIoResult();
+		}
 
 		[[nodiscard]]
 		data_t::iterator Find(const std::uint64_t id) noexcept;
