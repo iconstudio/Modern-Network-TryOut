@@ -36,7 +36,7 @@ static inline constexpr size_t clientIdOffset = 1;
 net::SocketPool clientPool{ clientsNumber };
 std::array<ExContext*, clientsNumber> clientContexts{};
 // all-in-one circular buffer
-std::array<std::byte, clientsNumber * sizeRecvBuffer> clientsRecvBuffer{};
+std::array<std::byte, clientsNumber* sizeRecvBuffer> clientsRecvBuffer{};
 
 [[nodiscard]]
 constexpr size_t GetIndexOnID(const size_t& id) noexcept
@@ -156,119 +156,115 @@ void Worker(size_t nth)
 		{
 			ex_context->Clear();
 
-			if (0 <= io_id)
-			//if (clientIdOffset <= io_id)
+			auto& op = ex_context->myOperation;
+			const auto& id = ex_context->myID;
+
+			switch (op)
 			{
-				auto& op = ex_context->myOperation;
-				const auto& id = ex_context->myID;
-
-				switch (op)
+				case IoOperation::Accept:
 				{
-					case IoOperation::Accept:
+					if (not io_event.isSucceed)
 					{
-						if (not io_event.isSucceed)
-						{
-							std::println("Worker has been failed as acceptance on {}", id);
-							break; // switch (op)
-						}
+						std::println("Worker has been failed as acceptance on {}", id);
+						break; // switch (op)
+					}
 
-						ex_context->myOperation = IoOperation::Recv;
-						std::println("Client connected - {}", id);
+					ex_context->myOperation = IoOperation::Recv;
+					std::println("Client connected - {}", id);
+
+					auto it = clientPool.Find(id);
+					auto& client = *it;
+					auto& socket = client.sk;
+
+					auto r = socket->Receive(*ex_context, GetBuffer(id));
+
+					if (r)
+					{
+						std::println("Client {}'s receive are reserved", id);
+					}
+					else
+					{
+						std::println("Client {}'s receive are not able to be reserved ({})", id, r.error());
+					}
+				}
+				break;
+
+				case IoOperation::Recv:
+				{
+					if (not io_event.isSucceed)
+					{
+						std::println("Worker has been failed as receiving on client {}", id);
 
 						auto it = clientPool.Find(id);
 						auto& client = *it;
 						auto& socket = client.sk;
 
-						auto r = socket->Receive(*ex_context, GetBuffer(id));
+						ex_context->myOperation = IoOperation::Close;
+						socket->CloseAsync(*ex_context);
 
-						if (r)
-						{
-							std::println("Client {}'s receive are reserved", id);
-						}
-						else
-						{
-							std::println("Client {}'s receive are not able to be reserved ({})", id, r.error());
-						}
+						break; // switch (op)
 					}
-					break;
 
-					case IoOperation::Recv:
+					auto& bytes = io_event.ioBytes;
+				}
+				break;
+
+				case IoOperation::Send:
+				{
+					const auto& bytes = io_event.ioBytes;
+
+					if (not io_event.isSucceed)
 					{
-						if (not io_event.isSucceed)
+						std::println("Worker has been failed as sending on client {}", id);
+
+						delete ex_context;
+
+						if (0 == bytes)
 						{
-							std::println("Worker has been failed as receiving on client {}", id);
+							std::println("Closing client {} as sending has been failed", id);
 
 							auto it = clientPool.Find(id);
 							auto& client = *it;
 							auto& socket = client.sk;
 
-							ex_context->myOperation = IoOperation::Close;
-							socket->CloseAsync(*ex_context);
+							auto& ctx = clientContexts[GetIndexOnID(id)];
+							ctx->myOperation = IoOperation::Close;
 
-							break; // switch (op)
+							socket->CloseAsync(*ctx);
 						}
 
-						auto& bytes = io_event.ioBytes;
+						break; // switch (op)
 					}
-					break;
 
-					case IoOperation::Send:
+					delete ex_context;
+				}
+				break;
+
+				case IoOperation::Close:
+				{
+					ex_context->Clear();
+					std::println("Client {} is closed", id);
+
+					// accept again
+					ex_context->myOperation = IoOperation::Accept;
+					auto it = clientPool.Find(id);
+					auto& client = *it;
+					auto& socket = client.sk;
+
+					auto acceptance = serverListener.ReserveAccept(*ex_context, *socket);
+					//if (not acceptance)
 					{
-						const auto& bytes = io_event.ioBytes;
+						//std::println("Client {} cannot be accepted due to {}", id, acceptance.error());
 
-						if (not io_event.isSucceed)
-						{
-							std::println("Worker has been failed as sending on client {}", id);
-
-							delete ex_context;
-
-							if (0 == bytes)
-							{
-								std::println("Closing client {} as sending has been failed", id);
-
-								auto it = clientPool.Find(id);
-								auto& client = *it;
-								auto& socket = client.sk;
-
-								auto& ctx = clientContexts[GetIndexOnID(id)];
-								ctx->myOperation = IoOperation::Close;
-
-								socket->CloseAsync(*ctx);
-							}
-
-							break; // switch (op)
-						}
-
-						delete ex_context;
+						//std::abort();
+						//break;
 					}
-					break;
+				}
+				break;
 
-					case IoOperation::Close:
-					{
-						ex_context->Clear();
-						std::println("Client {} is closed", id);
-
-						// accept again
-						ex_context->myOperation = IoOperation::Accept;
-						auto it = clientPool.Find(id);
-						auto& client = *it;
-						auto& socket = client.sk;
-
-						auto acceptance = serverListener.ReserveAccept(*ex_context, *socket);
-						//if (not acceptance)
-						{
-							//std::println("Client {} cannot be accepted due to {}", id, acceptance.error());
-
-							//std::abort();
-							//break;
-						}
-					}
-					break;
-
-					default:
-					{
-						std::println("Unknown task on {}", id);
-					}
+				default:
+				{
+					std::println("Unknown task on {}", id);
 				}
 			}
 		}
