@@ -2,27 +2,19 @@ module;
 #define NOMINMAX
 #pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
-
 module Net.Io.Schedule;
-import Net.Io.Station;
 
-net::io::Schedule::Awaiter
-net::io::Schedule::Start()
-{
-	return { *this };
-}
-
-net::io::Event&
-net::io::Schedule::Awaiter::await_resume()
+net::io::Event
+net::io::Schedule::WaitForIoResult()
 noexcept
 {
-	auto& ev_handle = ioSchedule.GetEvent();
+	net::io::Event ev_handle{};
 
 	::LPOVERLAPPED overlapped{};
 	::BOOL result = 0;
 	try
 	{
-		result = ::GetQueuedCompletionStatus(ioSchedule.ioStation.GetHandle()
+		result = ::GetQueuedCompletionStatus(ioHandle
 			, std::addressof(ev_handle.ioBytes)
 			, std::addressof(ev_handle.eventId)
 			, std::addressof(overlapped)
