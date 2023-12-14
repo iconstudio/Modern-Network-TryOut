@@ -17,20 +17,6 @@ export namespace net::io
 	class [[nodiscard]] Station final
 		: public net::Handler<net::NativeHandle>, public std::enable_shared_from_this<Station>
 	{
-	private:
-		struct Awaiter
-		{
-			static constexpr bool await_ready() noexcept
-			{
-				return true;
-			}
-			static constexpr void await_suspend(std::coroutine_handle<void>) noexcept
-			{}
-			[[nodiscard]] std::unique_ptr<net::io::Schedule> await_resume();
-
-			net::io::Station& ioStation;
-		};
-
 	public:
 		using Stationary = std::expected<net::io::Station, net::ErrorCodes>;
 
@@ -43,7 +29,8 @@ export namespace net::io
 		bool Destroy() noexcept;
 		bool Destroy(net::ErrorCodes& error_code) noexcept;
 
-		[[nodiscard]] Awaiter Schedule() noexcept;
+		[[nodiscard]] net::io::Schedule Schedule() noexcept;
+		[[nodiscard]] net::io::Event WaitForIoResult() noexcept;
 
 		[[nodiscard]] static Stationary Create() noexcept;
 		[[nodiscard]] static Stationary Create(std::uint32_t concurrency_hint) noexcept;

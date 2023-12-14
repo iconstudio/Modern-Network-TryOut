@@ -120,15 +120,37 @@ noexcept
 	}
 }
 
-net::io::Station::Awaiter
+net::io::Schedule
 net::io::Station::Schedule()
 noexcept
 {
-	return Awaiter{ *this };
+	return { GetHandle(), mySwitch.get_token() };
 }
 
-std::unique_ptr<net::io::Schedule>
-net::io::Station::Awaiter::await_resume()
+net::io::Event
+net::io::Station::WaitForIoResult()
+noexcept
 {
-	return std::make_unique<net::io::Schedule>(ioStation, ioStation.MakeCancelToken());
+	net::io::Event ev_handle{};
+
+	::LPOVERLAPPED overlapped{};
+	::BOOL result = 0;
+	try
+	{
+		result = ::GetQueuedCompletionStatus(GetHandle()
+			, std::addressof(ev_handle.ioBytes)
+			, std::addressof(ev_handle.eventId)
+			, std::addressof(overlapped)
+			, INFINITE);
+
+		ev_handle.ioContext = reinterpret_cast<net::io::Context*>(overlapped);
+		ev_handle.isSucceed = (1 == result);
+	}
+	catch (...)
+	{
+		ev_handle.ioContext = nullptr;
+		ev_handle.isSucceed = false;
+	}
+
+	return ev_handle;
 }
