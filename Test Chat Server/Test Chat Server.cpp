@@ -169,7 +169,7 @@ void Worker(size_t nth)
 						break; // switch (op)
 					}
 
-					ex_context->myOperation = IoOperation::Recv;
+					op = IoOperation::Recv;
 					std::println("Client connected - {}", id);
 
 					auto it = clientPool.Find(id);
@@ -199,7 +199,7 @@ void Worker(size_t nth)
 						auto& client = *it;
 						auto& socket = client.sk;
 
-						ex_context->myOperation = IoOperation::Close;
+						op = IoOperation::Close;
 						socket->CloseAsync(*ex_context);
 
 						break; // switch (op)
@@ -246,18 +246,18 @@ void Worker(size_t nth)
 					std::println("Client {} is closed", id);
 
 					// accept again
-					ex_context->myOperation = IoOperation::Accept;
+					op = IoOperation::Accept;
 					auto it = clientPool.Find(id);
 					auto& client = *it;
 					auto& socket = client.sk;
 
 					auto acceptance = serverListener.ReserveAccept(*ex_context, *socket);
-					//if (not acceptance)
+					if (not acceptance)
 					{
-						//std::println("Client {} cannot be accepted due to {}", id, acceptance.error());
+						std::println("Client {} cannot be accepted due to {}", id, acceptance.error());
 
-						//std::abort();
-						//break;
+						std::abort();
+						break;
 					}
 				}
 				break;
