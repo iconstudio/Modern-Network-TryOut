@@ -262,7 +262,30 @@ void Worker(size_t nth)
 
 				case IoOperation::BroadcastMessage:
 				{
+					auto msg_ctx = static_cast<ChatMsgContext*>(ex_context);
+					if (nullptr == msg_ctx)
+					{
+						std::println("An msg error occured on the client {}", id);
+						std::abort();
+						break;
+					}
 
+					for (auto& ck : everySockets)
+					{
+						auto& socket = *ck.sk;
+
+						auto sender = new ExContext{};
+						sender->myID = ck.id;
+						sender->myOperation = IoOperation::Send;
+
+						constexpr char msg[]{ "asdasdda" };
+						auto sr = socket.Send(*sender, reinterpret_cast<std::byte*>(msg), sizeof(msg));
+
+						if (not sr)
+						{
+							std::println("Message cannot be sent on the client {}", id);
+						}
+					}
 				}
 				break;
 
