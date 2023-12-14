@@ -29,11 +29,21 @@ public:
 	IoOperation myOperation;
 };
 
+class Client
+{
+public:
+	net::Socket* mySocket;
+	ExContext myContext;
+};
+
 net::Socket serverListener{};
 static inline constexpr size_t clientsNumber = 40;
 static inline constexpr size_t sizeRecvBuffer = 256;
 static inline constexpr size_t clientIdOffset = 1;
-net::SocketPool clientPool{ clientsNumber };
+
+net::SocketPool everySockets{ clientsNumber };
+std::array<Client*, clientsNumber> everyClients{};
+
 std::array<ExContext*, clientsNumber> clientContexts{};
 // all-in-one circular buffer
 std::array<std::byte, clientsNumber* sizeRecvBuffer> clientsRecvBuffer{};
@@ -66,7 +76,7 @@ int main()
 	serverListener.Bind(net::EndPoint{ net::IPv4Address::Loopback, 10000 });
 	serverListener.IsAddressReusable = true;
 
-	clientPool.Add(&serverListener, 0ULL);
+	everySockets.Add(&serverListener, 0ULL);
 	std::println("The listener is ready.");
 
 	for (auto& ctx : clientContexts)
@@ -79,7 +89,7 @@ int main()
 	{
 		const size_t id = i + clientIdOffset;
 
-		auto socket = clientPool.Allocate(id, net::SocketType::Asynchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
+		auto socket = everySockets.Allocate(id, net::SocketType::Asynchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
 		socket->IsAddressReusable = true;
 
@@ -89,7 +99,7 @@ int main()
 	}
 	std::println("Clients are ready.");
 
-	lastClient = clientPool.begin();
+	lastClient = everySockets.begin();
 
 	std::println("=========== Start ===========");
 	if (serverListener.Open().has_value())
@@ -103,7 +113,7 @@ int main()
 		auto& worker = workers.emplace_back(Worker, i);
 	}
 
-	for (auto& client : clientPool)
+	for (auto& client : everySockets)
 	{
 		auto& id = client.id;
 		auto& socket = *client.sk;
@@ -136,7 +146,7 @@ int main()
 
 void Worker(size_t nth)
 {
-	//auto io_schedule = clientPool.Schedule();
+	//auto io_schedule = everySockets.Schedule();
 	std::println("Worker {} is started", nth);
 
 	while (true)
@@ -147,7 +157,7 @@ void Worker(size_t nth)
 			//break;
 		}
 
-		auto io_event = clientPool.WaitForIoResult();
+		auto io_event = everySockets.WaitForIoResult();
 		auto& io_context = io_event.ioContext;
 		auto& io_id = io_event.eventId;
 
@@ -172,7 +182,7 @@ void Worker(size_t nth)
 					op = IoOperation::Recv;
 					std::println("Client connected - {}", id);
 
-					auto it = clientPool.Find(id);
+					auto it = everySockets.Find(id);
 					auto& client = *it;
 					auto& socket = client.sk;
 
@@ -195,12 +205,12 @@ void Worker(size_t nth)
 					{
 						std::println("Worker has been failed as receiving on client {}", id);
 
-						auto it = clientPool.Find(id);
+						auto it = everySockets.Find(id);
 						auto& client = *it;
 						auto& socket = client.sk;
 
 						op = IoOperation::Close;
-						socket->CloseAsync(*ex_context);
+						socket->CloseAsync(ex_context);
 
 						break; // switch (op)
 					}
@@ -223,14 +233,14 @@ void Worker(size_t nth)
 						{
 							std::println("Closing client {} as sending has been failed", id);
 
-							auto it = clientPool.Find(id);
+							auto it = everySockets.Find(id);
 							auto& client = *it;
 							auto& socket = client.sk;
 
 							auto& ctx = clientContexts[GetIndexOnID(id)];
 							ctx->myOperation = IoOperation::Close;
 
-							socket->CloseAsync(*ctx);
+							socket->CloseAsync(ctx);
 						}
 
 						break; // switch (op)
@@ -247,11 +257,11 @@ void Worker(size_t nth)
 
 					// accept again
 					op = IoOperation::Accept;
-					auto it = clientPool.Find(id);
+					auto it = everySockets.Find(id);
 					auto& client = *it;
 					auto& socket = client.sk;
 
-					auto acceptance = serverListener.ReserveAccept(*ex_context, *socket);
+					auto acceptance = serverListener.ReserveAccept(ex_context, *socket);
 					if (not acceptance)
 					{
 						std::println("Client {} cannot be accepted due to {}", id, acceptance.error());
