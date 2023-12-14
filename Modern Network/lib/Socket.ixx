@@ -60,6 +60,8 @@ export namespace net
 		bool Close(SocketClosingErrorCodes& error_code) const noexcept;
 		bool CloseAsync(io::Context& context) const noexcept;
 		bool CloseAsync(io::Context& context, SocketClosingErrorCodes& error_code) const noexcept;
+		bool CloseAsync(io::Context* const context) const noexcept;
+		bool CloseAsync(io::Context* const context, SocketClosingErrorCodes& error_code) const noexcept;
 
 		// Opt-out Methods
 
@@ -88,6 +90,8 @@ export namespace net
 
 		SocketResult ReserveAccept(io::Context& context, Socket& client) const;
 		SocketResult ReserveAccept(io::Context& context, Socket& client, std::span<std::byte> accept_buffer) const;
+		SocketResult ReserveAccept(io::Context* const context, Socket& client) const;
+		SocketResult ReserveAccept(io::Context* const context, Socket& client, std::span<std::byte> accept_buffer) const;
 
 		// Synchronous Send
 

@@ -36,19 +36,19 @@ static void CALLBACK rioRoutine(const ::DWORD err, const ::DWORD bytes, ::LPWSAO
 }
 void SocketFunctionInitializer(const net::NativeSocket& sock);
 
-Socket::Socket()
+net::Socket::Socket()
 noexcept
 	: Socket(EmptySocket)
 {}
 
-Socket::Socket(EmptySocketType)
+net::Socket::Socket(EmptySocketType)
 noexcept
 	: Handler(INVALID_SOCKET)
 	, myProtocol(InternetProtocols::Unknown), myFamily(IpAddressFamily::Unknown)
 	, IsAddressReusable(this, false, SetAddressReusable)
 {}
 
-Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily family) noexcept
+net::Socket::Socket(net::NativeSocket sock, net::InternetProtocols protocol, net::IpAddressFamily family) noexcept
 	: Handler(sock)
 	, myProtocol(protocol), myFamily(family)
 	, IsAddressReusable(this, false, SetAddressReusable)
@@ -56,8 +56,8 @@ Socket::Socket(NativeSocket sock, InternetProtocols protocol, IpAddressFamily fa
 	std::call_once(internalInitFlag, ::SocketFunctionInitializer, sock);
 }
 
-Socket&
-Socket::operator=(EmptySocketType)
+net::Socket&
+net::Socket::operator=(EmptySocketType)
 noexcept
 {
 	if (IsAvailable())
@@ -68,8 +68,8 @@ noexcept
 	return *this = Socket{ EmptySocket };
 }
 
-SocketListeningResult
-Socket::Open()
+net::SocketListeningResult
+net::Socket::Open()
 const noexcept
 {
 	const int open = ::listen(myHandle, SOMAXCONN);
@@ -82,7 +82,7 @@ const noexcept
 }
 
 bool
-Socket::Close()
+net::Socket::Close()
 const noexcept
 {
 	if (IsAvailable())
@@ -103,7 +103,7 @@ const noexcept
 }
 
 bool
-Socket::Close(SocketClosingErrorCodes& error_code)
+Socket::Close(net::SocketClosingErrorCodes& error_code)
 const noexcept
 {
 	if (IsAvailable())
@@ -141,12 +141,26 @@ const noexcept
 }
 
 bool
-net::Socket::CloseAsync(io::Context& context)
+net::Socket::CloseAsync(net::io::Context& context)
+const noexcept
+{
+	return CloseAsync(std::addressof(context));
+}
+
+bool
+net::Socket::CloseAsync(net::io::Context& context, net::SocketClosingErrorCodes& error_code)
+const noexcept
+{
+	return CloseAsync(std::addressof(context), error_code);
+}
+
+bool
+net::Socket::CloseAsync(net::io::Context* const context)
 const noexcept
 {
 	if (IsAvailable())
 	{
-		auto* ctx = reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context));
+		auto* ctx = reinterpret_cast<::LPWSAOVERLAPPED>(context);
 		if (IsAddressReusable)
 		{
 			return (1 == ::fnTransmitFile(myHandle, nullptr, 0, 0, ctx, nullptr, TF_DISCONNECT | TF_REUSE_SOCKET));
@@ -163,7 +177,7 @@ const noexcept
 }
 
 bool
-net::Socket::CloseAsync(io::Context& context, SocketClosingErrorCodes& error_code)
+net::Socket::CloseAsync(net::io::Context* const context, net::SocketClosingErrorCodes& error_code)
 const noexcept
 {
 	if (IsAvailable())
@@ -186,7 +200,21 @@ const noexcept
 }
 
 net::SocketResult
-net::Socket::ReserveAccept(net::io::Context& context, Socket& client)
+net::Socket::ReserveAccept(net::io::Context& context, net::Socket& client)
+const
+{
+	return ReserveAccept(std::addressof(context), client);
+}
+
+net::SocketResult
+net::Socket::ReserveAccept(net::io::Context& context, Socket& client, std::span<std::byte> accept_buffer)
+const
+{
+	return ReserveAccept(std::addressof(context), client, std::move(accept_buffer));
+}
+
+net::SocketResult
+net::Socket::ReserveAccept(net::io::Context* const context, net::Socket& client)
 const
 {
 	char temp_buffer[::DEFAULT_ACCEPT_SIZE * 2];
@@ -202,7 +230,7 @@ const
 		, ::DEFAULT_ACCEPT_SIZE
 		, ::DEFAULT_ACCEPT_SIZE
 		, std::addressof(result_bytes)
-		, reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context)))
+		, reinterpret_cast<::LPWSAOVERLAPPED>(context))
 	)
 	{
 		return result_bytes;
@@ -221,7 +249,7 @@ const
 }
 
 net::SocketResult
-net::Socket::ReserveAccept(net::io::Context& context, Socket& client, std::span<std::byte> accept_buffer)
+net::Socket::ReserveAccept(net::io::Context* const context, net::Socket& client, std::span<std::byte> accept_buffer)
 const
 {
 	if (not IsAvailable())
@@ -236,7 +264,7 @@ const
 		, ::DEFAULT_ACCEPT_SIZE
 		, ::DEFAULT_ACCEPT_SIZE
 		, std::addressof(result_bytes)
-		, reinterpret_cast<::LPWSAOVERLAPPED>(std::addressof(context)))
+		, reinterpret_cast<::LPWSAOVERLAPPED>(context))
 	)
 	{
 		return result_bytes;
@@ -254,18 +282,22 @@ const
 	}
 }
 
-bool net::Socket::ReusableAddress() const noexcept
+bool
+net::Socket::ReusableAddress()
+const noexcept
 {
 	return IsAddressReusable;
 }
 
-void net::Socket::ReusableAddress(bool flag) noexcept
+void
+net::Socket::ReusableAddress(bool flag)
+noexcept
 {
 	IsAddressReusable = flag;
 }
 
-Socket
-Socket::Create(SocketType type
+net::Socket
+net::Socket::Create(SocketType type
 	, const InternetProtocols& protocol
 	, const IpAddressFamily& family)
 	noexcept
