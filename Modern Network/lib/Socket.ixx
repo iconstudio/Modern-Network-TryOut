@@ -133,11 +133,13 @@ export namespace net
 
 		[[nodiscard]]
 		Task<SocketSendingResult> MakeSendTask(io::Context& context, std::span<const std::byte> memory) const noexcept;
+		[[nodiscard]]
 		Task<SocketSendingResult> MakeSendTask(io::Context& context, std::span<const std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketSendingResult> MakeSendTask(io::Context& context, const _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketReceivingResult> MakeReceiveTask(io::Context& context, std::span<std::byte> memory) const noexcept;
+		[[nodiscard]]
 		Task<SocketReceivingResult> MakeReceiveTask(io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketReceivingResult> MakeReceiveTask(io::Context& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
@@ -146,11 +148,13 @@ export namespace net
 
 		[[nodiscard]]
 		Task<SocketSendingResult> AsyncSend(io::Context& context, std::span<const std::byte> memory) const noexcept;
+		[[nodiscard]]
 		Task<SocketSendingResult> AsyncSend(io::Context& context, std::span<const std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketSendingResult> AsyncSend(io::Context& context, const _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketReceivingResult> AsyncRecv(io::Context& context, std::span<std::byte> memory) const noexcept;
+		[[nodiscard]]
 		Task<SocketReceivingResult> AsyncRecv(io::Context& context, std::span<std::byte> memory, size_t size) const noexcept;
 		[[nodiscard]]
 		Task<SocketReceivingResult> AsyncRecv(io::Context& context, _In_reads_bytes_(size) std::byte* const& memory, size_t size) const noexcept;
