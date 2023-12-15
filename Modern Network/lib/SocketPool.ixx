@@ -39,10 +39,10 @@ export namespace net
 		SocketPool(const size_t& size);
 		~SocketPool();
 
-		void Add(Socket* const& socket_ptr, const std::uint64_t id);
+		void Add(Socket* const& socket_ptr, const std::uintptr_t id);
 		[[nodiscard]]
-		bool TryAdd(Socket* const& socket_ptr, const std::uint64_t id) noexcept;
-		Socket* const Allocate(std::uint64_t id, SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family);
+		bool TryAdd(Socket* const& socket_ptr, const std::uintptr_t id) noexcept;
+		Socket* const Allocate(std::uintptr_t id, SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family);
 
 		[[nodiscard]]
 		bool Schedule(net::io::Context& context, std::uintptr_t id, unsigned long infobytes) noexcept
