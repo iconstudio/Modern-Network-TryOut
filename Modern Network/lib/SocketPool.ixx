@@ -5,6 +5,7 @@ import Net.IpAddress;
 import Net.Socket;
 import Net.Property;
 import Net.Io.Station;
+export import Net.Io.Context;
 import <cstdint>;
 import <vector>;
 import <span>;
@@ -43,11 +44,18 @@ export namespace net
 		bool TryAdd(Socket* const& socket_ptr, const std::uint64_t id) noexcept;
 		Socket* const Allocate(std::uint64_t id, SocketType type, const InternetProtocols& protocol, const IpAddressFamily& family);
 
-		[[nodiscard]] auto Schedule() noexcept
+		[[nodiscard]]
+		bool Schedule(net::io::Context& context, std::uintptr_t id, unsigned long infobytes) noexcept
 		{
-			return myStation.Schedule();
+			return myStation.Schedule(context, std::move(id), std::move(infobytes));
 		}
-		[[nodiscard]] auto WaitForIoResult() noexcept
+		[[nodiscard]]
+		bool Schedule(net::io::Context* const context, std::uintptr_t id, unsigned long infobytes) noexcept
+		{
+			return myStation.Schedule(context, std::move(id), std::move(infobytes));
+		}
+		[[nodiscard]]
+		auto WaitForIoResult() noexcept
 		{
 			return myStation.WaitForIoResult();
 		}
