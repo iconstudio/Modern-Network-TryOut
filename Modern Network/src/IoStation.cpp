@@ -120,11 +120,14 @@ noexcept
 	}
 }
 
-net::io::Schedule
-net::io::Station::Schedule()
+bool
+net::io::Station::Schedule(net::io::Context& context, std::uintptr_t id, unsigned long infobytes)
 noexcept
 {
-	return { GetHandle(), mySwitch.get_token() };
+	return 0 != ::PostQueuedCompletionStatus(GetHandle()
+		, std::move(infobytes)
+		, std::move(id)
+		, reinterpret_cast<net::io::Context*>(std::addressof(context)));
 }
 
 net::io::Event
