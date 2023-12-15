@@ -22,8 +22,8 @@ export namespace net::io
 		Station() = default;
 		~Station() = default;
 
-		net::SocketResult Register(net::Socket& socket, std::uint64_t id) noexcept;
-		bool TryRegister(net::Socket& socket, std::uint64_t id, net::ErrorCodes& error_code) noexcept;
+		net::SocketResult Register(net::Socket& socket, std::uintptr_t id) noexcept;
+		bool TryRegister(net::Socket& socket, std::uintptr_t id, net::ErrorCodes& error_code) noexcept;
 		bool Destroy() noexcept;
 		bool Destroy(net::ErrorCodes& error_code) noexcept;
 

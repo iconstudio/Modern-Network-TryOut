@@ -34,7 +34,7 @@ noexcept
 {}
 
 net::SocketResult
-net::io::Station::Register(net::Socket& socket, std::uint64_t id)
+net::io::Station::Register(net::Socket& socket, std::uintptr_t id)
 noexcept
 {
 #if _DEBUG
@@ -61,7 +61,7 @@ noexcept
 }
 
 bool
-net::io::Station::TryRegister(net::Socket& socket, std::uint64_t id, net::ErrorCodes& error_code)
+net::io::Station::TryRegister(net::Socket& socket, std::uintptr_t id, net::ErrorCodes& error_code)
 noexcept
 {
 	if (auto result = Register(socket, id); result)
