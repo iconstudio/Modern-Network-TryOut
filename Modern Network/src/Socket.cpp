@@ -472,19 +472,19 @@ SocketFunctionInitializer(const net::NativeSocket& sock)
 #if _DEBUG
 	result =
 #endif // _DEBUG
-	::WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER
-		, fntable_addr, sizeof(GUID)
-		, std::addressof(fnAcceptEx), sizeof(fnAcceptEx)
-		, bytes_addr
-		, nullptr, nullptr);
+		::WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER
+			, fntable_addr, sizeof(GUID)
+			, std::addressof(fnAcceptEx), sizeof(fnAcceptEx)
+			, bytes_addr
+			, nullptr, nullptr);
 
 	fntable_id = WSAID_TRANSMITFILE;
 #if _DEBUG
 	result =
 #endif // _DEBUG
-	::WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER
-		, fntable_addr, sizeof(GUID)
-		, std::addressof(fnTransmitFile), sizeof(fnTransmitFile)
-		, bytes_addr
-		, nullptr, nullptr);
+		::WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER
+			, fntable_addr, sizeof(GUID)
+			, std::addressof(fnTransmitFile), sizeof(fnTransmitFile)
+			, bytes_addr
+			, nullptr, nullptr);
 }
