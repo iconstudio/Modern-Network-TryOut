@@ -28,6 +28,7 @@ export namespace net::io
 		bool Destroy(net::ErrorCodes& error_code) noexcept;
 
 		bool Schedule(net::io::Context& context, std::uintptr_t id, unsigned long infobytes) noexcept;
+		bool Schedule(net::io::Context* const context, std::uintptr_t id, unsigned long infobytes) noexcept;
 		[[nodiscard]] net::io::Event WaitForIoResult() noexcept;
 
 		[[nodiscard]] static Stationary Create() noexcept;

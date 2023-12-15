@@ -117,6 +117,16 @@ noexcept
 		, reinterpret_cast<::WSAOVERLAPPED*>(std::addressof(context)));
 }
 
+bool
+net::io::Station::Schedule(net::io::Context* const context, std::uintptr_t id, unsigned long infobytes)
+noexcept
+{
+	return 0 != ::PostQueuedCompletionStatus(GetHandle()
+		, std::move(infobytes)
+		, std::move(id)
+		, reinterpret_cast<::WSAOVERLAPPED*>(context));
+}
+
 net::io::Event
 net::io::Station::WaitForIoResult()
 noexcept
