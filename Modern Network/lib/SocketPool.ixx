@@ -33,6 +33,7 @@ export namespace net
 		using const_view_t = std::span<const EncapsuledSocket>;
 		using seek_t = std::ranges::subrange<iterator>;
 		using const_seek_t = std::ranges::subrange<const_iterator>;
+		using size_type = data_t::size_type;
 
 		SocketPool(const size_t& size);
 		~SocketPool();
@@ -91,37 +92,37 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		constexpr data_t::iterator begin() noexcept
+		constexpr iterator begin() noexcept
 		{
 			return myPool.begin();
 		}
 
 		[[nodiscard]]
-		constexpr data_t::iterator end() noexcept
+		constexpr iterator end() noexcept
 		{
 			return myPool.end();
 		}
 
 		[[nodiscard]]
-		constexpr data_t::const_iterator begin() const noexcept
+		constexpr const_iterator begin() const noexcept
 		{
 			return myPool.begin();
 		}
 
 		[[nodiscard]]
-		constexpr data_t::const_iterator end() const noexcept
+		constexpr const_iterator end() const noexcept
 		{
 			return myPool.end();
 		}
 
 		[[nodiscard]]
-		constexpr data_t::const_iterator cbegin() const noexcept
+		constexpr const_iterator cbegin() const noexcept
 		{
 			return myPool.cbegin();
 		}
 
 		[[nodiscard]]
-		constexpr data_t::const_iterator cend() const noexcept
+		constexpr const_iterator cend() const noexcept
 		{
 			return myPool.cend();
 		}
@@ -139,13 +140,13 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		constexpr data_t::size_type size() const noexcept
+		constexpr size_type size() const noexcept
 		{
 			return myPool.size();
 		}
 
 		[[nodiscard]]
-		constexpr data_t::size_type max_size() const noexcept
+		constexpr size_type max_size() const noexcept
 		{
 			return myPool.max_size();
 		}
