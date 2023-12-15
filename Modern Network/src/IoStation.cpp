@@ -114,7 +114,7 @@ noexcept
 	return 0 != ::PostQueuedCompletionStatus(GetHandle()
 		, std::move(infobytes)
 		, std::move(id)
-		, reinterpret_cast<net::io::Context*>(std::addressof(context)));
+		, reinterpret_cast<::WSAOVERLAPPED*>(std::addressof(context)));
 }
 
 net::io::Event
