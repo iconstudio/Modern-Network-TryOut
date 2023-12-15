@@ -356,6 +356,8 @@ void Worker(size_t nth)
 					const auto msg_data = reinterpret_cast<const std::byte*>(msg.data());
 					const size_t msg_size = msg.size();
 
+					std::println("Client {}: {}", id, msg);
+
 					for (auto& ck : everySockets)
 					{
 						const auto& target_id = ck.id;
@@ -374,18 +376,18 @@ void Worker(size_t nth)
 						}
 
 						auto sender = new ExContext{};
-						sender->myID = ck.id;
+						sender->myID = target_id;
 						sender->myOperation = IoOperation::Send;
 
 						auto sr = socket.Send(*sender, msg_data, msg_size);
 
 						if (not sr)
 						{
-							std::println("Message cannot be sent on the client {}", id);
+							std::println("Client {} cannot send to message to {}", id, target_id);
 						}
 						else
 						{
-							std::println("Client {}: {}", id, msg);
+							std::println("Client {} to {}", id, target_id);
 						}
 					}
 
