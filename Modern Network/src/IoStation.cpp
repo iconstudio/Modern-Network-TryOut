@@ -30,15 +30,8 @@ noexcept
 
 net::io::Station::Station(net::NativeHandle&& handle)
 noexcept
-	: Handler(std::move(handle)), mySwitch()
+	: Handler(std::move(handle))
 {}
-
-std::stop_token
-net::io::Station::MakeCancelToken()
-const noexcept
-{
-	return mySwitch.get_token();
-}
 
 net::SocketResult
 net::io::Station::Register(net::Socket& socket, std::uint64_t id)
@@ -80,12 +73,6 @@ noexcept
 		error_code = std::move(result).error();
 		return false;
 	}
-}
-
-void
-net::io::Station::Stop()
-{
-	mySwitch.request_stop();
 }
 
 bool

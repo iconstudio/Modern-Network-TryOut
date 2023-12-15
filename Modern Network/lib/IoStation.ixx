@@ -10,8 +10,6 @@ import <cstdint>;
 import <limits>;
 import <expected>;
 import <memory>;
-import <coroutine>;
-import <stop_token>;
 
 export namespace net::io
 {
@@ -26,7 +24,6 @@ export namespace net::io
 
 		net::SocketResult Register(net::Socket& socket, std::uint64_t id) noexcept;
 		bool TryRegister(net::Socket& socket, std::uint64_t id, net::ErrorCodes& error_code) noexcept;
-		void Stop();
 		bool Destroy() noexcept;
 		bool Destroy(net::ErrorCodes& error_code) noexcept;
 
@@ -42,11 +39,7 @@ export namespace net::io
 	private:
 		Station(net::NativeHandle&& handle) noexcept;
 
-		[[nodiscard]] std::stop_token MakeCancelToken() const noexcept;
-
 		Station(const Station&) = delete;
 		Station& operator=(const Station&) = delete;
-
-		std::stop_source mySwitch;
 	};
 }
