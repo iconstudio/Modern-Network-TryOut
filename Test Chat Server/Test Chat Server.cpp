@@ -1,6 +1,7 @@
 ﻿#pragma comment(lib, "Modern Network.lib")
 #include <cstdlib>
 #include <array>
+#include <vector>
 #include <span>
 #include <print>
 #include <string>
@@ -48,14 +49,38 @@ public:
 	ExContext myContext;
 };
 
+enum class PacketCategory : unsigned char
+{
+	None = 0, Chat, SignIn, SignOut
+};
+
+#pragma pack(push, 1)
+struct alignas(1) BasicPacket
+{
+	PacketCategory myCat;
+	short mySize;
+};
+
+struct alignas(1) PointerPacket : public BasicPacket
+{
+	void* myData;
+
+	[[nodiscard]]
+	std::vector<std::byte> Serialize() const
+	{
+		return {};
+	}
+};
+#pragma pack(pop)
+
 net::Socket serverListener{};
 static inline constexpr size_t clientsNumber = 40;
 static inline constexpr size_t sizeRecvBuffer = 256;
 static inline constexpr std::uintptr_t serverID = 0;
 static inline constexpr std::uintptr_t clientIdOffset = 1;
 
+//std::array<Client*, clientsNumber> everyClients{};
 net::SocketPool everySockets{ clientsNumber };
-std::array<Client*, clientsNumber> everyClients{};
 
 std::array<ExContext*, clientsNumber> clientContexts{};
 // all-in-one circular buffer
@@ -159,17 +184,10 @@ int main()
 
 void Worker(size_t nth)
 {
-	//auto io_schedule = everySockets.Schedule();
 	std::println("Worker {} is started", nth);
 
 	while (true)
 	{
-		//if (io_schedule.IsCancelled())
-		{
-			//std::println("Worker has been cancelled");
-			//break;
-		}
-
 		auto io_event = everySockets.WaitForIoResult();
 		auto& io_context = io_event.ioContext;
 		auto& io_id = io_event.eventId;
@@ -341,6 +359,7 @@ void Worker(size_t nth)
 				}
 				break;
 
+				// Custome event
 				case IoOperation::BroadcastMessage:
 				{
 					auto msg_ctx = static_cast<ChatMsgContext*>(ex_context);
