@@ -3,6 +3,7 @@
 #include <array>
 #include <span>
 #include <print>
+#include <string>
 #include <thread>
 #include <atomic>
 
@@ -27,7 +28,7 @@ class ExContext : public net::io::Context
 public:
 	using Context::Context;
 
-	size_t myID;
+	std::uintptr_t myID;
 	IoOperation myOperation;
 };
 
@@ -37,6 +38,7 @@ public:
 	using ExContext::ExContext;
 
 	std::atomic_int refCount;
+	std::string chatMsg;
 };
 
 class Client
@@ -49,7 +51,8 @@ public:
 net::Socket serverListener{};
 static inline constexpr size_t clientsNumber = 40;
 static inline constexpr size_t sizeRecvBuffer = 256;
-static inline constexpr size_t clientIdOffset = 1;
+static inline constexpr std::uintptr_t serverID = 0;
+static inline constexpr std::uintptr_t clientIdOffset = 1;
 
 net::SocketPool everySockets{ clientsNumber };
 std::array<Client*, clientsNumber> everyClients{};
@@ -59,14 +62,14 @@ std::array<ExContext*, clientsNumber> clientContexts{};
 std::array<std::byte, clientsNumber* sizeRecvBuffer> clientsRecvBuffer{};
 
 [[nodiscard]]
-constexpr size_t GetIndexOnID(const size_t& id) noexcept
+constexpr size_t GetIndexOnID(const std::uintptr_t& id) noexcept
 {
 	return id - clientIdOffset;
 }
 
 [[nodiscard]]
 constexpr std::span<std::byte, sizeRecvBuffer>
-GetBuffer(const size_t& id)
+GetBuffer(const std::uintptr_t& id)
 noexcept
 {
 	return std::span<std::byte, sizeRecvBuffer>(clientsRecvBuffer.data() + GetIndexOnID(id) * sizeRecvBuffer, sizeRecvBuffer);
@@ -86,7 +89,7 @@ int main()
 	serverListener.Bind(net::EndPoint{ net::IPv4Address::Loopback, 10000 });
 	serverListener.IsAddressReusable = true;
 
-	everySockets.Add(&serverListener, 0ULL);
+	everySockets.Add(&serverListener, serverID);
 	std::println("The listener is ready.");
 
 	for (auto& ctx : clientContexts)
@@ -97,7 +100,7 @@ int main()
 
 	for (size_t i = 0; i < clientsNumber; ++i)
 	{
-		const size_t id = i + clientIdOffset;
+		const std::uintptr_t id = i + clientIdOffset;
 
 		auto socket = everySockets.Allocate(id, net::SocketType::Asynchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 
@@ -189,12 +192,12 @@ void Worker(size_t nth)
 						break; // switch (op)
 					}
 
-					op = IoOperation::Recv;
 					std::println("Client connected - {}", id);
 
 					auto it = everySockets.Find(id);
 					auto& client = *it;
 					auto& socket = client.sk;
+					op = IoOperation::Recv;
 
 					auto r = socket->Receive(*ex_context, GetBuffer(id));
 
@@ -226,6 +229,84 @@ void Worker(size_t nth)
 					}
 
 					auto& bytes = io_event.ioBytes;
+					if (0 == bytes)
+					{
+						std::println("Closing client {} as sending has been failed", id);
+
+						auto it = everySockets.Find(id);
+						auto& client = *it;
+						auto& socket = client.sk;
+
+						op = IoOperation::Close;
+						socket->CloseAsync(ex_context);
+
+						break; // switch (op)
+					}
+
+					auto buffer = GetBuffer(id);
+					auto buffer_first_it = buffer.cbegin();
+					auto buffer_last_it = buffer.cbegin() + bytes;
+
+					std::string temp_msg{};
+					temp_msg.reserve(static_cast<size_t>(bytes + 1));
+
+					while (buffer_first_it != buffer_last_it)
+					{
+						temp_msg.push_back(static_cast<const char>(*buffer_first_it));
+						++buffer_first_it;
+					}
+
+					struct MemoryFailsafe
+					{
+						~MemoryFailsafe()
+						{
+							if (not ok and ptr)
+							{
+								delete ptr;
+							}
+						}
+
+						bool ok;
+						ChatMsgContext* ptr;
+					};
+
+					auto msg_ctx = new ChatMsgContext{};
+					MemoryFailsafe failsafe{ .ptr = msg_ctx };
+
+					msg_ctx->chatMsg = std::move(temp_msg);
+					msg_ctx->myID = id;
+					msg_ctx->myOperation = IoOperation::BroadcastMessage;
+
+					if (everySockets.Schedule(msg_ctx, id, bytes))
+					{
+						failsafe.ok = true;
+					}
+					else
+					{
+						std::println("Worker cannot schedule a broadcasting on the client {}", id);
+					}
+
+					auto it = everySockets.Find(id);
+					auto& client = *it;
+					auto& socket = client.sk;
+					op = IoOperation::Recv;
+
+					// Restart receive
+					auto r = socket->Receive(*ex_context, buffer);
+
+					if (r)
+					{
+						std::println("Client {}'s receive are reserved", id);
+					}
+					else
+					{
+						std::println("Client {}'s receive are not able to be reserved ({})", id, r.error());
+
+						op = IoOperation::Close;
+						socket->CloseAsync(ex_context);
+
+						break; // switch (op)
+					}
 				}
 				break;
 
@@ -235,7 +316,7 @@ void Worker(size_t nth)
 
 					if (not io_event.isSucceed)
 					{
-						std::println("Worker has been failed as sending on client {}", id);
+						std::println("Worker has been failed as sending on the client {}", id);
 
 						delete ex_context;
 
@@ -270,22 +351,45 @@ void Worker(size_t nth)
 						break;
 					}
 
+					//constexpr char msg[]{ "asdasdda" };
+					const auto& msg = msg_ctx->chatMsg;
+					const auto msg_data = reinterpret_cast<const std::byte*>(msg.data());
+					const size_t msg_size = msg.size();
+
 					for (auto& ck : everySockets)
 					{
+						const auto& target_id = ck.id;
+						if (target_id == serverID)
+						{
+							continue;
+						}
+
+						auto& target_ctx = clientContexts[GetIndexOnID(ck.id)];
 						auto& socket = *ck.sk;
+						// IsAvailable은 안됨
+						//if (not socket.IsAvailable())
+						if (target_ctx->myOperation == IoOperation::None || target_ctx->myOperation == IoOperation::Accept)
+						{
+							continue;
+						}
 
 						auto sender = new ExContext{};
 						sender->myID = ck.id;
 						sender->myOperation = IoOperation::Send;
 
-						constexpr char msg[]{ "asdasdda" };
-						auto sr = socket.Send(*sender, reinterpret_cast<std::byte*>(msg), sizeof(msg));
+						auto sr = socket.Send(*sender, msg_data, msg_size);
 
 						if (not sr)
 						{
 							std::println("Message cannot be sent on the client {}", id);
 						}
+						else
+						{
+							std::println("Client {}: {}", id, msg);
+						}
 					}
+
+					delete msg_ctx;
 				}
 				break;
 
