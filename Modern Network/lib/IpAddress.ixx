@@ -21,9 +21,6 @@ export namespace net
 		IpAddress(const IpAddress& other);
 		IpAddress& operator=(const IpAddress& other);
 
-		~IpAddress()
-		{}
-
 		[[nodiscard]]
 		SerializedIpAddress Serialize() const noexcept;
 		bool TrySerialize(SerializedIpAddress& out) const noexcept;
