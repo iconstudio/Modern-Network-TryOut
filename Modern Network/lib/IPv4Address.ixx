@@ -8,18 +8,16 @@ export namespace net
 	class [[nodiscard]] IPv4Address final
 	{
 	public:
-		static ReadonlyProperty<IpAddress> Loopback;
-
 		[[nodiscard]]
 		static IpAddress Create(std::string_view address) noexcept
 		{
 			return IpAddress{ IpAddressFamily::IPv4, address };
 		}
 
+		static inline ReadonlyProperty<IpAddress> Loopback = Create("127.0.0.1");
+
 	private:
 		constexpr IPv4Address() noexcept = default;
 		constexpr ~IPv4Address() noexcept = default;
 	};
-
-	ReadonlyProperty<IpAddress> IPv4Address::Loopback = IPv4Address::Create("127.0.0.1");
 }
