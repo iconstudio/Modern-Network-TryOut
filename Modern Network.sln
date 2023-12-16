@@ -5,8 +5,6 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Modern Network", "Modern Network\Modern Network.vcxproj", "{D672B687-2D7D-4592-8343-07C93596A1EF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{9FC79968-2EA7-466E-ABF5-B149390178EA}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test Client", "Test Client\Test Client.vcxproj", "{B5622BF7-E0C5-41F8-BFB4-1107ED291744}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test Chat Server", "Test Chat Server\Test Chat Server.vcxproj", "{B586CD32-9C07-4407-95E1-84391E715DF9}"
@@ -27,14 +25,6 @@ Global
 		{D672B687-2D7D-4592-8343-07C93596A1EF}.Release|x64.Build.0 = Release|x64
 		{D672B687-2D7D-4592-8343-07C93596A1EF}.Release|x86.ActiveCfg = Release|x64
 		{D672B687-2D7D-4592-8343-07C93596A1EF}.Release|x86.Build.0 = Release|x64
-		{9FC79968-2EA7-466E-ABF5-B149390178EA}.Debug|x64.ActiveCfg = Debug|x64
-		{9FC79968-2EA7-466E-ABF5-B149390178EA}.Debug|x64.Build.0 = Debug|x64
-		{9FC79968-2EA7-466E-ABF5-B149390178EA}.Debug|x86.ActiveCfg = Debug|Win32
-		{9FC79968-2EA7-466E-ABF5-B149390178EA}.Debug|x86.Build.0 = Debug|Win32
-		{9FC79968-2EA7-466E-ABF5-B149390178EA}.Release|x64.ActiveCfg = Release|x64
-		{9FC79968-2EA7-466E-ABF5-B149390178EA}.Release|x64.Build.0 = Release|x64
-		{9FC79968-2EA7-466E-ABF5-B149390178EA}.Release|x86.ActiveCfg = Release|Win32
-		{9FC79968-2EA7-466E-ABF5-B149390178EA}.Release|x86.Build.0 = Release|Win32
 		{B5622BF7-E0C5-41F8-BFB4-1107ED291744}.Debug|x64.ActiveCfg = Debug|x64
 		{B5622BF7-E0C5-41F8-BFB4-1107ED291744}.Debug|x64.Build.0 = Debug|x64
 		{B5622BF7-E0C5-41F8-BFB4-1107ED291744}.Debug|x86.ActiveCfg = Debug|Win32
