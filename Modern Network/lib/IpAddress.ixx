@@ -31,20 +31,17 @@ export namespace net
 		{
 			return addressFamily;
 		}
-		[[nodiscard]]
-		constexpr std::string_view GetAddress() const& noexcept
-		{
-			return addressBuffer.get();
-		}
+
 		[[nodiscard]]
 		constexpr IpAddressFamily&& GetFamily() && noexcept
 		{
 			return static_cast<IpAddressFamily&&>(addressFamily);
 		}
+
 		[[nodiscard]]
-		constexpr std::unique_ptr<char[]>&& GetAddress() && noexcept
+		constexpr std::string_view GetAddressString() const noexcept
 		{
-			return static_cast<std::unique_ptr<char[]>&&>(addressBuffer);
+			return addressBuffer.get();
 		}
 
 		[[nodiscard]]

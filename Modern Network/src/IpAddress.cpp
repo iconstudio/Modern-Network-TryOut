@@ -116,5 +116,5 @@ std::format_context::iterator
 std::formatter<net::IpAddress>::format(const net::IpAddress& ip, std::format_context& context)
 const noexcept
 {
-	return std::format_to(context.out(), "IP Address [{} / {}]", std::to_string(ip.GetFamily()), ip.GetAddress());
+	return std::format_to(context.out(), "IP Address [{} / {}]", std::to_string(ip.GetFamily()), ip.GetAddressString());
 }
