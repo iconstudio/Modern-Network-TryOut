@@ -266,8 +266,9 @@ void Worker(size_t nth)
 					auto buffer_last_it = buffer.cbegin() + bytes;
 
 					std::string temp_msg{};
-					temp_msg.reserve(static_cast<size_t>(bytes + 1));
+					temp_msg.reserve(12 + static_cast<size_t>(bytes) * 2);
 
+					temp_msg += std::format("Client {}: ", id);
 					while (buffer_first_it != buffer_last_it)
 					{
 						temp_msg.push_back(static_cast<const char>(*buffer_first_it));
@@ -375,8 +376,6 @@ void Worker(size_t nth)
 					const auto msg_data = reinterpret_cast<const std::byte*>(msg.data());
 					const size_t msg_size = msg.size();
 
-					std::println("Client {}: {}", id, msg);
-
 					for (auto& ck : everySockets)
 					{
 						const auto& target_id = ck.id;
@@ -406,7 +405,7 @@ void Worker(size_t nth)
 						}
 						else
 						{
-							std::println("Client {} to {}", id, target_id);
+							std::println("Client {} to {}: {}", id, target_id, msg);
 						}
 					}
 
