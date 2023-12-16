@@ -1,9 +1,7 @@
-module;
-#include <cstdint>
-#include <type_traits>
-#include <string_view>
-
 export module Net.EndPoint;
+import <cstdint>;
+import <type_traits>;
+import <string_view>;
 import Net.IpAddress;
 
 export namespace net
@@ -48,25 +46,20 @@ export namespace net
 		}
 
 		[[nodiscard]]
-		std::string_view GetAddress() const noexcept
-		{
-			return myAddress.GetAddress();
-		}
-
-		[[nodiscard]]
 		constexpr const std::uint16_t& GetPort() const& noexcept
 		{
 			return myPort;
 		}
 		[[nodiscard]]
-		constexpr decltype(auto) GetAddressBuffer() && noexcept
-		{
-			return std::move(myAddress).GetAddress();
-		}
-		[[nodiscard]]
 		constexpr std::uint16_t&& GetPort() && noexcept
 		{
 			return std::move(myPort);
+		}
+
+		[[nodiscard]]
+		std::string_view GetAddressString() const noexcept
+		{
+			return myAddress.GetAddressString();
 		}
 
 	private:
