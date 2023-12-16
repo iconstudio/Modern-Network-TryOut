@@ -335,16 +335,3 @@ const noexcept
 {
 	return MakeReceiveTask(*context, memory, std::move(size));
 }
-
-net::Task<net::SocketSendingResult>
-net::Socket::AsyncSend(io::Context& context, std::span<const std::byte> memory)
-const noexcept
-{
-	auto task = MakeSendTask(context, memory);
-
-	std::thread{
-		[&] { task(); }
-	}.detach();
-	
-	return task;
-}

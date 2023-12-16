@@ -6,6 +6,7 @@ module;
 
 module Net.Socket;
 import <coroutine>;
+import <thread>;
 
 net::SocketSendingResult RawSend(const net::NativeSocket& sock, ::WSABUF& buffer) noexcept;
 net::SocketSendingResult RawSendEx(const net::NativeSocket& sock, ::WSABUF& buffer, void* context, ::LPWSAOVERLAPPED_COMPLETION_ROUTINE routine) noexcept;
@@ -51,7 +52,7 @@ const noexcept
 bool
 net::Socket::Send(std::span<const std::byte> memory
 	, net::SendingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Send(memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -80,7 +81,7 @@ const noexcept
 bool
 net::Socket::Send(const std::byte* const& memory, size_t size
 	, net::SendingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Send(memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -134,7 +135,7 @@ const noexcept
 bool
 net::Socket::Send(io::Context& context, std::span<const std::byte> memory
 	, net::SendingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Send(context, memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -163,7 +164,7 @@ const noexcept
 bool
 net::Socket::Send(io::Context& context, const std::byte* const& memory
 	, size_t size, net::SendingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Send(context, memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, SendingErrorCodes> {
@@ -278,6 +279,45 @@ net::Socket::MakeSendTask(const std::shared_ptr<io::Context>& context, const std
 const noexcept
 {
 	return MakeSendTask(*context, memory, std::move(size));
+}
+
+net::Task<net::SocketSendingResult>
+net::Socket::AsyncSend(net::io::Context& context, std::span<const std::byte> memory)
+const noexcept
+{
+	auto task = MakeSendTask(context, memory);
+
+	std::thread{
+		[&] { task(); }
+	}.detach();
+
+	return task;
+}
+
+net::Task<net::SocketSendingResult>
+net::Socket::AsyncSend(net::io::Context& context, std::span<const std::byte> memory, size_t size)
+const noexcept
+{
+	auto task = MakeSendTask(context, memory, size);
+
+	std::thread{
+		[&] { task(); }
+	}.detach();
+
+	return task;
+}
+
+net::Task<net::SocketSendingResult>
+net::Socket::AsyncSend(net::io::Context& context, const std::byte* const& memory, size_t size)
+const noexcept
+{
+	auto task = MakeSendTask(context, memory, size);
+
+	std::thread{
+		[&] { task(); }
+	}.detach();
+
+	return task;
 }
 
 net::SocketSendingResult
