@@ -55,7 +55,7 @@ namespace Test_Chat_Client
 				}
 			}
 		}
-		private void SignOut()
+		private void BeginSignOut()
 		{
 			lock (mySocket)
 			{
@@ -130,9 +130,30 @@ namespace Test_Chat_Client
 				}
 			}
 		}
+		private void AddChatMessage(string msg)
+		{
+			chatMessages.Add(msg);
+		}
+		private void AddMember(string msg)
+		{
+			memberListBox.Items.Add(msg);
+		}
 
 		private void Initialize()
 		{
+			signInPage.VisibleChanged += (object? sender, EventArgs e) =>
+			{
+				ChangeVisible(signInMenuItem, true);
+				ChangeVisible(signOutMenuItem, false);
+				chatMessages.Clear();
+			};
+			chatPage.VisibleChanged += (object? sender, EventArgs e) =>
+			{
+				ChangeVisible(signInMenuItem, false);
+				ChangeVisible(signOutMenuItem, true);
+				BeginReceive();
+			};
+
 			recvBuffer = new byte[bufferSize];
 			sendBuffer = new byte[bufferSize];
 			chatMessages = new()
@@ -155,16 +176,10 @@ namespace Test_Chat_Client
 		private void ChangePageToSignIn()
 		{
 			ChangeCurrentPage(signInPage);
-			ChangeVisible(signInMenuItem, true);
-			ChangeVisible(signOutMenuItem, false);
-			chatMessages.Clear();
 		}
 		private void ChangePageToChatting()
 		{
 			ChangeCurrentPage(chatPage);
-			ChangeVisible(signInMenuItem, false);
-			ChangeVisible(signOutMenuItem, true);
-			BeginReceive();
 		}
 
 		private void Form1_Load(object sender, EventArgs e)
@@ -181,7 +196,7 @@ namespace Test_Chat_Client
 		}
 		private void signOutMenuItem_Click(object sender, EventArgs e)
 		{
-			SignOut();
+			BeginSignOut();
 		}
 		private void ¼³Á¤ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
