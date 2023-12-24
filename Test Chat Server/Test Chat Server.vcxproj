@@ -139,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Client.ixx" />
+    <ClCompile Include="Context.ixx" />
+    <ClCompile Include="IoOperation.ixx" />
     <ClCompile Include="Test Chat Server.cpp" />
   </ItemGroup>
   <ItemGroup>

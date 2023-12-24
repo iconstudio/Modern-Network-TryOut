@@ -6,47 +6,28 @@
 #include <print>
 #include <string>
 #include <thread>
+#include <algorithm>
 #include <atomic>
 
 import Net;
 import Net.IpAddress;
 import Net.IpAddress.IPv4;
-import Net.Io.Context;
-import Net.Io.Station;
 import Net.Socket;
 import Net.SocketPool;
 
+import Test.IoOperation;
+import Test.Context;
+import Test.Client;
+
 void Worker(size_t nth);
 
-enum class IoOperation
-{
-	None = 0, Accept, Connect, Recv, Send, Close,
-	BroadcastMessage
-};
-
-class ExContext : public net::io::Context
-{
-public:
-	using Context::Context;
-
-	std::uintptr_t myID;
-	IoOperation myOperation;
-};
-
-class ChatMsgContext : public ExContext
+class ChatMsgContext : public test::ExContext
 {
 public:
 	using ExContext::ExContext;
 
 	std::atomic_int refCount;
 	std::string chatMsg;
-};
-
-class Client
-{
-public:
-	net::Socket* mySocket;
-	ExContext myContext;
 };
 
 enum class PacketCategory : unsigned char
@@ -61,7 +42,7 @@ struct alignas(1) BasicPacket
 	short mySize;
 };
 
-struct alignas(1) PointerPacket : public BasicPacket
+struct PointerPacket : public BasicPacket
 {
 	void* myData;
 
@@ -79,17 +60,22 @@ static inline constexpr size_t sizeRecvBuffer = 256;
 static inline constexpr std::uintptr_t serverID = 0;
 static inline constexpr std::uintptr_t clientIdOffset = 1;
 
-//std::array<Client*, clientsNumber> everyClients{};
 net::SocketPool everySockets{ clientsNumber };
 
-std::array<ExContext*, clientsNumber> clientContexts{};
+std::array<test::Client*, clientsNumber> everyClients{};
 // all-in-one circular buffer
 std::array<std::byte, clientsNumber* sizeRecvBuffer> clientsRecvBuffer{};
 
 [[nodiscard]]
-constexpr size_t GetIndexOnID(const std::uintptr_t& id) noexcept
+constexpr size_t GetIndexByID(const std::uintptr_t& id) noexcept
 {
 	return id - clientIdOffset;
+}
+
+[[nodiscard]]
+constexpr test::Client& FindClient(const std::uintptr_t& id)
+{
+	return *everyClients[GetIndexByID(id)];
 }
 
 [[nodiscard]]
@@ -97,10 +83,8 @@ constexpr std::span<std::byte, sizeRecvBuffer>
 GetBuffer(const std::uintptr_t& id)
 noexcept
 {
-	return std::span<std::byte, sizeRecvBuffer>(clientsRecvBuffer.data() + GetIndexOnID(id) * sizeRecvBuffer, sizeRecvBuffer);
+	return std::span<std::byte, sizeRecvBuffer>(clientsRecvBuffer.data() + GetIndexByID(id) * sizeRecvBuffer, sizeRecvBuffer);
 }
-
-net::SocketPool::iterator lastClient{};
 
 int main()
 {
@@ -117,27 +101,21 @@ int main()
 	everySockets.Add(&serverListener, serverID);
 	std::println("The listener is ready.");
 
-	for (auto& ctx : clientContexts)
+	std::uintptr_t id = 0;
+	for (auto* & client : everyClients)
 	{
-		ctx = new ExContext{};
+		client = new test::Client{};
+		client->myID = id + clientIdOffset;
+		client->mySocket = everySockets.Allocate(id, net::SocketType::Asynchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
+		client->mySocket->IsAddressReusable = true;
+
+		auto& ctx = client->myContext;
+		ctx.myID = id;
+		ctx.myOperation = test::IoOperation::None;
+
+		++id;
 	}
-	std::println("Contexts are ready.");
-
-	for (size_t i = 0; i < clientsNumber; ++i)
-	{
-		const std::uintptr_t id = i + clientIdOffset;
-
-		auto socket = everySockets.Allocate(id, net::SocketType::Asynchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
-
-		socket->IsAddressReusable = true;
-
-		auto& ctx = clientContexts[i];
-		ctx->myID = id;
-		ctx->myOperation = IoOperation::None;
-	}
-	std::println("Clients are ready.");
-
-	lastClient = everySockets.begin();
+	std::println("Client prefabs are ready.");
 
 	std::println("=========== Start ===========");
 	if (serverListener.Open().has_value())
@@ -151,20 +129,12 @@ int main()
 		auto& worker = workers.emplace_back(Worker, i);
 	}
 
-	for (auto& client : everySockets)
+	for (auto*& client : everyClients)
 	{
-		auto& id = client.id;
-		auto& socket = *client.sk;
+		auto& ctx = client->myContext;
+		ctx.myOperation = test::IoOperation::Accept;
 
-		if (0 == id)
-		{
-			continue;
-		}
-
-		auto& ctx = clientContexts[GetIndexOnID(id)];
-		ctx->myOperation = IoOperation::Accept;
-
-		auto acceptance = serverListener.ReserveAccept(*ctx, socket);
+		auto acceptance = serverListener.ReserveAccept(ctx, *client->mySocket);
 		if (not acceptance)
 		{
 			std::abort();
@@ -174,11 +144,11 @@ int main()
 	std::println("Clients are reverved to accept.");
 
 	std::println("=========== Update ===========");
-
 	while (true)
 	{
 
 	}
+
 	net::core::Annihilate();
 }
 
@@ -192,7 +162,7 @@ void Worker(size_t nth)
 		auto& io_context = io_event.ioContext;
 		auto& io_id = io_event.eventId;
 
-		auto ex_context = static_cast<ExContext*>(io_context);
+		auto ex_context = static_cast<test::ExContext*>(io_context);
 		if (ex_context)
 		{
 			ex_context->Clear();
@@ -202,7 +172,7 @@ void Worker(size_t nth)
 
 			switch (op)
 			{
-				case IoOperation::Accept:
+				case test::IoOperation::Accept:
 				{
 					if (not io_event.isSucceed)
 					{
@@ -215,7 +185,7 @@ void Worker(size_t nth)
 					auto it = everySockets.Find(id);
 					auto& client = *it;
 					auto& socket = client.sk;
-					op = IoOperation::Recv;
+					op = test::IoOperation::Recv;
 
 					auto r = socket->Receive(*ex_context, GetBuffer(id));
 
@@ -230,7 +200,7 @@ void Worker(size_t nth)
 				}
 				break;
 
-				case IoOperation::Recv:
+				case test::IoOperation::Recv:
 				{
 					if (not io_event.isSucceed)
 					{
@@ -240,7 +210,7 @@ void Worker(size_t nth)
 						auto& client = *it;
 						auto& socket = client.sk;
 
-						op = IoOperation::Close;
+						op = test::IoOperation::Close;
 						socket->CloseAsync(ex_context);
 
 						break; // switch (op)
@@ -255,7 +225,7 @@ void Worker(size_t nth)
 						auto& client = *it;
 						auto& socket = client.sk;
 
-						op = IoOperation::Close;
+						op = test::IoOperation::Close;
 						socket->CloseAsync(ex_context);
 
 						break; // switch (op)
@@ -294,7 +264,7 @@ void Worker(size_t nth)
 
 					msg_ctx->chatMsg = std::move(temp_msg);
 					msg_ctx->myID = id;
-					msg_ctx->myOperation = IoOperation::BroadcastMessage;
+					msg_ctx->myOperation = test::IoOperation::BroadcastMessage;
 
 					if (everySockets.Schedule(msg_ctx, id, bytes))
 					{
@@ -308,7 +278,7 @@ void Worker(size_t nth)
 					auto it = everySockets.Find(id);
 					auto& client = *it;
 					auto& socket = client.sk;
-					op = IoOperation::Recv;
+					op = test::IoOperation::Recv;
 
 					// Restart receive
 					auto r = socket->Receive(*ex_context, buffer);
@@ -321,7 +291,7 @@ void Worker(size_t nth)
 					{
 						std::println("Client {}'s receive are not able to be reserved ({})", id, r.error());
 
-						op = IoOperation::Close;
+						op = test::IoOperation::Close;
 						socket->CloseAsync(ex_context);
 
 						break; // switch (op)
@@ -329,7 +299,7 @@ void Worker(size_t nth)
 				}
 				break;
 
-				case IoOperation::Send:
+				case test::IoOperation::Send:
 				{
 					const auto& bytes = io_event.ioBytes;
 
@@ -343,14 +313,13 @@ void Worker(size_t nth)
 						{
 							std::println("Closing client {} as sending has been failed", id);
 
-							auto it = everySockets.Find(id);
-							auto& client = *it;
-							auto& socket = client.sk;
+							auto& client = FindClient(id);
+							auto& socket = *client.mySocket;
 
-							auto& ctx = clientContexts[GetIndexOnID(id)];
-							ctx->myOperation = IoOperation::Close;
+							auto& ctx = client.myContext;
+							ctx.myOperation = test::IoOperation::Close;
 
-							socket->CloseAsync(ctx);
+							socket.CloseAsync(ctx);
 						}
 
 						break; // switch (op)
@@ -361,7 +330,7 @@ void Worker(size_t nth)
 				break;
 
 				// Custome event
-				case IoOperation::BroadcastMessage:
+				case test::IoOperation::BroadcastMessage:
 				{
 					auto msg_ctx = static_cast<ChatMsgContext*>(ex_context);
 					if (nullptr == msg_ctx)
@@ -384,18 +353,24 @@ void Worker(size_t nth)
 							continue;
 						}
 
-						auto& target_ctx = clientContexts[GetIndexOnID(ck.id)];
+						auto& target = FindClient(ck.id);
+						auto& target_ctx = target.myContext;
 						auto& socket = *ck.sk;
+
 						// IsAvailable은 안됨
+						// 
 						//if (not socket.IsAvailable())
-						if (target_ctx->myOperation == IoOperation::None || target_ctx->myOperation == IoOperation::Accept)
+						constexpr auto range = std::array{ test::IoOperation::None, test::IoOperation::Accept };
+						if (std::ranges::any_of(range, [&](const test::IoOperation& ops) noexcept {
+								return target_ctx.myOperation == ops;
+							}))
 						{
 							continue;
 						}
 
-						auto sender = new ExContext{};
+						auto sender = new test::ExContext{};
 						sender->myID = target_id;
-						sender->myOperation = IoOperation::Send;
+						sender->myOperation = test::IoOperation::Send;
 
 						auto sr = socket.Send(*sender, msg_data, msg_size);
 
@@ -413,13 +388,13 @@ void Worker(size_t nth)
 				}
 				break;
 
-				case IoOperation::Close:
+				case test::IoOperation::Close:
 				{
 					ex_context->Clear();
 					std::println("Client {} is closed", id);
 
 					// accept again
-					op = IoOperation::Accept;
+					op = test::IoOperation::Accept;
 					auto it = everySockets.Find(id);
 					auto& client = *it;
 					auto& socket = client.sk;
