@@ -302,6 +302,8 @@ test::Framework::CloseClient(const std::uintptr_t& id) const
 	auto& socket = client.mySocket;
 	auto& context = client.myContext;
 
+	context.ResetOperation(test::IoOperation::Close);
+
 	return socket->CloseAsync(context);
 }
 
@@ -375,7 +377,7 @@ test::Framework::OnChat(test::ChatMsgContext* sender)
 	const size_t msg_size = msg.size();
 
 	// Do not create another context
-	sender->myOperation = test::IoOperation::Send;
+	sender->ResetOperation(test::IoOperation::Send);
 
 	size_t count = 0;
 	for (auto& ck : everyClients)
