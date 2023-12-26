@@ -2,7 +2,6 @@
 import <cstdio>;
 import <print>;
 
-import Net;
 import Test.Framework;
 
 test::Framework serverFramework{};
@@ -38,7 +37,9 @@ int main()
 		}
 	}
 
+	std::println("========== Destroy ===========");
 	serverFramework.Destroy();
 
+	std::println("========== Clean up ==========");
 	serverFramework.Cleanup();
 }
