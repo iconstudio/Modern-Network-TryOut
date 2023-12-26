@@ -7,7 +7,7 @@ import <span>;
 import <thread>;
 import <atomic>;
 
-export import Net;
+import Net;
 import Net.IpAddress;
 export import Net.EndPoint;
 export import Net.Socket;
