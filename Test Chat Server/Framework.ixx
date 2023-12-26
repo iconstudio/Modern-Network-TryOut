@@ -1,11 +1,9 @@
-module;
-#include <span>
-
 export module Test.Framework;
 import <cstdlib>;
 import <string>;
 import <array>;
 import <vector>;
+import <span>;
 import <thread>;
 import <atomic>;
 
