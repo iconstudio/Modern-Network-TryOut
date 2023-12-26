@@ -2,6 +2,7 @@ module Test.Framework;
 import <print>;
 import <thread>;
 import <algorithm>;
+import <atomic>;
 
 struct [[nodiscard]] MemoryFailsafe
 {
@@ -354,7 +355,7 @@ test::Framework::OnReceive(const std::uintptr_t& id, const size_t& bytes)
 	msg_ctx->myOperation = test::IoOperation::BroadcastMessage;
 	msg_ctx->refCount = static_cast<int>(clientsNumber.load(std::memory_order_relaxed));
 
-	if (everySockets.Schedule(msg_ctx, id, bytes))
+	if (everySockets.Schedule(msg_ctx, id, static_cast<unsigned long>(bytes)))
 	{
 		failsafe.ok = true;
 	}
