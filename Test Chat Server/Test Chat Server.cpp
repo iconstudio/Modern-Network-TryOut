@@ -1,8 +1,8 @@
-﻿#pragma comment(lib, "Modern Network.lib")
-#include <print>
-
+﻿#pragma comment(lib, "Modern Network.lib"
 import Net;
 import Test.Framework;
+
+import <print>;
 
 test::Framework serverFramework{};
 
