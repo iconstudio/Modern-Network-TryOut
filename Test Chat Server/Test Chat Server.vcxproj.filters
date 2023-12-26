@@ -33,5 +33,11 @@
     <ClCompile Include="Framework.ixx">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ChatMsgContext.ixx">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet.ixx">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

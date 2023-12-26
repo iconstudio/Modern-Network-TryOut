@@ -1,7 +1,8 @@
 export module Test.Context;
 import <cstdint>;
+import <atomic>;
 import Net.Io.Context;
-import Test.IoOperation;
+export import Test.IoOperation;
 
 export namespace test
 {
@@ -11,6 +12,6 @@ export namespace test
 		using Context::Context;
 
 		std::uintptr_t myID;
-		IoOperation myOperation;
+		std::atomic<IoOperation> myOperation;
 	};
 }

@@ -1,5 +1,7 @@
 export module Test.Framework;
 import <cstdlib>;
+import <expected>;
+import <tuple>;
 import <string>;
 import <array>;
 import <vector>;
@@ -16,7 +18,9 @@ export import Net.IpAddress.IPv4;
 
 export import Test.IoOperation;
 export import Test.Context;
+export import Test.ChatMsgContext;
 export import Test.Client;
+export import Test.Packet;
 
 export namespace test
 {
@@ -29,6 +33,7 @@ export namespace test
 	class Framework final
 	{
 	public:
+		using ChatBroadcastingResult = std::expected<unsigned int, std::tuple<net::SendingErrorCodes, std::uintptr_t>>;
 		static constexpr std::size_t maxClientsNumber = 40;
 		static constexpr std::size_t sizeRecvBuffer = 256;
 		static constexpr std::size_t oneBufferSize = maxClientsNumber * sizeRecvBuffer;
@@ -55,6 +60,14 @@ export namespace test
 		/// Clean every system resources up
 		/// </summary>
 		void Cleanup();
+
+		net::SocketResult ReserveAccept(const std::uintptr_t& id) const;
+		bool CloseClient(const std::uintptr_t& id) const;
+
+		net::SocketReceivingResult OnAccept(const std::uintptr_t& id);
+		[[nodiscard]] net::SocketReceivingResult OnReceive(const std::uintptr_t& id, const size_t& bytes);
+		[[nodiscard]] ChatBroadcastingResult OnChat(test::ChatMsgContext* sender);
+		net::SocketResult OnClose(const std::uintptr_t& id);
 
 		[[nodiscard]]
 		constexpr test::Client& FindClient(const std::uintptr_t& id) const
@@ -112,37 +125,4 @@ export namespace test
 	};
 
 	void Worker(Framework& framework, size_t nth);
-
-	class ChatMsgContext : public test::ExContext
-	{
-	public:
-		using ExContext::ExContext;
-
-		std::atomic_int refCount;
-		std::string chatMsg;
-	};
-
-	enum class PacketCategory : unsigned char
-	{
-		None = 0, Chat, SignIn, SignOut
-	};
-
-#pragma pack(push, 1)
-	struct alignas(1) BasicPacket
-	{
-		PacketCategory myCat;
-		short mySize;
-	};
-
-	struct PointerPacket : public BasicPacket
-	{
-		void* myData;
-
-		[[nodiscard]]
-		std::vector<std::byte> Serialize() const
-		{
-			return {};
-		}
-	};
-#pragma pack(pop)
 }

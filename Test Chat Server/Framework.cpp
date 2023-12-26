@@ -3,6 +3,20 @@ import <print>;
 import <thread>;
 import <algorithm>;
 
+struct [[nodiscard]] MemoryFailsafe
+{
+	~MemoryFailsafe()
+	{
+		if (not ok and ptr)
+		{
+			delete ptr;
+		}
+	}
+
+	bool ok;
+	test::ChatMsgContext* ptr;
+};
+
 void
 test::Worker(Framework& framework, size_t nth)
 {
@@ -12,6 +26,11 @@ test::Worker(Framework& framework, size_t nth)
 
 	while (true)
 	{
+		if (not socket_pool.IsAvailable())
+		{
+			break;
+		}
+
 		auto io_event = socket_pool.WaitForIoResult();
 		auto& io_context = io_event.ioContext;
 		auto& io_id = io_event.eventId;
@@ -35,112 +54,48 @@ test::Worker(Framework& framework, size_t nth)
 					}
 
 					std::println("Client connected - {}", id);
-
-					auto& client = framework.FindClient(id);
-					auto& socket = client.mySocket;
-
-					op = test::IoOperation::Recv;
-					auto r = socket->Receive(*ex_context, framework.GetBuffer(id));
-
-					if (r)
+					auto rr = framework.OnAccept(id);
+					if (rr)
 					{
 						std::println("Client {}'s receive are reserved", id);
-						++framework.clientsNumber;
 					}
 					else
 					{
-						std::println("Client {}'s receive are not able to be reserved ({})", id, r.error());
+						std::println("Client {}'s receive are not able to be reserved ({})", id, rr.error());
 					}
 				}
 				break;
 
 				case test::IoOperation::Recv:
 				{
-					auto& client = framework.FindClient(id);
-					auto& socket = client.mySocket;
-
 					if (not io_event.isSucceed)
 					{
 						std::println("Worker has been failed as receiving on client {}", id);
 
-						op = test::IoOperation::Close;
-						socket->CloseAsync(ex_context);
-
+						framework.CloseClient(id);
 						break; // switch (op)
 					}
 
 					auto& bytes = io_event.ioBytes;
 					if (0 == bytes)
 					{
-						std::println("Closing client {} as sending has been failed", id);
+						std::println("Closing client {} as receiving has been failed", id);
 
-						op = test::IoOperation::Close;
-						socket->CloseAsync(ex_context);
-
+						framework.CloseClient(id);
 						break; // switch (op)
 					}
 
-					auto buffer = framework.GetBuffer(id);
-					auto buffer_first_it = buffer.cbegin();
-					auto buffer_last_it = buffer.cbegin() + bytes;
-
-					std::string temp_msg{};
-					temp_msg.reserve(12 + static_cast<size_t>(bytes) * 2);
-
-					temp_msg += std::format("Client {}: ", id);
-					while (buffer_first_it != buffer_last_it)
-					{
-						temp_msg.push_back(static_cast<const char>(*buffer_first_it));
-						++buffer_first_it;
-					}
-
-					struct MemoryFailsafe
-					{
-						~MemoryFailsafe()
-						{
-							if (not ok and ptr)
-							{
-								delete ptr;
-							}
-						}
-
-						bool ok;
-						ChatMsgContext* ptr;
-					};
-
-					auto msg_ctx = new ChatMsgContext{};
-					MemoryFailsafe failsafe{ .ptr = msg_ctx };
-
-					msg_ctx->chatMsg = std::move(temp_msg);
-					msg_ctx->myID = id;
-					msg_ctx->myOperation = test::IoOperation::BroadcastMessage;
-					msg_ctx->refCount = static_cast<int>(framework.clientsNumber.load(std::memory_order_relaxed));
-
-					if (socket_pool.Schedule(msg_ctx, id, bytes))
-					{
-						failsafe.ok = true;
-					}
-					else
-					{
-						std::println("Worker cannot schedule a broadcasting on the client {}", id);
-					}
-
-					op = test::IoOperation::Recv;
-
 					// Restart receive
-					auto r = socket->Receive(*ex_context, buffer);
-
-					if (r)
+					auto rr = framework.OnReceive(id, bytes);
+					if (rr)
 					{
 						std::println("Client {}'s receive are reserved", id);
 					}
 					else
 					{
-						std::println("Client {}'s receive are not able to be reserved ({})", id, r.error());
+						std::println("Client {}'s receive are not able to be reserved ({})", id, rr.error());
 
-						op = test::IoOperation::Close;
-						socket->CloseAsync(ex_context);
-
+						framework.CloseClient(id);
 						break; // switch (op)
 					}
 				}
@@ -163,13 +118,7 @@ test::Worker(Framework& framework, size_t nth)
 						{
 							std::println("Closing client {} as sending has been failed", id);
 
-							auto& client = framework.FindClient(id);
-							auto& socket = *client.mySocket;
-
-							auto& ctx = client.myContext;
-							ctx.myOperation = test::IoOperation::Close;
-
-							socket.CloseAsync(ctx);
+							framework.CloseClient(id);
 						}
 
 						break; // switch (op)
@@ -179,7 +128,7 @@ test::Worker(Framework& framework, size_t nth)
 					auto msg_ctx = static_cast<ChatMsgContext*>(ex_context);
 					if (nullptr != msg_ctx)
 					{
-						std::println("Message sent to the client {}", id);
+						std::println("Message sent from the client {}", id);
 
 						// Preserve the message buffer until they sent
 						if (msg_ctx->refCount.fetch_sub(1) <= 1)
@@ -205,72 +154,28 @@ test::Worker(Framework& framework, size_t nth)
 						break;
 					}
 
-					//constexpr char msg[]{ "asdasdda" };
-					const auto& msg = msg_ctx->chatMsg;
-					const auto msg_data = reinterpret_cast<const std::byte*>(msg.data());
-					const size_t msg_size = msg.size();
-
-					for (auto& ck : framework.everyClients)
+					auto br = framework.OnChat(msg_ctx);
+					if (not br)
 					{
-						const auto& target_id = ck->myID;
+						auto& err = br.error();
 
-						auto& target = framework.FindClient(target_id);
-						auto& target_ctx = target.myContext;
-						auto& socket = *ck->mySocket;
-
-						// IsAvailableÀº ¾ÈµÊ
-						// 
-						//if (not socket.IsAvailable())
-						constexpr auto range = std::array{ test::IoOperation::None, test::IoOperation::Accept };
-						if (std::ranges::any_of(range, [&](const test::IoOperation& ops) noexcept {
-							return target_ctx.myOperation == ops;
-							}))
-						{
-							continue;
-						}
-
-						// Do not create another context
-						//auto sender = new test::ExContext{};
-						auto sender = msg_ctx;
-						//sender->myID = target_id;
-						sender->myOperation = test::IoOperation::Send;
-
-						auto sr = socket.Send(*sender, msg_data, msg_size);
-
-						if (not sr)
-						{
-							std::println("Client {} cannot send to message to {}", id, target_id);
-						}
-						else
-						{
-							std::println("Client {} to {}: {}", id, target_id, msg);
-						}
+						std::println("Client {} cannot send to message to {}, due to {}", id, std::get<1>(err), std::get<0>(err));
 					}
-
-					//delete msg_ctx;
 				}
 				break;
 
 				case test::IoOperation::Close:
 				{
-					ex_context->Clear();
-					--framework.clientsNumber;
-
 					std::println("Client {} is closed", id);
 
-					// accept again
-					op = test::IoOperation::Accept;
-					auto it = socket_pool.Find(id);
-					auto& client = *it;
-					auto& socket = client.sk;
-
-					auto acceptance = framework.myListener.ReserveAccept(ex_context, *socket);
+					// start acceptance again
+					auto acceptance = framework.OnClose(id);
 					if (not acceptance)
 					{
 						std::println("Client {} cannot be accepted due to {}", id, acceptance.error());
 
 						std::abort();
-						break;
+						break; // switch (op)
 					}
 				}
 				break;
@@ -367,11 +272,147 @@ test::Framework::Destroy()
 	for (auto& sk : everySockets)
 	{
 		sk.sk->Close();
-	}	
+	}
 }
 
 void
 test::Framework::Cleanup()
 {
 	net::core::Annihilate();
+}
+
+net::SocketResult
+test::Framework::ReserveAccept(const std::uintptr_t& id) const
+{
+	auto& client = FindClient(id);
+	auto& socket = client.mySocket;
+	auto& context = client.myContext;
+
+	context.myOperation = test::IoOperation::Accept;
+
+	return myListener.ReserveAccept(context, *socket);
+}
+
+bool
+test::Framework::CloseClient(const std::uintptr_t& id) const
+{
+	auto& client = FindClient(id);
+	auto& socket = client.mySocket;
+	auto& context = client.myContext;
+
+	return socket->CloseAsync(context);
+}
+
+net::SocketReceivingResult
+test::Framework::OnAccept(const std::uintptr_t& id)
+{
+	auto& client = FindClient(id);
+	auto& socket = client.mySocket;
+	auto& context = client.myContext;
+
+	context.myOperation = test::IoOperation::Recv;
+
+	auto rr = socket->Receive(context, GetBuffer(id));
+	if (rr)
+	{
+		++clientsNumber;
+	}
+
+	return rr;
+}
+
+net::SocketReceivingResult
+test::Framework::OnReceive(const std::uintptr_t& id, const size_t& bytes)
+{
+	auto& client = FindClient(id);
+	auto& socket = client.mySocket;
+	auto& context = client.myContext;
+
+	auto buffer = GetBuffer(id);
+	auto buffer_first_it = buffer.cbegin();
+	auto buffer_last_it = buffer.cbegin() + bytes;
+
+	std::string temp_msg{};
+	temp_msg.reserve(12 + static_cast<size_t>(bytes) * 2);
+
+	temp_msg += std::format("Client {}: ", id);
+	while (buffer_first_it != buffer_last_it)
+	{
+		temp_msg.push_back(static_cast<const char>(*buffer_first_it));
+		++buffer_first_it;
+	}
+
+	auto msg_ctx = new ChatMsgContext{};
+	MemoryFailsafe failsafe{ .ptr = msg_ctx };
+
+	msg_ctx->chatMsg = std::move(temp_msg);
+	msg_ctx->myID = id;
+	msg_ctx->myOperation = test::IoOperation::BroadcastMessage;
+	msg_ctx->refCount = static_cast<int>(clientsNumber.load(std::memory_order_relaxed));
+
+	if (everySockets.Schedule(msg_ctx, id, bytes))
+	{
+		failsafe.ok = true;
+	}
+	else
+	{
+		std::println("Worker cannot schedule a broadcasting on the client {}", id);
+	}
+
+	context.myOperation = test::IoOperation::Recv;
+
+	return socket->Receive(context, buffer);
+}
+
+test::Framework::ChatBroadcastingResult
+test::Framework::OnChat(test::ChatMsgContext* sender)
+{
+	const auto& msg = sender->chatMsg;
+	const auto msg_data = reinterpret_cast<const std::byte*>(msg.data());
+	const size_t msg_size = msg.size();
+
+	unsigned int count = 0;
+	for (auto& ck : everyClients)
+	{
+		const auto& target_id = ck->myID;
+
+		auto& target = FindClient(target_id);
+		auto& target_ctx = target.myContext;
+		auto& socket = *ck->mySocket;
+
+		//if (not socket.IsAvailable())
+		constexpr auto range = std::array{ test::IoOperation::None, test::IoOperation::Accept };
+		if (std::ranges::any_of(range, [&](const test::IoOperation& ops) noexcept {
+			return target_ctx.myOperation == ops;
+			}))
+		{
+			continue;
+		}
+
+		// Do not create another context
+		sender->myOperation = test::IoOperation::Send;
+
+		auto sr = socket.Send(*sender, msg_data, msg_size);
+		if (not sr)
+		{
+			return  std::unexpected{ std::make_tuple(sr.error(), target_id)};
+		}
+
+		++count;
+	}
+
+	return count;
+}
+
+net::SocketResult
+test::Framework::OnClose(const std::uintptr_t& id)
+{
+	auto& client = FindClient(id);
+	auto& socket = client.mySocket;
+	auto& context = client.myContext;
+
+	context.Clear();
+	--clientsNumber;
+
+	return ReserveAccept(id);
 }
