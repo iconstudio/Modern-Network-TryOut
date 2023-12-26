@@ -141,6 +141,8 @@
   <ItemGroup>
     <ClCompile Include="Client.ixx" />
     <ClCompile Include="Context.ixx" />
+    <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="Framework.ixx" />
     <ClCompile Include="IoOperation.ixx" />
     <ClCompile Include="Test Chat Server.cpp" />
   </ItemGroup>
