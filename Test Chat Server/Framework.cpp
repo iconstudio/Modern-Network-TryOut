@@ -250,7 +250,8 @@ test::Framework::Start(size_t concurrent_hint)
 	for (auto*& client : everyClients)
 	{
 		auto& ctx = client->myContext;
-		ctx.myOperation = test::IoOperation::Accept;
+
+		ctx.ResetOperation(test::IoOperation::Accept);
 
 		auto acceptance = myListener.ReserveAccept(ctx, *client->mySocket);
 		if (not acceptance)
@@ -289,7 +290,7 @@ test::Framework::ReserveAccept(const std::uintptr_t& id) const
 	auto& socket = client.mySocket;
 	auto& context = client.myContext;
 
-	context.myOperation = test::IoOperation::Accept;
+	context.ResetOperation(test::IoOperation::Accept);
 
 	return myListener.ReserveAccept(context, *socket);
 }
@@ -311,7 +312,7 @@ test::Framework::OnAccept(const std::uintptr_t& id)
 	auto& socket = client.mySocket;
 	auto& context = client.myContext;
 
-	context.myOperation = test::IoOperation::Recv;
+	context.ResetOperation(test::IoOperation::Recv);
 
 	auto rr = socket->Receive(context, GetBuffer(id));
 	if (rr)
@@ -360,7 +361,7 @@ test::Framework::OnReceive(const std::uintptr_t& id, const size_t& bytes)
 		std::println("Worker cannot schedule a broadcasting on the client {}", id);
 	}
 
-	context.myOperation = test::IoOperation::Recv;
+	context.ResetOperation(test::IoOperation::Recv);
 
 	return socket->Receive(context, buffer);
 }
