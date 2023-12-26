@@ -225,8 +225,8 @@ test::Framework::Awake(test::ServerPreset&& setup)
 		client->mySocket->IsAddressReusable = true;
 
 		auto& ctx = client->myContext;
-		ctx.myID = id;
-		ctx.myOperation = test::IoOperation::None;
+
+		ctx = test::ExContext{ id, test::IoOperation::None };
 
 		++client_index;
 	}
