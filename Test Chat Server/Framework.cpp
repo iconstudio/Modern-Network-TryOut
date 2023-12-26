@@ -394,9 +394,6 @@ test::Framework::OnChat(test::ChatMsgContext* sender)
 			continue;
 		}
 
-		// Do not create another context
-		sender->myOperation = test::IoOperation::Send;
-
 		auto sr = socket.Send(*sender, msg_data, msg_size);
 		if (sr)
 		{
@@ -410,11 +407,6 @@ test::Framework::OnChat(test::ChatMsgContext* sender)
 net::SocketResult
 test::Framework::OnClose(const std::uintptr_t& id)
 {
-	auto& client = FindClient(id);
-	auto& socket = client.mySocket;
-	auto& context = client.myContext;
-
-	context.Clear();
 	--clientsNumber;
 
 	return ReserveAccept(id);
