@@ -2,6 +2,7 @@
 import Net;
 import Test.Framework;
 
+import <cstdio>;
 import <print>;
 
 test::Framework serverFramework{};
