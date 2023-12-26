@@ -66,7 +66,8 @@ export namespace test
 
 		net::SocketReceivingResult OnAccept(const std::uintptr_t& id);
 		[[nodiscard]] net::SocketReceivingResult OnReceive(const std::uintptr_t& id, const size_t& bytes);
-		[[nodiscard]] ChatBroadcastingResult OnChat(test::ChatMsgContext* sender);
+		// ChatBroadcastingResult
+		[[nodiscard]] size_t OnChat(test::ChatMsgContext* sender);
 		net::SocketResult OnClose(const std::uintptr_t& id);
 
 		[[nodiscard]]

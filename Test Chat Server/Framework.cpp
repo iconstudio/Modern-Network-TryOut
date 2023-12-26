@@ -155,11 +155,12 @@ test::Worker(Framework& framework, size_t nth)
 					}
 
 					auto br = framework.OnChat(msg_ctx);
-					if (not br)
+					if (br == 0)
 					{
-						auto& err = br.error();
+						std::println("Client {} has been failed on sending message(s)", id);
+						//auto& err = br.error();
 
-						std::println("Client {} cannot send to message to {}, due to {}", id, std::get<1>(err), std::get<0>(err));
+						//std::println("Client {} cannot send message to {}, due to {}", id, std::get<1>(err), std::get<0>(err));
 					}
 				}
 				break;
@@ -364,14 +365,18 @@ test::Framework::OnReceive(const std::uintptr_t& id, const size_t& bytes)
 	return socket->Receive(context, buffer);
 }
 
-test::Framework::ChatBroadcastingResult
+//test::Framework::ChatBroadcastingResult
+size_t
 test::Framework::OnChat(test::ChatMsgContext* sender)
 {
 	const auto& msg = sender->chatMsg;
 	const auto msg_data = reinterpret_cast<const std::byte*>(msg.data());
 	const size_t msg_size = msg.size();
 
-	unsigned int count = 0;
+	// Do not create another context
+	sender->myOperation = test::IoOperation::Send;
+
+	size_t count = 0;
 	for (auto& ck : everyClients)
 	{
 		const auto& target_id = ck->myID;
@@ -393,12 +398,10 @@ test::Framework::OnChat(test::ChatMsgContext* sender)
 		sender->myOperation = test::IoOperation::Send;
 
 		auto sr = socket.Send(*sender, msg_data, msg_size);
-		if (not sr)
+		if (sr)
 		{
-			return  std::unexpected{ std::make_tuple(sr.error(), target_id)};
+			++count;
 		}
-
-		++count;
 	}
 
 	return count;
