@@ -318,7 +318,10 @@ void Worker(size_t nth)
 					{
 						std::println("Worker has been failed as sending on the client {}", id);
 
-						delete ex_context;
+						if (ex_context != nullptr)
+						{
+							delete ex_context;
+						}
 
 						if (0 == bytes)
 						{
@@ -336,7 +339,22 @@ void Worker(size_t nth)
 						break; // switch (op)
 					}
 
-					delete ex_context;
+					// Specialization for chat msgs
+					auto msg_ctx = static_cast<ChatMsgContext*>(ex_context);
+					if (nullptr != msg_ctx)
+					{
+						std::println("Message sent to the client {}", id);
+
+						// Preserve the message buffer until they sent
+						if (msg_ctx->refCount.fetch_sub(1) <= 0)
+						{
+							delete msg_ctx;
+						}
+					}
+					else
+					{
+						delete ex_context;
+					}
 				}
 				break;
 
@@ -379,8 +397,10 @@ void Worker(size_t nth)
 							continue;
 						}
 
-						auto sender = new test::ExContext{};
-						sender->myID = target_id;
+						// Do not create another context
+						//auto sender = new test::ExContext{};
+						auto sender = msg_ctx;
+						//sender->myID = target_id;
 						sender->myOperation = test::IoOperation::Send;
 
 						auto sr = socket.Send(*sender, msg_data, msg_size);
@@ -395,7 +415,7 @@ void Worker(size_t nth)
 						}
 					}
 
-					delete msg_ctx;
+					//delete msg_ctx;
 				}
 				break;
 
