@@ -55,16 +55,17 @@ struct PointerPacket : public BasicPacket
 #pragma pack(pop)
 
 net::Socket serverListener{};
-static inline constexpr size_t clientsNumber = 40;
+static inline volatile std::atomic_size_t clientsNumber = 0;
+static inline constexpr size_t maxClientsNumber = 40;
 static inline constexpr size_t sizeRecvBuffer = 256;
 static inline constexpr std::uintptr_t serverID = 0;
 static inline constexpr std::uintptr_t clientIdOffset = 1;
 
-net::SocketPool everySockets{ clientsNumber };
+net::SocketPool everySockets{ maxClientsNumber };
 
-std::array<test::Client*, clientsNumber> everyClients{};
+std::array<test::Client*, maxClientsNumber> everyClients{};
 // all-in-one circular buffer
-std::array<std::byte, clientsNumber* sizeRecvBuffer> clientsRecvBuffer{};
+std::array<std::byte, maxClientsNumber* sizeRecvBuffer> clientsRecvBuffer{};
 
 [[nodiscard]]
 constexpr size_t GetIndexByID(const std::uintptr_t& id) noexcept
@@ -200,6 +201,7 @@ void Worker(size_t nth)
 					if (r)
 					{
 						std::println("Client {}'s receive are reserved", id);
+						++clientsNumber;
 					}
 					else
 					{
@@ -273,6 +275,7 @@ void Worker(size_t nth)
 					msg_ctx->chatMsg = std::move(temp_msg);
 					msg_ctx->myID = id;
 					msg_ctx->myOperation = test::IoOperation::BroadcastMessage;
+					msg_ctx->refCount = clientsNumber.load(std::memory_order_relaxed);
 
 					if (everySockets.Schedule(msg_ctx, id, bytes))
 					{
@@ -399,6 +402,8 @@ void Worker(size_t nth)
 				case test::IoOperation::Close:
 				{
 					ex_context->Clear();
+					--clientsNumber;
+
 					std::println("Client {} is closed", id);
 
 					// accept again
