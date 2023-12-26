@@ -212,13 +212,13 @@ void Worker(size_t nth)
 
 				case test::IoOperation::Recv:
 				{
+					auto it = everySockets.Find(id);
+					auto& client = *it;
+					auto& socket = client.sk;
+
 					if (not io_event.isSucceed)
 					{
 						std::println("Worker has been failed as receiving on client {}", id);
-
-						auto it = everySockets.Find(id);
-						auto& client = *it;
-						auto& socket = client.sk;
 
 						op = test::IoOperation::Close;
 						socket->CloseAsync(ex_context);
@@ -230,10 +230,6 @@ void Worker(size_t nth)
 					if (0 == bytes)
 					{
 						std::println("Closing client {} as sending has been failed", id);
-
-						auto it = everySockets.Find(id);
-						auto& client = *it;
-						auto& socket = client.sk;
 
 						op = test::IoOperation::Close;
 						socket->CloseAsync(ex_context);
@@ -275,7 +271,7 @@ void Worker(size_t nth)
 					msg_ctx->chatMsg = std::move(temp_msg);
 					msg_ctx->myID = id;
 					msg_ctx->myOperation = test::IoOperation::BroadcastMessage;
-					msg_ctx->refCount = clientsNumber.load(std::memory_order_relaxed);
+					msg_ctx->refCount = static_cast<int>(clientsNumber.load(std::memory_order_relaxed));
 
 					if (everySockets.Schedule(msg_ctx, id, bytes))
 					{
@@ -286,9 +282,6 @@ void Worker(size_t nth)
 						std::println("Worker cannot schedule a broadcasting on the client {}", id);
 					}
 
-					auto it = everySockets.Find(id);
-					auto& client = *it;
-					auto& socket = client.sk;
 					op = test::IoOperation::Recv;
 
 					// Restart receive
@@ -346,7 +339,7 @@ void Worker(size_t nth)
 						std::println("Message sent to the client {}", id);
 
 						// Preserve the message buffer until they sent
-						if (msg_ctx->refCount.fetch_sub(1) <= 0)
+						if (msg_ctx->refCount.fetch_sub(1) <= 1)
 						{
 							delete msg_ctx;
 						}
