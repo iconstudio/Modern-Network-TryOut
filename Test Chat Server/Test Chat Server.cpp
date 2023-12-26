@@ -73,6 +73,12 @@ constexpr size_t GetIndexByID(const std::uintptr_t& id) noexcept
 }
 
 [[nodiscard]]
+constexpr std::uintptr_t GetIDByIndex(const size_t& index) noexcept
+{
+	return index + clientIdOffset;
+}
+
+[[nodiscard]]
 constexpr test::Client& FindClient(const std::uintptr_t& id)
 {
 	return *everyClients[GetIndexByID(id)];
@@ -101,11 +107,13 @@ int main()
 	everySockets.Add(&serverListener, serverID);
 	std::println("The listener is ready.");
 
-	std::uintptr_t id = 0;
+	size_t client_index = 0;
 	for (auto* & client : everyClients)
 	{
+		const auto id = GetIDByIndex(client_index);
+
 		client = new test::Client{};
-		client->myID = id + clientIdOffset;
+		client->myID = id;
 		client->mySocket = everySockets.Allocate(id, net::SocketType::Asynchronous, net::InternetProtocols::TCP, net::IpAddressFamily::IPv4);
 		client->mySocket->IsAddressReusable = true;
 
@@ -113,7 +121,7 @@ int main()
 		ctx.myID = id;
 		ctx.myOperation = test::IoOperation::None;
 
-		++id;
+		++client_index;
 	}
 	std::println("Client prefabs are ready.");
 
