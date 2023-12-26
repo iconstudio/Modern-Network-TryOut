@@ -23,11 +23,13 @@ int main()
 
 	std::println("=========== Update ===========");
 
+	char command[256]{};
+	constexpr unsigned cmd_size = sizeof(command);
+
 	while (true)
 	{
-		char command[256]{};
 
-		auto input = ::scanf_s("%s", command, sizeof(command));
+		auto input = ::scanf_s("%s", command, cmd_size);
 		if (EOF != input)
 		{
 			if (command[0] == 'q')
