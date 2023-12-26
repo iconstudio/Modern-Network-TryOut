@@ -109,7 +109,7 @@ export namespace test
 			return std::span<const std::byte, Framework::sizeRecvBuffer>(data, sizeRecvBuffer);
 		}
 
-		friend void Worker(Framework&, size_t);
+		friend void Worker(test::Framework&, size_t);
 
 		Framework(const Framework&) = delete;
 		Framework(Framework&&) = delete;
@@ -117,13 +117,13 @@ export namespace test
 		void operator=(Framework&&) = delete;
 
 		net::Socket myListener;
-		std::array<test::Client*, Framework::maxClientsNumber> everyClients;
+		std::array<test::Client*, test::Framework::maxClientsNumber> everyClients;
 		net::SocketPool everySockets;
 		// all-in-one circular buffer
-		std::array<std::byte, Framework::oneBufferSize> clientsRecvBuffer;
+		std::array<std::byte, test::Framework::oneBufferSize> clientsRecvBuffer;
 		volatile std::atomic_size_t clientsNumber;
 		std::vector<std::jthread> myWorkers{};
 	};
 
-	void Worker(Framework& framework, size_t nth);
+	void Worker(test::Framework& framework, size_t nth);
 }
