@@ -130,7 +130,7 @@ test::Worker(Framework& framework, size_t nth)
 					{
 						std::println("Message sent from the client {}", id);
 
-						// Preserve the message buffer until they sent
+						// Preserve the message buffer until they got sent
 						if (msg_ctx->refCount.fetch_sub(1) <= 1)
 						{
 							delete msg_ctx;
