@@ -1,8 +1,10 @@
+module;
+#include <atomic>
+#include <algorithm>
+#include <print>
+
 module Test.Framework;
-import <print>;
 import <thread>;
-import <algorithm>;
-import <atomic>;
 
 struct [[nodiscard]] MemoryFailsafe
 {
@@ -320,6 +322,7 @@ test::Framework::OnAccept(const std::uintptr_t& id)
 	auto rr = socket->Receive(context, GetBuffer(id));
 	if (rr)
 	{
+		//std::atomic_fetch_add(std::addressof(clientsNumber), 1ULL);
 		++clientsNumber;
 	}
 

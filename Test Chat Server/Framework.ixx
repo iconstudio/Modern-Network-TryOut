@@ -1,13 +1,15 @@
+module;
+#include <array>
+#include <atomic>
+
 export module Test.Framework;
 import <cstdlib>;
 import <expected>;
 import <tuple>;
 import <string>;
-import <array>;
 import <vector>;
 import <span>;
 import <thread>;
-import <atomic>;
 
 import Net;
 import Net.IpAddress;
