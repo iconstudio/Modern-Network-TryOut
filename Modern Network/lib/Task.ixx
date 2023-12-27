@@ -65,7 +65,7 @@ export namespace net
 			: myHandle(std::move(handle))
 		{}
 
-		~Task() noexcept(noexcept(myHandle.destroy()))
+		~Task() noexcept(noexcept(std::declval<handle_type>().destroy()))
 		{
 			if (myHandle)
 			{
