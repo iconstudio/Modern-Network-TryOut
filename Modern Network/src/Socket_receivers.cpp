@@ -64,12 +64,12 @@ net::Socket::Receive(std::span<std::byte> memory
 {
 	return Receive(memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
-		return true;
-	}).or_else(
-		[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
-		error_code = std::move(tr_error_code);
-		return false;
-	}).value_or(false);
+			return true;
+		}).or_else(
+			[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
+				error_code = std::move(tr_error_code);
+				return false;
+			}).value_or(false);
 }
 
 bool
@@ -78,12 +78,12 @@ const noexcept
 {
 	return Receive(memory, std::move(size)).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
-		return true;
-	}).or_else(
-		[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
-		error_code = std::move(tr_error_code);
-		return false;
-	}).value_or(false);
+			return true;
+		}).or_else(
+			[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
+				error_code = std::move(tr_error_code);
+				return false;
+			}).value_or(false);
 }
 
 bool
@@ -93,12 +93,12 @@ net::Socket::Receive(std::byte* const& memory, size_t size
 {
 	return Receive(memory, std::move(size)).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
-		return true;
-	}).or_else(
-		[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
-		error_code = std::move(tr_error_code);
-		return false;
-	}).value_or(false);
+			return true;
+		}).or_else(
+			[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
+				error_code = std::move(tr_error_code);
+				return false;
+			}).value_or(false);
 }
 
 net::SocketReceivingResult
@@ -205,16 +205,16 @@ const noexcept
 bool
 net::Socket::Receive(net::io::Context& context, std::span<std::byte> memory
 	, net::ReceivingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Receive(context, memory).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
-		return true;
-	}).or_else(
-		[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
-		error_code = std::move(tr_error_code);
-		return false;
-	}).value_or(false);
+			return true;
+		}).or_else(
+			[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
+				error_code = std::move(tr_error_code);
+				return false;
+			}).value_or(false);
 }
 
 bool
@@ -234,16 +234,16 @@ const noexcept
 bool
 net::Socket::Receive(net::io::Context& context, std::byte* const& memory, size_t size
 	, net::ReceivingErrorCodes& error_code)
-const noexcept
+	const noexcept
 {
 	return Receive(context, memory, size).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
-		return true;
-	}).or_else(
-		[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
-		error_code = std::move(tr_error_code);
-		return false;
-	}).value_or(false);
+			return true;
+		}).or_else(
+			[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
+				error_code = std::move(tr_error_code);
+				return false;
+			}).value_or(false);
 }
 
 net::Task<net::SocketReceivingResult>
