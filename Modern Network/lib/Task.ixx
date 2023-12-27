@@ -1,9 +1,12 @@
 export module Net.Task;
 import <stdexcept>;
 import <utility>;
-import <thread>;
-import <latch>;
 import <coroutine>;
+
+namespace net
+{
+	void __ExecuteCoroutine(std::coroutine_handle<void> handle);
+}
 
 export namespace net
 {
@@ -79,13 +82,7 @@ export namespace net
 
 		void StartAsync() const
 		{
-			if (myHandle)
-			{
-				std::thread{
-					[h = myHandle] {
-					h.resume();
-				} }.detach();
-			}
+			net::__ExecuteCoroutine(myHandle);
 		}
 
 		T operator()()
@@ -149,10 +146,7 @@ export namespace net
 			~promise_type() noexcept = default;
 
 			[[nodiscard]]
-			Task<void> get_return_object() noexcept
-			{
-				return Task<void>(handle_type::from_promise(*this));
-			}
+			Task<void> get_return_object() noexcept;
 
 			static constexpr void return_void() noexcept {}
 
@@ -173,6 +167,20 @@ export namespace net
 			}
 		};
 
+		struct Awaiter
+		{
+			static constexpr bool await_ready() noexcept { return true; }
+			static constexpr void await_suspend(std::coroutine_handle<void>) noexcept
+			{}
+
+			void await_resume() const
+			{
+				coHandle();
+			}
+
+			handle_type coHandle;
+		};
+
 		constexpr Task(const handle_type& handle) noexcept
 			: myHandle(handle)
 		{}
@@ -181,71 +189,19 @@ export namespace net
 			: myHandle(std::move(handle))
 		{}
 
-		~Task() noexcept(noexcept(myHandle.destroy()))
-		{
-			if (myHandle)
-			{
-				myHandle.destroy();
-			}
-		}
+		~Task() noexcept;
 
-		void Start() const
-		{
-			if (myHandle)
-			{
-				myHandle.resume();
-			}
-		}
+		void Start() const;
+		void StartAsync() const;
 
-		void StartAsync() const
-		{
-			if (myHandle)
-			{
-				std::thread{
-					[h = myHandle] {
-					h.resume();
-				} }.detach();
-			}
-		}
-
-		void operator()()
-		{
-			if (myHandle)
-			{
-				myHandle.resume();
-			}
-		}
-
-		auto operator co_await()
-		{
-			struct awaiter
-			{
-				static constexpr bool await_ready() noexcept { return true; }
-				static constexpr void await_suspend(std::coroutine_handle<void>) noexcept
-				{}
-
-				void await_resume()
-				{
-					coHandle();
-				}
-
-				handle_type coHandle;
-			};
-
-			return awaiter{ .coHandle = myHandle };
-		}
+		void operator()() const;
+		Awaiter operator co_await() const noexcept;
 
 		[[nodiscard]]
-		bool IsDone() const noexcept
-		{
-			return myHandle.done();
-		}
+		bool IsDone() const noexcept;
 
 		[[nodiscard]]
-		constexpr bool operator==(const Task& other) const noexcept
-		{
-			return myHandle.address() == other.myHandle.address();
-		}
+		bool operator==(const Task& other) const noexcept;
 
 	private:
 		const static inline std::runtime_error reservedError{ "Cannot acquire a value from the null promise" };
@@ -253,4 +209,3 @@ export namespace net
 		handle_type myHandle;
 	};
 }
-
