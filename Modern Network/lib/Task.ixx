@@ -6,6 +6,7 @@ import <coroutine>;
 namespace net
 {
 	void __ExecuteCoroutine(std::coroutine_handle<void> handle);
+	void __ExecuteCoroutineAsync(std::coroutine_handle<void> handle);
 }
 
 export namespace net
@@ -74,23 +75,17 @@ export namespace net
 
 		void Start() const
 		{
-			if (myHandle)
-			{
-				myHandle.resume();
-			}
+			net::__ExecuteCoroutine(myHandle);
 		}
 
 		void StartAsync() const
 		{
-			net::__ExecuteCoroutine(myHandle);
+			net::__ExecuteCoroutineAsync(myHandle);
 		}
 
 		T operator()()
 		{
-			if (myHandle)
-			{
-				myHandle.resume();
-			}
+			net::__ExecuteCoroutine(myHandle);
 
 			return std::move(myHandle.promise().myValue);
 		}

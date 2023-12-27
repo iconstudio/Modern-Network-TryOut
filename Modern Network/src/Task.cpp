@@ -24,27 +24,21 @@ void
 net::Task<void>::Start()
 const
 {
-	if (myHandle)
-	{
-		myHandle.resume();
-	}
+	net::__ExecuteCoroutine(myHandle);
 }
 
 void
 net::Task<void>::StartAsync()
 const
 {
-	net::__ExecuteCoroutine(myHandle);
+	net::__ExecuteCoroutineAsync(myHandle);
 }
 
 void
 net::Task<void>::operator()()
 const
 {
-	if (myHandle)
-	{
-		myHandle.resume();
-	}
+	net::__ExecuteCoroutine(myHandle);
 }
 
 net::Task<void>::Awaiter
@@ -70,6 +64,14 @@ const noexcept
 
 void
 net::__ExecuteCoroutine(std::coroutine_handle<void> handle)
+{
+	if (handle)
+	{
+		handle.resume();
+	}
+}
+
+void net::__ExecuteCoroutineAsync(std::coroutine_handle<void> handle)
 {
 	if (handle)
 	{
