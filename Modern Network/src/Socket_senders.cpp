@@ -3,11 +3,11 @@ module;
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <WinSock2.h>
-#include <utility>
 
 module Net.Socket;
+import <cstddef>;
+import <utility>;
 import <coroutine>;
-import <thread>;
 
 net::SocketSendingResult RawSend(const net::NativeSocket& sock, ::WSABUF& buffer) noexcept;
 net::SocketSendingResult RawSendEx(const net::NativeSocket& sock, ::WSABUF& buffer, void* context, ::LPWSAOVERLAPPED_COMPLETION_ROUTINE routine) noexcept;
@@ -287,10 +287,7 @@ net::Socket::AsyncSend(net::io::Context& context, std::span<const std::byte> mem
 const noexcept
 {
 	auto task = MakeSendTask(context, memory);
-
-	std::thread{
-		[&] { task(); }
-	}.detach();
+	task.StartAsync();
 
 	return task;
 }
@@ -300,10 +297,7 @@ net::Socket::AsyncSend(net::io::Context& context, std::span<const std::byte> mem
 const noexcept
 {
 	auto task = MakeSendTask(context, memory, size);
-
-	std::thread{
-		[&] { task(); }
-	}.detach();
+	task.StartAsync();
 
 	return task;
 }
@@ -313,10 +307,7 @@ net::Socket::AsyncSend(net::io::Context& context, const std::byte* const& memory
 const noexcept
 {
 	auto task = MakeSendTask(context, memory, size);
-
-	std::thread{
-		[&] { task(); }
-	}.detach();
+	task.StartAsync();
 
 	return task;
 }
