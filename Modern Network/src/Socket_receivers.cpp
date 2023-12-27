@@ -5,8 +5,8 @@ module;
 #include <WinSock2.h>
 
 module Net.Socket;
+import <cstddef>;
 import <utility>;
-import <thread>;
 import <coroutine>;
 
 net::SocketReceivingResult
