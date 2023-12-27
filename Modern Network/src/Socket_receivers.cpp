@@ -76,7 +76,7 @@ bool
 net::Socket::Receive(std::span<std::byte> memory, size_t size, net::ReceivingErrorCodes& error_code)
 const noexcept
 {
-	return Receive(memory, size).and_then(
+	return Receive(memory, std::move(size)).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
 		return true;
 	}).or_else(
@@ -91,7 +91,7 @@ net::Socket::Receive(std::byte* const& memory, size_t size
 	, net::ReceivingErrorCodes& error_code)
 	const noexcept
 {
-	return Receive(memory, size).and_then(
+	return Receive(memory, std::move(size)).and_then(
 		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
 		return true;
 	}).or_else(
@@ -218,6 +218,20 @@ const noexcept
 }
 
 bool
+net::Socket::Receive(net::io::Context& context, std::span<std::byte> memory, size_t size, net::ReceivingErrorCodes& error_code)
+const noexcept
+{
+	return Receive(context, memory, std::move(size)).and_then(
+		[](unsigned int&&) noexcept -> expected<bool, ReceivingErrorCodes> {
+			return true;
+		}).or_else(
+			[&](net::ReceivingErrorCodes&& tr_error_code) noexcept -> expected<bool, ReceivingErrorCodes> {
+				error_code = std::move(tr_error_code);
+				return false;
+			}).value_or(false);
+}
+
+bool
 net::Socket::Receive(net::io::Context& context, std::byte* const& memory, size_t size
 	, net::ReceivingErrorCodes& error_code)
 const noexcept
@@ -335,4 +349,34 @@ net::Socket::MakeReceiveTask(const std::shared_ptr<io::Context>& context, std::b
 const noexcept
 {
 	return MakeReceiveTask(*context, memory, std::move(size));
+}
+
+net::Task<net::SocketReceivingResult>
+net::Socket::AsyncRecv(net::io::Context& context, std::span<std::byte> memory)
+const noexcept
+{
+	auto task = MakeReceiveTask(context, memory);
+	task.StartAsync();
+
+	return task;
+}
+
+net::Task<net::SocketReceivingResult>
+net::Socket::AsyncRecv(net::io::Context& context, std::span<std::byte> memory, size_t size)
+const noexcept
+{
+	auto task = MakeReceiveTask(context, memory, std::move(size));
+	task.StartAsync();
+
+	return task;
+}
+
+net::Task<net::SocketReceivingResult>
+net::Socket::AsyncRecv(net::io::Context& context, std::byte* const& memory, size_t size)
+const noexcept
+{
+	auto task = MakeReceiveTask(context, memory, std::move(size));
+	task.StartAsync();
+
+	return task;
 }
