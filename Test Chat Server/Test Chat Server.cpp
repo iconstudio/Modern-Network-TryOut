@@ -28,7 +28,6 @@ int main()
 
 	while (true)
 	{
-
 		auto input = ::scanf_s("%s", command, cmd_size);
 		if (EOF != input)
 		{
