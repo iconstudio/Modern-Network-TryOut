@@ -2,6 +2,7 @@ export module Net.Io.Context;
 import Net.NativeHandle;
 import <cstdint>;
 import <type_traits>;
+import <variant>;
 
 export namespace net::io
 {
@@ -16,10 +17,7 @@ export namespace net::io
 		{
 			ioLower = 0;
 			ioUpper = 0;
-
-			std::uintptr_t* repr = reinterpret_cast<std::uintptr_t*>(std::addressof(offset));
-			*repr = 0ULL;
-
+			myOffset = {};
 			eventObject = nullptr;
 		}
 
@@ -29,18 +27,15 @@ export namespace net::io
 			return std::addressof(other) == this;
 		}
 
+		constexpr Context(Context&&) noexcept = default;
+		constexpr Context& operator=(Context&&) = default;
+
 	protected:
+		struct NearFarOffsets { std::uint32_t offsetLower; std::uint32_t offsetUpper; };
+
 		std::uint64_t ioLower;
 		std::uint64_t ioUpper;
-		union
-		{
-			struct
-			{
-				std::uint32_t offsetLower;
-				std::uint32_t offsetUpper;
-			};
-			NativeHandle offset = {};
-		};
+		std::variant<NearFarOffsets, NativeHandle> myOffset;
 		NativeHandle eventObject;
 
 	private:
