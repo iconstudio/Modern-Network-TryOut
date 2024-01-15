@@ -127,6 +127,9 @@ export namespace net
 			}
 		}
 
+		constexpr IProperty(IProperty&&) noexcept = default;
+		constexpr IProperty& operator=(IProperty&&) = default;
+
 	protected:
 		T myValue;
 	};
@@ -265,6 +268,9 @@ export namespace net
 				return std::addressof(myValue);
 			}
 		}
+
+		constexpr IProperty(IProperty&&) noexcept = default;
+		constexpr IProperty& operator=(IProperty&&) = default;
 
 	protected:
 		T myValue;
@@ -415,6 +421,9 @@ export namespace net
 				return std::addressof(myValue);
 			}
 		}
+
+		constexpr IProperty(IProperty&&) noexcept = default;
+		constexpr IProperty& operator=(IProperty&&) = default;
 
 	protected:
 		Context* const myContext;
