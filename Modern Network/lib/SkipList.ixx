@@ -1,6 +1,5 @@
 export module Net.Collection.SkipList;
 import Net.Constraints;
-import <print>;
 import <atomic>;
 import <mutex>;
 
@@ -87,7 +86,7 @@ export namespace net::collections
 			{
 				curr[i] = pred[i]->nexts[i];
 
-				// ³ëµå ÀüÁø
+				// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				while (curr[i]->value < x)
 				{
 					pred[i] = curr[i];
@@ -108,7 +107,7 @@ export namespace net::collections
 
 		bool ADD(const T& x)
 		{
-			// ¸ðµç °èÃþ¿¡ ´ëÇÑ Æ÷ÀÎÅÍ
+			// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			NODE_SK* pred[MAX_LEVEL + 1];
 			NODE_SK* curr[MAX_LEVEL + 1];
 
@@ -119,10 +118,10 @@ export namespace net::collections
 				const ptrdiff_t found_level = Find(x, pred, curr);
 				if (-1 != found_level)
 				{
-					// »èÁ¦µÈ ³ëµå´Â Add°¡ °¡´ÉÇÏ¹Ç·Î ´Ù½Ã ½ÃÀÛ
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Addï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¹Ç·ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					if (curr[found_level]->isRemoved) continue;
 
-					// ¿ÏÀü ¿¬°áµÉ ¶§ ±îÁö ´ë±â
+					// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 					while (!curr[found_level]->fullyLinked);
 					return false;
 				}
@@ -137,10 +136,10 @@ export namespace net::collections
 				// 
 				bool valid = false;
 
-				// ÇÊ¿ä¾ø´Â Àá±ÝÀ» ¸·±â À§ÇØ ³ëµå ÇÏ³ª¾¿ Àá±×¸é¼­ ÁøÇà
+				// ï¿½Ê¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½×¸é¼­ ï¿½ï¿½ï¿½ï¿½
 				ptrdiff_t last_top_locked_level = 0;
 
-				// ¸ðµç ³ëµå¸¦ Àá±×°í ¹«°á¼º °Ë»ç
+				// ï¿½ï¿½ï¿½ ï¿½ï¿½å¸¦ ï¿½ï¿½×°ï¿½ ï¿½ï¿½ï¿½á¼º ï¿½Ë»ï¿½
 				for (ptrdiff_t i = 0; i <= valid_level; i++)
 				{
 					pred[i]->lock();
@@ -157,7 +156,7 @@ export namespace net::collections
 				}
 				if (!valid)
 				{
-					// recursive_lockÀº Àá±Ù È½¼ö¸¸Å­ ´Ù½Ã ÇØÁ¦ÇØÁà¾ß ÇÑ´Ù.
+					// recursive_lockï¿½ï¿½ ï¿½ï¿½ï¿½ È½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 					for (ptrdiff_t k = 0; k < last_top_locked_level; k++)
 					{
 						pred[k]->unlock();
@@ -166,7 +165,7 @@ export namespace net::collections
 					continue;
 				}
 
-				// ³ëµå »ðÀÔ ºÎºÐ
+				// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½
 				auto newbie = new NODE_SK{ x, valid_level };
 				for (ptrdiff_t i = 0; i <= valid_level; i++)
 				{
@@ -188,7 +187,7 @@ export namespace net::collections
 
 		bool REMOVE(const T& x)
 		{
-			// ¸ðµç °èÃþ¿¡ ´ëÇÑ Æ÷ÀÎÅÍ
+			// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			NODE_SK* pred[MAX_LEVEL + 1]{};
 			NODE_SK* curr[MAX_LEVEL + 1]{};
 
@@ -208,7 +207,7 @@ export namespace net::collections
 					pred[i]->nexts[i] = curr[i]->nexts[i];
 				}
 
-				// curr[0~i]¸¦ »èÁ¦
+				// curr[0~i]ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				auto& target = curr[0];
 
 
@@ -238,12 +237,12 @@ export namespace net::collections
 			{
 				if (ptr == &tail) break;
 
-				std::print("{}, ", ptr->value);
+				//std::print("{}, ", ptr->value);
 
 				ptr = ptr->nexts[0];
 			}
 
-			std::println("");
+			//std::println("");
 		}
 
 		void CLEAR()

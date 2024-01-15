@@ -6,7 +6,7 @@ module;
 module Net.Socket;
 import <type_traits>;
 import <mutex>;
-import <print>;
+//import <print>;
 
 net::SocketOptioningResult RawSetOption(const net::NativeSocket& sock, int option, const void* buffer, int buff_size) noexcept;
 net::SocketOptioningResult RawGetOption(const net::NativeSocket& sock, int option) noexcept;
@@ -31,7 +31,7 @@ static void CALLBACK rioRoutine(const ::DWORD err, const ::DWORD bytes, ::LPWSAO
 {
 	if (0 != err)
 	{
-		std::println("Socket error: {}", err);
+		//std::println("Socket error: {}", err);
 	}
 }
 void SocketFunctionInitializer(const net::NativeSocket& sock);
