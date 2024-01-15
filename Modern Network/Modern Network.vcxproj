@@ -101,7 +101,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="lib\Application.ixx" />
+    <ClCompile Include="lib\Application.ixx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="lib\Awaitable.ixx" />
     <ClCompile Include="lib\BasicCoroutine.ixx" />
     <ClCompile Include="lib\BasicPromise.ixx" />
@@ -158,7 +161,10 @@
     <ClCompile Include="lib\TypeList.ixx" />
     <ClCompile Include="lib\ValuePromise.ixx" />
     <ClCompile Include="Modern Network.cpp" />
-    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Application.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\ConcurrentAwaiter.cpp" />
     <ClCompile Include="src\Coroutine.cpp" />
     <ClCompile Include="src\EndPoint.cpp" />
