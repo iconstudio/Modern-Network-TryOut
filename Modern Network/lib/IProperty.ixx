@@ -293,8 +293,8 @@ export namespace net
 		constexpr ~IProperty()
 			noexcept(nothrow_destructibles<T>) = default;
 
-		template<convertible_to<T> U, invocables<Context&, T&> Fn>
-			requires constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
+		template<typename U, invocables<Context&, T&> Fn>
+			requires constructible_from<functor_t, Fn&&>
 		constexpr IProperty(Context* const& context, U&& trans_value, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_default_constructibles<T> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
