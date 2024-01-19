@@ -11,76 +11,47 @@ export namespace net
 	class [[nodiscard]] BorrowedPointer;
 
 	template<notvoids T>
+		requires (not std::is_array_v<T>)
 	class [[nodiscard]] BorrowedPointer<T>
 	{
 	public:
 		constexpr BorrowedPointer() noexcept = default;
-		constexpr BorrowedPointer(nullptr_t) noexcept {}
 
-		constexpr BorrowedPointer(T* const& ptr) noexcept
+		constexpr BorrowedPointer(nullptr_t) noexcept
+			: myData()
+		{}
+
+		constexpr BorrowedPointer(T* ptr) noexcept
 			: myData(ptr)
 		{}
 
-		template <convertible_to<T> U>
+		template<convertible_to<T> U>
 			requires (not std::is_array_v<U>)
-		explicit constexpr BorrowedPointer(U* const& ptr) noexcept
+		explicit constexpr BorrowedPointer(U* ptr) noexcept
 			: myData(ptr)
 		{}
 
-		template <convertible_to<T> U = T>
-			requires (not std::is_array_v<U>)
 		[[nodiscard]]
-		constexpr U& operator*() const& noexcept
+		constexpr T& operator*() const & noexcept
 		{
 			return *myData;
 		}
 
-		template <convertible_to<T> U = T>
-			requires (not std::is_array_v<U>)
 		[[nodiscard]]
-		constexpr U& operator*() && noexcept
+		constexpr T& operator*() && noexcept
 		{
 			return *std::exchange(myData, nullptr);
 		}
 
-		template <convertible_to<T> U = T>
 		[[nodiscard]]
-		constexpr volatile U& operator*() const volatile& noexcept
-		{
-			return *myData;
-		}
-
-		template <convertible_to<T> U = T>
-		[[nodiscard]]
-		constexpr volatile U& operator*() volatile&& noexcept
-		{
-			return std::exchange(myData, nullptr);
-		}
-
-		template <convertible_to<T> U = T>
-			requires (not std::is_array_v<U>)
-		[[nodiscard]]
-		constexpr U* const operator->() const noexcept
+		constexpr T* operator->() const noexcept
 		{
 			return myData;
 		}
 
-		template <convertible_to<T> U = T>
-			requires (not std::is_array_v<U>)
-		[[nodiscard]]
-		constexpr volatile U* const operator->() const volatile noexcept
+		constexpr operator T*() const noexcept
 		{
 			return myData;
-		}
-
-		constexpr operator T* const& () const& noexcept
-		{
-			return myData;
-		}
-
-		constexpr operator T* () && noexcept
-		{
-			return std::exchange(myData, nullptr);
 		}
 
 		BorrowedPointer(const BorrowedPointer&) noexcept = default;
@@ -97,7 +68,10 @@ export namespace net
 	{
 	public:
 		constexpr BorrowedPointer() noexcept = default;
-		constexpr BorrowedPointer(nullptr_t) noexcept {}
+
+		constexpr BorrowedPointer(nullptr_t) noexcept
+			: myData()
+		{}
 
 		BorrowedPointer(const std::shared_ptr<T>& ptr)
 			: myData(ptr)
@@ -107,50 +81,28 @@ export namespace net
 			: myData(std::move(ptr))
 		{}
 
-		template <convertible_to<T> U = T>
-			requires (not std::is_array_v<U>)
 		[[nodiscard]]
-		U& operator*() const& noexcept
+		T& operator*() const & noexcept
 		{
 			std::shared_ptr<T> ptr = myData.lock();
 			return *ptr;
 		}
 
-		template <convertible_to<T> U = T>
-			requires (not std::is_array_v<U>)
 		[[nodiscard]]
-		U& operator*() && noexcept
+		T& operator*() && noexcept
 		{
 			std::shared_ptr<T> ptr = std::exchange(myData, nullptr).lock();
 			return *ptr;
 		}
 
 		[[nodiscard]]
-		volatile T& operator*() const volatile& noexcept
-		{
-			return *static_cast<std::weak_ptr<T>>(myData);
-		}
-
-		[[nodiscard]]
-		volatile T& operator*() volatile&& noexcept
-		{
-			return std::exchange(myData, nullptr);
-		}
-
-		[[nodiscard]]
-		T* const operator->() const noexcept
+		T* operator->() const noexcept
 		{
 			std::shared_ptr<T> ptr = myData.lock();
 			return ptr.get();
 		}
 
-		[[nodiscard]]
-		volatile T* const operator->() const volatile noexcept
-		{
-			return static_cast<std::weak_ptr<T>>(myData).get();
-		}
-
-		operator T* const () const noexcept
+		operator T*() const noexcept
 		{
 			return myData.get();
 		}
@@ -169,8 +121,25 @@ export namespace net
 	{
 	public:
 		constexpr BorrowedPointer() noexcept = default;
-		constexpr BorrowedPointer(nullptr_t) noexcept {}
+		constexpr BorrowedPointer(nullptr_t) noexcept
+			: myData()
+		{}
+
+		constexpr BorrowedPointer(void* ptr) noexcept
+			: myData(ptr)
+		{}
+
+		constexpr operator void*() const noexcept
+		{
+			return myData;
+		}
+
+		BorrowedPointer(const BorrowedPointer&) noexcept = default;
+		BorrowedPointer& operator=(const BorrowedPointer&) noexcept = default;
+		BorrowedPointer(BorrowedPointer&&) noexcept = default;
+		BorrowedPointer& operator=(BorrowedPointer&&) noexcept = default;
 
 	private:
+		void* myData;
 	};
 }
