@@ -14,7 +14,7 @@ export namespace net::io
 		constexpr Entity(Entity&&) noexcept = default;
 		constexpr Entity& operator=(Entity&&) = default;
 
-		ReadonlyProperty<Socket> myConnectum;
+		Socket myConnectum;
 		Context myContext;
 
 	private:
