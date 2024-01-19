@@ -125,6 +125,19 @@ export namespace net
 			}
 		}
 
+		[[nodiscard]]
+		friend constexpr std::strong_ordering operator<=>(const IProperty& lhs, const IProperty& rhs) noexcept
+		{
+			return lhs.myValue <=> rhs.myValue;
+		}
+
+		template<typename U, typename X2, bool S2, bool C2, bool R2, bool E2>
+		[[nodiscard]]
+		friend constexpr std::strong_ordering operator<=>(const IProperty& lhs, const IProperty<U, X2, S2, C2, R2, E2>& rhs) noexcept
+		{
+			return lhs.myValue <=> rhs.myValue;
+		}
+
 		constexpr IProperty(IProperty&&) noexcept = default;
 		constexpr IProperty& operator=(IProperty&&) = default;
 
@@ -152,7 +165,7 @@ export namespace net
 			noexcept(nothrow_constructible<T, U&&> and nothrow_default_constructibles<T> and nothrow_constructible<functor_t, Fn&&>)
 			requires constructible_from<T, U&&> and constructible_from<functor_t, Fn&&>
 			: myValue(static_cast<U&&>(trans_value))
-, mySetter(std::forward_like<functor_t>(setter))
+			, mySetter(std::forward_like<functor_t>(setter))
 		{}
 
 		template<bool C2, bool R2, bool E2>
@@ -160,7 +173,7 @@ export namespace net
 			noexcept(nothrow_copy_constructibles<T, functor_t>)
 			requires Copyable and C2 and copy_constructible<T, functor_t>
 			: myValue(other.myValue)
-, mySetter(other.mySetter)
+			, mySetter(other.mySetter)
 		{}
 
 		template<bool C2, bool R2, bool E2>
@@ -168,7 +181,7 @@ export namespace net
 			noexcept(nothrow_move_constructibles<T, functor_t>)
 			requires move_constructibles<T, functor_t>
 			: myValue(other.myValue)
-, mySetter(std::exchange(other.mySetter, nullptr))
+			, mySetter(std::exchange(other.mySetter, nullptr))
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, bool E2, invocables<T&> Fn>
@@ -176,7 +189,7 @@ export namespace net
 		constexpr IProperty(const IProperty<U, X2, S2, C2, R2, E2>& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, const U&> and nothrow_constructible<functor_t, Fn&&>)
 			: myValue(other.myValue)
-, mySetter(setter)
+			, mySetter(setter)
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, bool E2, invocables<T&> Fn>
@@ -184,7 +197,7 @@ export namespace net
 		constexpr IProperty(IProperty<U, X2, S2, C2, R2, E2>&& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_constructible<functor_t, Fn&&>)
 			: myValue(static_cast<U&&>(other.myValue))
-, mySetter(std::forward_like<Fn>(setter))
+			, mySetter(std::forward_like<Fn>(setter))
 		{}
 
 		[[nodiscard]]
@@ -270,6 +283,19 @@ export namespace net
 			}
 		}
 
+		[[nodiscard]]
+		friend constexpr std::strong_ordering operator<=>(const IProperty& lhs, const IProperty& rhs) noexcept
+		{
+			return lhs.myValue <=> rhs.myValue;
+		}
+
+		template<typename U, typename X2, bool S2, bool C2, bool R2, bool E2>
+		[[nodiscard]]
+		friend constexpr std::strong_ordering operator<=>(const IProperty& lhs, const IProperty<U, X2, S2, C2, R2, E2>& rhs) noexcept
+		{
+			return lhs.myValue <=> rhs.myValue;
+		}
+
 		constexpr IProperty(IProperty&&) noexcept = default;
 		constexpr IProperty& operator=(IProperty&&) = default;
 
@@ -298,8 +324,8 @@ export namespace net
 		constexpr IProperty(Context* const& context, U&& trans_value, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_default_constructibles<T> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
-		  , myValue(static_cast<U&&>(trans_value))
-		  , mySetter(static_cast<functor_t&&>(setter))
+			, myValue(static_cast<U&&>(trans_value))
+			, mySetter(static_cast<functor_t&&>(setter))
 		{}
 
 		template<bool S2, bool C2, bool R2, bool E2>
@@ -307,8 +333,8 @@ export namespace net
 		constexpr IProperty(const IProperty<T, Context, true, C2, R2, E2>& other)
 			noexcept(nothrow_copy_constructibles<T, functor_t>)
 			: myContext(other.myContext)
-		  , myValue(other.myValue)
-		  , mySetter(other.mySetter)
+			, myValue(other.myValue)
+			, mySetter(other.mySetter)
 		{}
 
 		template<bool S2, bool C2, bool R2, bool E2>
@@ -316,8 +342,8 @@ export namespace net
 		constexpr IProperty(IProperty<T, Context, true, C2, R2, E2>&& other)
 			noexcept(nothrow_move_constructibles<T, functor_t>)
 			: myContext(std::exchange(other.myContext, nullptr))
-		  , myValue(other.myValue)
-		  , mySetter(std::exchange(other.mySetter, nullptr))
+			, myValue(other.myValue)
+			, mySetter(std::exchange(other.mySetter, nullptr))
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, bool E2, invocables<Context&, T&> Fn>
@@ -325,8 +351,8 @@ export namespace net
 		constexpr IProperty(Context* const& context, const IProperty<U, X2, S2, C2, R2, E2>& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, const U&> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
-		  , myValue(other.myValue)
-		  , mySetter(setter)
+			, myValue(other.myValue)
+			, mySetter(setter)
 		{}
 
 		template<convertible_to<T> U, typename X2, bool S2, bool C2, bool R2, bool E2, invocables<Context&, T&> Fn>
@@ -334,8 +360,8 @@ export namespace net
 		constexpr IProperty(Context* const& context, IProperty<U, X2, S2, C2, R2, E2>&& other, Fn&& setter)
 			noexcept(nothrow_constructible<T, U&&> and nothrow_constructible<functor_t, Fn&&>)
 			: myContext(context)
-		  , myValue(static_cast<U&&>(other.myValue))
-		  , mySetter(std::forward_like<functor_t>(setter))
+			, myValue(static_cast<U&&>(other.myValue))
+			, mySetter(std::forward_like<functor_t>(setter))
 		{}
 
 		[[nodiscard]]
@@ -419,6 +445,19 @@ export namespace net
 			{
 				return std::addressof(myValue);
 			}
+		}
+
+		[[nodiscard]]
+		friend constexpr std::strong_ordering operator<=>(const IProperty& lhs, const IProperty& rhs) noexcept
+		{
+			return lhs.myValue <=> rhs.myValue;
+		}
+
+		template<typename U, typename X2, bool S2, bool C2, bool R2, bool E2>
+		[[nodiscard]]
+		friend constexpr std::strong_ordering operator<=>(const IProperty& lhs, const IProperty<U, X2, S2, C2, R2, E2>& rhs) noexcept
+		{
+			return lhs.myValue <=> rhs.myValue;
 		}
 
 		constexpr IProperty(IProperty&&) noexcept = default;
